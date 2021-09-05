@@ -1,0 +1,43 @@
+
+
+!!
+gæti verið að yfirskrifa í sub process
+!!
+
+
+// TODOS
+  training
+  staff
+  judges
+
+  add fighters
+  add clubs
+  write actions
+
+
+
+// SPECIFIC
+tweaks:
+    physical.explosiveness added, adjust singleLeg!
+implement:
+    momentum triggers
+    archive match
+    count score properly at the end of the match if a decision
+
+
+// DREAMS
+each fighter has a potential range for each 
+stat/attribute/instruction/trainingfocuses
+manager can try to instruct the fighter to use
+certain moves, limbs and style.
+
+judges look at truePoints and depending on 
+retention and other judging.attributes gives
+a card. Three jjudges for each ring
+assistant manager also does this and gives his
+points to the manager
+
+mmam
+
+when a substitution is performed, the first fighter to become a substition
+is the first one substituted
