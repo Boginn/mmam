@@ -71,6 +71,7 @@ export default {
     return Math.abs(a - b);
   },
 
+
   //judging
   scoreRounds(judges, rounds) {
     var judgesTally = [];
@@ -424,6 +425,7 @@ export default {
   },
 
   pickMethodAttack(fighter) {
+
     let method;
     //check gameplan of fighter! later -- could be lists that check against
 
@@ -838,9 +840,9 @@ export default {
 
   determineEngagementByType(fighter) {
     //true is striker, false is grappler
-    if (fighter.grappler >= 70) {
+    if (fighter.type.grappler >= 70) {
       return false;
-    } else if (fighter.striker >= 70) {
+    } else if (fighter.type.striker >= 70) {
       return true;
     } else {
       return this.roll(fighter.type.grappler) > this.roll(fighter.type.striker)

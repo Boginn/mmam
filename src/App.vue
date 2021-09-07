@@ -1,23 +1,27 @@
 <template>
-  <v-app>
-    <v-app-bar app class="abcolor" dark>
-      <v-btn class="primary">
+  <v-app >
 
-      {{selectedClub.name}}
-</v-btn>
-      <ButtonsSmall :routes="routes" />
-      <v-col class="text-end">
-
-      <v-btn class="warning" :disabled="matchday" @click="this.continue"
-        ><span v-if="matchday"> Match Day</span>
-        <span v-else>Day: {{ day }} Continue</span></v-btn
-      >
+    <ScoreBanner v-if="isLive" :names="names" :score="score" class="ma-0"/>
 
 
-      <v-btn :disabled="!isFast" @click="setIntervalFast()">Fast</v-btn>
-      <v-btn :disabled="isFast" @click="setIntervalSlow()">Slow</v-btn>
-      </v-col>
+    <v-app-bar app class="abcolor " dark v-else>
+      
+         <router-link
+            :to="`/`"
+          >
+        <v-btn class="primary">
+          {{ selectedClub.name }}
+        </v-btn>
+        </router-link>
+        <ButtonsSmall :routes="routes" />
+        <v-col class="text-end">
+          <v-btn class="warning" :disabled="matchday" @click="this.continue"
+            ><span v-if="matchday"> Match Day</span>
+            <span v-else>Day: {{ day }} Continue</span></v-btn
+          >
+        </v-col>
     </v-app-bar>
+
 
     <v-main class="bgcolor">
       <router-view />
@@ -30,12 +34,14 @@ import classes from "@/data/classes.js";
 import engine from "@/engine/engine.js";
 import data from "@/data/data.js";
 import ButtonsSmall from "@/components/ButtonsSmall.vue";
+import ScoreBanner from "@/components/Match/ScoreBanner.vue";
 import matchData from "@/data/matchData.js";
 
 export default {
   name: "App",
   components: {
     ButtonsSmall,
+ScoreBanner
   },
   created() {
     this.test();
@@ -75,8 +81,8 @@ export default {
     staff() {
       return this.$store.getters.staff;
     },
-    live() {
-      return this.$store.getters.live;
+    isLive() {
+      return this.$store.getters.isLive;
     },
     currentMatch() {
       return this.$store.getters.currentMatch;
@@ -99,22 +105,21 @@ export default {
     routes() {
       return data.routes.appbar;
     },
-    isFast() {
-      return this.$store.getters.timeoutInterval > 500 ? true : false;
-    },
+
     selectedClub() {
-      return this.getClub(this.$store.getters.selectedClubId)
-    }
+      return this.getClub(this.$store.getters.selectedClubId);
+    },
+
+    score() {
+      return this.$store.getters.score;
+    },
+    names() {
+      return this.$store.getters.names;
+    },
   },
 
   methods: {
     //services
-    setIntervalFast() {
-      this.$store.dispatch("setTimeoutInterval", 200);
-    },
-    setIntervalSlow() {
-      this.$store.dispatch("setTimeoutInterval", 750);
-    },
 
     getClub(id) {
       return this.$store.getters.getClubById(id);
@@ -158,7 +163,7 @@ export default {
       });
       console.log(this.league);
     },
-    
+
     setLeague(league) {
       this.$store.dispatch("setLeague", league);
       this.$store.dispatch("setClubId", this.idCodeClub + this.league.length);
@@ -176,14 +181,15 @@ export default {
 
     setCommission() {
       this.$store.dispatch("setCommission", data.commission.judges);
-      this.$store.dispatch("setCommissionId", this.idCommissionClub + this.commission.length);
-
+      this.$store.dispatch(
+        "setCommissionId",
+        this.idCommissionClub + this.commission.length
+      );
     },
 
     setStaff() {
       this.$store.dispatch("setStaff", data.staff.coaches);
       this.$store.dispatch("setStaffId", this.idStaffClub + this.staff.length);
-
     },
 
     setSchedule(schedule) {
@@ -193,7 +199,6 @@ export default {
         this.idCodeMatch + this.schedule.length
       );
     },
-
 
     // game loop
     continue() {
@@ -226,20 +231,20 @@ export default {
 
     test() {
       console.log(matchData.engage.closeDistance[0].value);
-      var functionName = 'this.' + matchData.engage.closeDistance[0].value;
-      eval(functionName)('jo');
-
+      var functionName = "this." + matchData.engage.closeDistance[0].value;
+      eval(functionName)("jo");
     },
     grapple(mfg) {
-      console.log(
-        mfg
-      );
+      console.log(mfg);
     },
   },
 };
 </script>
 
 <style>
+.close:hover {
+opacity: 0.5;
+}
 a {
   text-decoration: none;
 }
@@ -261,5 +266,4 @@ a {
 ::-webkit-scrollbar-corner {
   opacity: 0;
 }
-
 </style>

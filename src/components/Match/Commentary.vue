@@ -1,5 +1,5 @@
 <template>
-      <v-col class="text-center">
+      <v-col class="text-center pt-1" >
         <v-col>
           <v-card class="commentary">
             <v-card-text>

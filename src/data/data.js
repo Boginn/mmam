@@ -13,6 +13,14 @@ export default {
 
   },
 
+  tabs: {
+    match: [
+      { name: 'overview', value: true },
+      { name: 'bench', value: false },
+      
+    ],
+  },
+
   headers: {
     squad: [
       { text: "Name", value: "personal.name" },

@@ -1,7 +1,6 @@
 <template>
-    <v-row class="mt-1 text-center" align="center" justify="center">
-      <v-col>
-        <v-col class="score sixth">
+    <v-app-bar app :style="{ backgroundImage: createBackgroundString }">
+        <v-col class="score text-center" >
           <v-row>
             <v-col>
               {{names.home}}
@@ -11,9 +10,8 @@
               {{names.away}}
             </v-col>
           </v-row>
-        </v-col>
       </v-col>
-    </v-row>
+        </v-app-bar>
 </template>
 
 <script>
@@ -28,14 +26,27 @@ export default {
 
   },
 
+  data() {
+    return {
+      
+      homeColor: '#496F5D', // send in color from each team here
+      awayColor: '#5E6019'
+    }
+  },
+  computed: {
+    createBackgroundString() {
+      return `linear-gradient(90deg, ${this.homeColor}, ${this.homeColor}, ${this.awayColor}, ${this.awayColor})`;
+    }
+  }
+
 }
 </script>
 
 <style >
 .score {
-  border-radius: 10px;
   font-size: 16pt;
+  /* border-radius: 10px;
 
-  box-shadow: 0px 3px 3px rgb(65, 62, 62);
+  box-shadow: 0px 3px 3px rgb(65, 62, 62); */
 }
 </style>

@@ -1,27 +1,25 @@
 <template>
   <v-container>
-    <v-container style="position: absolute; left: 0%">
+    <v-container style="position: absolute; left: 0%" class="pa-0 ma-0">
       <v-btn v-if="isDeveloper" @click="testEnd()">end with a decision</v-btn>
     </v-container>
 
-
-<!-- floating -->
+    <!-- floating -->
     <JudgesCard
+      v-if="isDecision && showJudgesCard"
       :decisions="decisions"
       :judges="judges"
       :cards="cards"
-      v-if="isDecision"
+      @closed="showJudgesCard = false"
     />
     <!-- floating -->
     <TruePoints :allRings="allRings" v-if="isDeveloper" />
 
-    <ScoreBanner :score="score" :names="{ home: getClub(match.clubs[0]).name, away: getClub(match.clubs[1]).name}"/>
-
     <!-- COMMENTARY -->
-    <v-row>
-<Commentary :messages="messages"/>
+    <v-row class="mt-0">
+      <Commentary :messages="messages" />
 
-      <v-col class="text-center ">
+      <v-col class="text-center pt-1">
         <v-col>
           <v-card class="commentary">
             <v-col>
@@ -43,7 +41,7 @@
                 </v-col>
               </v-row>
             </v-col>
-             <v-col>
+            <v-col>
               <v-btn class="primary timestampbtn">
                 {{ timestamp }}
               </v-btn>
@@ -78,310 +76,65 @@
               >
                 Pause
               </v-btn>
+              <span class="ml-5"></span>
+
+              <v-btn
+                small
+                class="seventh"
+                :disabled="!isFast"
+                @click="setIntervalFast()"
+                >+</v-btn
+              >
+
+              <v-btn
+                small
+                class="seventh"
+                :disabled="isFast"
+                @click="setIntervalSlow()"
+                >-</v-btn
+              >
             </v-col>
           </v-card>
         </v-col>
       </v-col>
-
-           
     </v-row>
 
     <v-divider></v-divider>
 
     <!-- MATCH  -->
-    <v-col class="mt-1">
-      <v-card elevation="10" height="400px">
-        <v-row>
-          <v-tab
-            @click="selectTab(0)"
-            class="ml-6 mt-3 pa-2 sixth"
-            v-bind:class="{
-              seventh: tabs.overview,
-            }"
-            >Overview</v-tab
-          >
-          <v-tab
-            @click="selectTab(1)"
-            class="ml-1 mt-3 pa-2 sixth"
-            v-bind:class="{
-              seventh: tabs.bench,
-            }"
-            >Bench</v-tab
-          >
-        </v-row>
-        <v-row v-if="tabs.overview">
-          <v-card-text>
-            <v-row align="center">
-              <v-col
-                align="center"
-                v-for="(fighter, index) in homeTactic.selection"
-                :key="index"
-              >
-                <div
-                  class="secondary font-shadow body-1"
-                  v-if="
-                    !getFighter(fighter).match.finished &&
-                      !getFighter(fighter).match.substituted &&
-                      getFighter(fighter).personal.name != 'Select'
-                  "
-                >
-                  <div>
-                    {{ firstName(getFighter(fighter)) }} '<b>{{
-                      getFighter(fighter).nickname
-                    }}</b
-                    >' {{ lastName(getFighter(fighter)) }}
-                  </div>
-
-                  <div v-if="isDeveloper">
-                    e:
-                    <b class="font-shadow red--text">
-                      {{ getFighter(fighter).match.exposed }}
-                    </b>
-                    - c:
-                    <b class="font-shadow amber--text">
-                      {{ getFighter(fighter).match.condition }}
-                    </b>
-                    - l:
-                    <b class="font-shadow green--text">
-                      {{ getFighter(fighter).match.learned }}
-                    </b>
-                    - m:
-                    <b class="font-shadow blue--text">
-                      {{ getFighter(fighter).match.momentum }}
-                    </b>
-                  </div>
-                  <div>
-                    <v-progress-linear
-                      height="15"
-                      v-model="getFighter(fighter).match.condition"
-                      :buffer-value="100"
-                      color="green"
-                      background-color="red"
-                    ></v-progress-linear>
-                  </div></div
-              ></v-col>
-            </v-row>
-            <v-row align="center">
-              <v-col align="center">
-                <div
-                  class="positions centerPosition "
-                  v-bind:class="{
-                    red: ringFinishedLeft,
-                    primary: !ringFinishedLeft,
-                  }"
-                >
-                  <v-row>
-                    <v-col class="pa-7 pt-6 white--text ring-message">
-                      <span v-if="!ringFinishedLeft">
-                        {{ messagesForRings[0].slice().reverse()[0] }}</span
-                      >
-                    </v-col>
-                  </v-row>
-                </div>
-              </v-col>
-              <v-col align="center">
-                <div
-                  class="positions centerPosition "
-                  v-bind:class="{
-                    red: ringFinishedCenter,
-                    primary: !ringFinishedCenter,
-                  }"
-                >
-                  <v-row>
-                    <v-col class="pa-7 pt-6 white--text ring-message">
-                      <span v-if="!ringFinishedCenter">
-                        {{ messagesForRings[1].slice().reverse()[0] }}</span
-                      >
-                    </v-col>
-                  </v-row>
-                </div></v-col
-              >
-              <v-col align="center">
-                <div
-                  class="positions centerPosition "
-                  v-bind:class="{
-                    red: ringFinishedRight,
-                    primary: !ringFinishedRight,
-                  }"
-                >
-                  <v-row>
-                    <v-col class="pa-7 pt-6 white--text ring-message">
-                      <span v-if="!ringFinishedRight">
-                        {{ messagesForRings[2].slice().reverse()[0] }}</span
-                      >
-                    </v-col>
-                  </v-row>
-                </div></v-col
-              >
-            </v-row>
-            <v-row align="center">
-              <v-col
-                align="center"
-                v-for="(fighter, index) in awayTactic.selection"
-                :key="index"
-              >
-                <div
-                  class="fourth font-shadow body-1"
-                  v-if="
-                    !getFighter(fighter).match.finished &&
-                      !getFighter(fighter).match.substituted &&
-                      getFighter(fighter).personal.name != 'Select'
-                  "
-                >
-                  <div>
-                    <v-progress-linear
-                      height="15"
-                      v-model="getFighter(fighter).match.condition"
-                      :buffer-value="100"
-                      color="green"
-                      background-color="red"
-                    ></v-progress-linear>
-                  </div>
-                  <div>
-                    {{ firstName(getFighter(fighter)) }} '<b>{{
-                      getFighter(fighter).nickname
-                    }}</b
-                    >' {{ lastName(getFighter(fighter)) }}
-                  </div>
-
-                  <div v-if="isDeveloper">
-                    e:
-                    <b class="font-shadow red--text">
-                      {{ getFighter(fighter).match.exposed }}</b
-                    >
-                    - c:
-                    <b class="font-shadow amber--text">
-                      {{ getFighter(fighter).match.condition }}</b
-                    >
-                    - l:
-                    <b class="font-shadow green--text">
-                      {{ getFighter(fighter).match.learned }}</b
-                    >
-                    - m:
-                    <b class="font-shadow blue--text">
-                      {{ getFighter(fighter).match.momentum }}</b
-                    >
-                  </div>
-                </div></v-col
-              >
-            </v-row>
-          </v-card-text>
-        </v-row>
-<Bench v-if="tabs.bench" :awayTactic="awayTactic" :homeTactic="homeTactic" :awaySubs="awaySubs" :homeSubs="homeSubs"/>
-        <!-- <v-row v-if="tabs.bench">
-          <v-card-text>
-            <p class="text-center ">
-              Finished
-            </p>
-            <v-row align="center">
-              <v-col class="ma-2">
-                <div class="primary" style="minHeight: 70px">
-                  <v-col class="ma-0" align="center">
-                    <div
-                      v-for="(fighter, index) in homeTactic.selection"
-                      :key="index"
-                    >
-                      <div
-                        class="secondary font-shadow ma-1"
-                        v-if="getFighter(fighter).match.finished"
-                      >
-                        <span class="red--text">
-                          {{ getFighter(fighter).personal.name }}
-                        </span>
-                        <div>
-                          - c:
-                          <b class="font-shadow amber--text">
-                            {{ getFighter(fighter).match.condition }}
-                          </b>
-                        </div>
-                      </div>
-                    </div>
-                  </v-col>
-                </div>
-              </v-col>
-
-              <v-col class="ma-2">
-                <div class="fourth" style="minHeight: 70px">
-                  <v-col class="ma-0" align="center">
-                    <div
-                      v-for="(fighter, index) in awayTactic.selection"
-                      :key="index"
-                    >
-                      <div
-                        class="secondary font-shadow ma-1"
-                        v-if="getFighter(fighter).match.finished"
-                      >
-                     <span class="red--text">
-                          {{ getFighter(fighter).personal.name }}
-                        </span>
-
-                        <div>
-                          - c:
-                          <b class="font-shadow amber--text">
-                            {{ getFighter(fighter).match.condition }}
-                          </b>
-                        </div>
-                      </div>
-                    </div>
-                  </v-col>
-                </div>
-
-
-
-              </v-col>
-            </v-row>
-          </v-card-text>
-          <v-card-text v-if="substitutionAvailable">
-            <p class="text-center ">
-              Substitutes
-            </p>
-            <v-row align="center">
-              <v-col class="ma-2">
-                <div class="primary">
-                  <v-col
-                    align="center"
-                    v-for="(fighter, index) in homeSubs"
-                    :key="index"
-                  >
-                    <div class="secondary font-shadow ma-1" > 
-                      {{ getFighter(fighter).personal.name }}
-                      <div>
-                        - c:
-                        <b class="font-shadow amber--text">
-                          {{ getFighter(fighter).match.condition }}
-                        </b>
-                      </div>
-                    </div></v-col
-                  >
-                </div>
-              </v-col>
-              <v-col class="ma-2">
-                <div class="fourth">
-                  <v-col
-                    align="center"
-                    v-for="(fighter, index) in awaySubs"
-                    :key="index"
-                  >
-                    <div class="secondary font-shadow ma-1">
-                      {{ getFighter(fighter).personal.name }}
-                      <div>
-                        - c:
-                        <b class="font-shadow amber--text">
-                          {{ getFighter(fighter).match.condition }}
-                        </b>
-                      </div>
-                    </div></v-col
-                  >
-                </div>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-row> -->
+    <v-col class="mt-1 ">
+      <v-row class="bgcolor pa-0 pl-5">
+        <v-tab
+          v-for="(tab, index) in tabs"
+          :key="index"
+          class="ml-1 mt-3 pa-2 pb-4"
+          @click="selectTab(index)"
+          v-bind:class="{
+            tertiary: tabs[index].value,
+            sixth: !tabs[index].value,
+          }"
+          >{{ tab.name }}</v-tab
+        >
+      </v-row>
+      <v-card elevation="10">
+        <Overview
+          v-if="isTabOverview"
+          :awayTactic="awayTactic"
+          :homeTactic="homeTactic"
+          :messages="messagesForRings"
+        />
+        <Bench
+          v-if="isTabBench"
+          :awayTactic="awayTactic"
+          :homeTactic="homeTactic"
+          :awaySubs="awaySubs"
+          :homeSubs="homeSubs"
+        />
       </v-card>
     </v-col>
 
     <!-- DETAILS -->
-<Details :activity="ringActivity"/>
+    <Details :activity="ringActivity" />
   </v-container>
 </template>
 
@@ -395,8 +148,8 @@ export default {
   components: {
     JudgesCard: () => import("@/components/Match/JudgesCard.vue"),
     TruePoints: () => import("@/components/Match/TruePoints.vue"),
-    ScoreBanner: () => import("@/components/Match/ScoreBanner.vue"),
     Commentary: () => import("@/components/Match/Commentary.vue"),
+    Overview: () => import("@/components/Match/Overview.vue"),
     Details: () => import("@/components/Match/Details.vue"),
     Bench: () => import("@/components/Match/Bench.vue"),
   },
@@ -406,6 +159,8 @@ export default {
     this.resetFighterMatchStats();
     this.assignJudges();
     this.setTactics();
+    this.$store.dispatch("setNames", this.names);
+    this.$store.dispatch("setIsLive", true);
 
     this.archivedMatch = new matchEngine.getArchivedMatchBlueprint(
       this.$route.params.id
@@ -414,7 +169,6 @@ export default {
 
   data: () => ({
     //bools
-    isDeveloper: true,
     isFullTime: false,
     isBetweenRounds: true,
     isHomeAttack: true,
@@ -433,18 +187,18 @@ export default {
     happenChance: 11,
 
     //ui
-    tabs: { overview: true, bench: false },
+    tabs: data.tabs.match,
+    showJudgesCard: true,
 
     //match data
-    archivedMatch: undefined,
     homeTactic: {},
     awayTactic: {},
     homeSubs: [],
     awaySubs: [],
+
     score: {
       home: 0,
       away: 0,
-
     },
     substitutionMade: false,
     pendingSub: false,
@@ -468,24 +222,7 @@ export default {
         awaySignificant: 0,
       },
     ],
-    // ringActivityLeft: {
-    //   home: 0,
-    //   away: 0,
-    //   homeSignificant: 0,
-    //   awaySignificant: 0,
-    // },
-    // ringActivityCenter: {
-    //   home: 0,
-    //   away: 0,
-    //   homeSignificant: 0,
-    //   awaySignificant: 0,
-    // },
-    // ringActivityRight: {
-    //   home: 0,
-    //   away: 0,
-    //   homeSignificant: 0,
-    //   awaySignificant: 0,
-    // },
+
     ringDecisionLeft: undefined,
     ringDecisionCenter: undefined,
     ringDecisionRight: undefined,
@@ -502,12 +239,19 @@ export default {
   }),
 
   computed: {
+    isDeveloper() {
+      return this.$store.getters.isDeveloper;
+    },
+
     //ui
     isTabOverview() {
-      return this.tabs[0];
+      return this.tabs[0].value;
     },
     isTabBench() {
-      return this.tabs[1];
+      return this.tabs[1].value;
+    },
+    isTabJudgesCard() {
+      return this.tabs[2].value;
     },
 
     routes() {
@@ -536,6 +280,12 @@ export default {
     },
     message() {
       return this.messages.slice().reverse()[0];
+    },
+    names() {
+      return {
+        home: this.getClub(this.match.clubs[0]).name,
+        away: this.getClub(this.match.clubs[1]).name,
+      };
     },
 
     //data
@@ -598,6 +348,9 @@ export default {
     },
 
     //match
+    isFast() {
+      return this.$store.getters.timeoutInterval > 500 ? true : false;
+    },
     match() {
       var match;
       this.schedule.forEach((element) => {
@@ -701,25 +454,19 @@ export default {
 
     //ui
     selectTab(selection) {
-      // for (let i = 0; i < this.tabs.length; i++) {
-      //   this.tabs[i] = false;
-      // }
-
-      // this.tabs[selection] = true;
-
-      // console.log(this.tabs);
-
-      if (selection == 0) {
-        this.tabs.overview = true;
-        this.tabs.bench = false;
-      } else if (selection == 1) {
-        this.tabs.overview = false;
-        this.tabs.bench = true;
+      for (let i = 0; i < this.tabs.length; i++) {
+        this.tabs[i].value = false;
       }
+      this.tabs[selection].value = true;
     },
 
     //services
-
+    setIntervalFast() {
+      this.$store.dispatch("setTimeoutInterval", 200);
+    },
+    setIntervalSlow() {
+      this.$store.dispatch("setTimeoutInterval", 750);
+    },
     firstName(fighter) {
       return fighter.personal.name.split(" ")[0];
     },
@@ -734,8 +481,34 @@ export default {
     },
 
     archiveMatch() {
-      this.archivedMatch.date = this.match.date;
-      this.archivedMatch.clubs = this.match.clubs;
+      var match = {
+        date: this.match.date,
+        clubs: this.match.clubs,
+        judges: this.judges,
+        decisions: this.decisions,
+        cards: this.cards,
+        score: this.score,
+        ringActivity: this.ringActivity,
+        //hopefully these fighters will pass their .match
+        //especially match.finished to see which side won
+        left: {
+          home: this.getFighter(this.homeTactic.selection.left),
+          away: this.getFighter(this.awayTactic.selection.left),
+          finish: this.ringFinishedLeft,
+        },
+        center: {
+          home: this.getFighter(this.homeTactic.selection.center),
+          away: this.getFighter(this.awayTactic.selection.center),
+          finish: this.ringFinishedCenter,
+        },
+        right: {
+          home: this.getFighter(this.homeTactic.selection.right),
+          away: this.getFighter(this.awayTactic.selection.right),
+          finish: this.ringFinishedRight,
+        },
+      };
+
+      this.$store.dispatch("addMatch", match);
     },
 
     //basics
@@ -795,9 +568,11 @@ export default {
     },
     endMatch() {
       // this.resetFighterMatchStats();
-      //bring back finished fighters to look at
-
+     
+      this.archiveMatch();
+      this.$store.dispatch("setIsLive", false);
       this.$store.dispatch("setMatchday", false);
+      this.$router.push("/");
     },
 
     endRound() {
@@ -893,7 +668,16 @@ export default {
           this.truePointsRight
         );
 
+        if (this.ringFinishedLeft) {
+          this.cards.leftMsg = "Finish";
+        } else if (this.ringFinishedCenter) {
+          this.cards.centerMsg = "Finish";
+        } else if (this.ringFinishedRight) {
+          this.cards.rightMsg = "Finish";
+        }
+
         this.isDecision = true; // opens Judges' Cards
+        this.$store.dispatch("setScore", this.score);
 
         setTimeout(() => {
           // timeout because component JudgesCard saves the list needed to the state
@@ -915,43 +699,6 @@ export default {
         }
       }
 
-      // if (ring == 1) {
-      //   if (isHomeAttack) {
-      //     this.ringActivityLeft.home += 1;
-      //     if (outcome.significant) {
-      //       this.ringActivityLeft.homeSignificant += 1;
-      //     }
-      //   } else {
-      //     this.ringActivityLeft.away += 1;
-      //     if (outcome.significant) {
-      //       this.ringActivityLeft.awaySignificant += 1;
-      //     }
-      //   }
-      // } else if (ring == 2) {
-      //   if (isHomeAttack) {
-      //     this.ringActivityCenter.home += 1;
-      //     if (outcome.significant) {
-      //       this.ringActivityCenter.homeSignificant += 1;
-      //     }
-      //   } else {
-      //     this.ringActivityCenter.away += 1;
-      //     if (outcome.significant) {
-      //       this.ringActivityCenter.awaySignificant += 1;
-      //     }
-      //   }
-      // } else if (ring == 3) {
-      //   if (isHomeAttack) {
-      //     this.ringActivityRight.home += 1;
-      //     if (outcome.significant) {
-      //       this.ringActivityRight.homeSignificant += 1;
-      //     }
-      //   } else {
-      //     this.ringActivityRight.away += 1;
-      //     if (outcome.significant) {
-      //       this.ringActivityRight.awaySignificant += 1;
-      //     }
-      //   }
-      // }
     },
     countScore() {
       let messager = function(winner, loser) {
@@ -967,56 +714,60 @@ export default {
       var homeCount = 0;
       var awayCount = 0;
 
-      this.cards.left.forEach((score) => {
-        if (score.home == true && score.away == false) {
-          homeCount += 1;
-        } else if (score.home == false && score.away == true) {
-          awayCount += 1;
-        }
-      });
+      if (!this.ringFinishedLeft) {
+        this.cards.left.forEach((score) => {
+          if (score.home == true && score.away == false) {
+            homeCount += 1;
+          } else if (score.home == false && score.away == true) {
+            awayCount += 1;
+          }
+        });
 
-      if (homeCount != awayCount) {
-        if (homeCount > awayCount) {
-          this.score.home += 1;
-          this.cards.leftMsg = messager(homeCount, awayCount);
+        if (homeCount != awayCount) {
+          if (homeCount > awayCount) {
+            this.score.home += 1;
+            this.cards.leftMsg = messager(homeCount, awayCount);
+          } else {
+            this.score.away += 1;
+            this.cards.leftMsg = messager(awayCount, homeCount);
+          }
         } else {
-          this.score.away += 1;
-          this.cards.leftMsg = messager(awayCount, homeCount);
+          this.cards.leftMsg = "Draw";
         }
-      } else {
-        this.cards.leftMsg = "Draw";
-      }
-      console.log(homeCount);
-      console.log(awayCount);
+        console.log(homeCount);
+        console.log(awayCount);
 
-      homeCount = 0;
-      awayCount = 0;
-
-      this.cards.right.forEach((score) => {
-        if (score.home == true && score.away == false) {
-          homeCount += 1;
-        } else if (score.home == false && score.away == true) {
-          awayCount += 1;
-        }
-      });
-
-      if (homeCount != awayCount) {
-        if (homeCount > awayCount) {
-          this.score.home += 1;
-          this.cards.rightMsg = messager(homeCount, awayCount);
-        } else {
-          this.score.away += 1;
-          this.cards.rightMsg = messager(awayCount, homeCount);
-        }
-      } else {
-        this.cards.rightMsg = "Draw";
+        homeCount = 0;
+        awayCount = 0;
       }
 
-      console.log(homeCount);
-      console.log(awayCount);
+      if (!this.ringFinishedRight) {
+        this.cards.right.forEach((score) => {
+          if (score.home == true && score.away == false) {
+            homeCount += 1;
+          } else if (score.home == false && score.away == true) {
+            awayCount += 1;
+          }
+        });
 
-      homeCount = 0;
-      awayCount = 0;
+        if (homeCount != awayCount) {
+          if (homeCount > awayCount) {
+            this.score.home += 1;
+            this.cards.rightMsg = messager(homeCount, awayCount);
+          } else {
+            this.score.away += 1;
+            this.cards.rightMsg = messager(awayCount, homeCount);
+          }
+        } else {
+          this.cards.rightMsg = "Draw";
+        }
+
+        console.log(homeCount);
+        console.log(awayCount);
+
+        homeCount = 0;
+        awayCount = 0;
+      }
 
       this.cards.center.forEach((score) => {
         if (score.home == true && score.away == false) {
@@ -1173,6 +924,8 @@ export default {
           timeoutIntervalMultiplier
         );
 
+        this.$store.dispatch("setScore", this.score);
+
         if (outcome.point) {
           // TODO
           this.tallyPoints(ring, outcome);
@@ -1260,7 +1013,8 @@ export default {
                 this.isDisabled = false;
               }, this.timeoutInterval * timeoutIntervalMultiplier);
             }
-            if (!this.substitutionMade) {
+            if (!this.awaySubs.length) {
+              //ef avail
               this.score.home += 3;
             }
           } else {
@@ -1272,7 +1026,7 @@ export default {
                 this.isDisabled = false;
               }, this.timeoutInterval * timeoutIntervalMultiplier);
             }
-            if (!this.substitutionMade) {
+            if (!this.homeSubs.length) {
               this.score.away += 3;
             }
           }
@@ -1445,12 +1199,6 @@ export default {
   right: 0;
   width: 10%;
 }
-
-
-
-
-
-
 
 .rounds {
   width: 50px;

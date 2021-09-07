@@ -14,17 +14,17 @@
         :key="route.name"
         class="small"
       >
-        <v-card class="d-flex pa-1 font-shadow small justify-center" :class="route.color">
           <router-link
             class="white--text"
             :to="`/${route.name.toLowerCase()}/`"
           >
+        <v-card class="d-flex pa-1 font-shadow small justify-center" :class="route.color">
             <h5 class="">
               {{ route.name }}
               <v-icon x-small class="ml-2"> {{ route.icon }}</v-icon>
             </h5>
-          </router-link>
         </v-card>
+          </router-link>
       </v-col>
     </v-row>
 

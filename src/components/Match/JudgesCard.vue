@@ -1,19 +1,36 @@
 <template>
-  <v-container style="position: absolute; bottom: 10%; left: 0%;">
-    <v-card width="25%">
-      <v-card-title>
-        Judges' Cards
+  <v-container  style="position: absolute; top: 5%; left: 25%; zIndex: 10;">
+    <v-card width="75%" class="sixth">
+      <v-card-title class="justify-space-between eight">
+        <v-icon class="eight--text" large @click="$emit('closed')">mdi-close</v-icon>
+        <span class="font-shadow">Judges' Cards</span> 
+        
+        <v-icon class="close" large @click="$emit('closed')">mdi-close</v-icon>
       </v-card-title>
+<v-row>
+<v-col>
 
       <v-card-text>
-        <v-divider class="mb-1"></v-divider>
 
         <div v-for="(decision, jdex) in decisions" :key="jdex">
-          <h4 class="text-center">
+
+          <h4 class="text-center seventh">
+            <div>
+
             {{ rings[jdex] }}
+            </div>
+            <div>
+
+             {{messages[jdex]}}
+            </div>
+          <v-divider class="mb-1 mt-1"></v-divider>
+            
           </h4>
           <div v-for="(judge, index) in judges[jdex]" :key="judge.id">
             <v-row v-if="decision">
+              <v-col>
+
+              </v-col>
               <v-col class="text-no-wrap judges">
                 {{ $parent.firstName(judge).substring(0, 1) }}.
                 {{ $parent.lastName(judge) }}</v-col
@@ -35,15 +52,24 @@
                   }}
                 </span>
               </v-col>
+                         <v-col>
+                
+              </v-col>
             </v-row>
           </div>
           <div class="text-end">
-            {{messages[jdex]}}
+            
 
           </div>
-          <v-divider class="mb-1"></v-divider>
         </div>
+
+
+
       </v-card-text>
+</v-col>
+
+</v-row>
+
     </v-card>
   </v-container>
 </template>
@@ -141,3 +167,4 @@ export default {
   gast() {},
 };
 </script>
+

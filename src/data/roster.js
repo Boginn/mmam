@@ -54,11 +54,12 @@ fighter01.skill.leadership = 10;
 fighter01.skill.positioning = 10;
 fighter01.skill.decisions = 10;
 fighter01.skill.vision = 10;
-fighter01.skill.versatility = 10;
 fighter01.skill.finishing = 10;
-fighter01.skill.footwork = 10;
 fighter01.skill.fluidity = 10;
 fighter01.skill.sharpness = 10;
+
+fighter01.skill.versatility = 10;
+fighter01.skill.footwork = 10;
 
 roster.push(fighter01);
 /*-----------------------------------------------------------------------------------------*/

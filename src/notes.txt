@@ -1,18 +1,11 @@
 
 
-!!
-gæti verið að yfirskrifa í sub process
-!!
-
 
 // TODOS
-  training
-  staff
-  judges
+  
+  
 
-  add fighters
-  add clubs
-  write actions
+
 
 
 
@@ -20,24 +13,59 @@ gæti verið að yfirskrifa í sub process
 tweaks:
     physical.explosiveness added, adjust singleLeg!
 implement:
+    archive match (maybed about done, will find out later)
+    screen to pick team to manage
+    news item, youve been hired
+    just manually schedule something
+    make more teams
+    make more roster
+    make schedule show all your matches only
+    have another schedule available from league view 
+    that shows all matches in the league
+    spruce up squad view, add condition
+    spruce up unit component
+    have a look at cm0102
+
+
+
+
+match:
+    being able to change tactics in a match
+    have seperate tactics for each ring
     momentum triggers
-    archive match
-    count score properly at the end of the match if a decision
+    judges need to get activity numbers
+    write actions
+
+
+   
+  
+    
+
 
 
 // DREAMS
 each fighter has a potential range for each 
 stat/attribute/instruction/trainingfocuses
+
 manager can try to instruct the fighter to use
 certain moves, limbs and style.
 
-judges look at truePoints and depending on 
+(judges look at truePoints and depending on 
 retention and other judging.attributes gives
-a card. Three jjudges for each ring
+a card.(done) )
 assistant manager also does this and gives his
 points to the manager
 
+approach unsigned players for a contract, have
+transfers bewteen clubs etc
+
+training, staff, assistant manager that shows stats
+and judges a ring
+
+youth developement news item, offers a pool of fighters
+coaches give their opinion based on judging potential ability
+etc 
+
 mmam
 
-when a substitution is performed, the first fighter to become a substition
-is the first one substituted
+

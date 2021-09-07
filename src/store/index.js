@@ -6,10 +6,8 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    live: false,
+    isDeveloper: true,
     day: 1,
-    timeoutInterval: 1000,
-
 
     league: [],
     roster: [],
@@ -18,15 +16,23 @@ export default new Vuex.Store({
 
     schedule: [],
 
-    matches: [], //hm?
+    matches: [],
 
+    //match
     matchday: false,
-    minute: null,
+    isLive: false,
 
     currentMatch: undefined,
     matchMessages: [],
     matchMessagesForRings: [[], [], []],
 
+    //matchData
+    timeoutInterval: 1000,
+    score: { home: 0, away: 0 },
+    names: { home: "", away: "" },
+    minute: null,
+
+    //id
     selectedClubId: null,
 
     fighterId: null,
@@ -36,7 +42,18 @@ export default new Vuex.Store({
     matchId: null,
   },
   getters: {
-  
+    isDeveloper(state) {
+      return state.isDeveloper;
+    },
+    //matchData
+
+    score(state) {
+      return state.score;
+    },
+    names(state) {
+      return state.names;
+    },
+
     matchMessages(state) {
       return state.matchMessages;
     },
@@ -51,6 +68,10 @@ export default new Vuex.Store({
     matchday(state) {
       return state.matchday;
     },
+
+    isLive(state) {
+      return state.isLive;
+    },
     minute(state) {
       return state.minute;
     },
@@ -58,9 +79,6 @@ export default new Vuex.Store({
       return state.timeoutInterval;
     },
 
-    live(state) {
-      return state.live;
-    },
     day(state) {
       return state.day;
     },
@@ -95,6 +113,11 @@ export default new Vuex.Store({
     //     state.roster
     //   );
     // },
+
+    //archive
+    matches(state) {
+      return state.matches;
+    },
 
     //id
     getFighterById: (state) => (id) => {
@@ -158,12 +181,14 @@ export default new Vuex.Store({
     },
 
     //match
-  
+    setIsLive(context, payload) {
+      context.commit("SET_IS_LIVE", payload);
+    },
     addMatchMessage(context, payload) {
       context.commit("ADD_MATCH_MESSAGE", payload);
     },
     addMatchMessageToRing(context, payload) {
-      console.log(payload)
+      console.log(payload);
       context.commit("ADD_MATCH_MESSAGE_TO_RING", payload);
     },
 
@@ -187,6 +212,19 @@ export default new Vuex.Store({
     },
     setTimeoutInterval(context, payload) {
       context.commit("SET_TIMEOUT_INTERVAL", payload);
+    },
+
+    //matchData
+    setScore(context, payload) {
+      context.commit("SET_SCORE", payload);
+    },
+    setNames(context, payload) {
+      context.commit("SET_NAMES", payload);
+    },
+
+    //archive
+    addMatch(context, payload) {
+      context.commit("ADD_MATCH", payload);
     },
 
     //id
@@ -244,6 +282,9 @@ export default new Vuex.Store({
     },
 
     //match
+    SET_IS_LIVE(state, payload) {
+      state.isLive = payload;
+    },
     ADD_MATCH_MESSAGE(state, payload) {
       // if (state.matchMessages.length > 3) {
       //   state.matchMessages.splice(0, 1);
@@ -254,8 +295,8 @@ export default new Vuex.Store({
       // if (state.matchMessages.length > 3) {
       //   state.matchMessages.splice(0, 1);
       // }
-      state.matchMessagesForRings[payload.ring-1].push(payload.msg);
-      console.log(state.matchMessagesForRings)
+      state.matchMessagesForRings[payload.ring - 1].push(payload.msg);
+      console.log(state.matchMessagesForRings);
     },
 
     ADD_SQUAD(state, payload) {
@@ -284,6 +325,20 @@ export default new Vuex.Store({
     SET_TIMEOUT_INTERVAL(state, payload) {
       state.timeoutInterval = payload;
     },
+
+    //matchData
+    SET_SCORE(state, payload) {
+      state.score = payload;
+    },
+    SET_NAMES(state, payload) {
+      state.names = payload;
+    },
+
+    //archive
+    ADD_MATCH(state, payload) {
+      state.matches.push(payload);
+    },
+
 
     //id
     SET_FIGHTER_ID(state, payload) {
