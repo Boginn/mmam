@@ -1,16 +1,18 @@
-import classes from "./classes";
+import classes from './classes';
 
-var england = [];
-
-var club01 = new classes.Club(0, 'Kimborough', 'England');
-england.push(club01);
-var club02 = new classes.Club(1, 'Fetterton', 'England');
-england.push(club02);
-var club03 = new classes.Club(2, 'Pussex', 'England');
-england.push(club03);
-var club04 = new classes.Club(3, 'Boroughfillex', 'England');
-england.push(club04);
+const england = [
+  new classes.Club('Kimborough', 'England'), // 0
+  new classes.Club('Fetterton', 'England'), // 1
+  new classes.Club('Pussex', 'England'), // 2
+  new classes.Club('Scough', 'England'), // 3
+  new classes.Club('Kennick', 'England'), // 4
+  new classes.Club('Groicester', 'England'), // 5
+  new classes.Club('Limmage', 'England'), // 6
+  new classes.Club('Tarkney', 'England'), // 7
+  new classes.Club('West Keynes', 'England'), // 8
+  new classes.Club('Mannshire', 'England'), // 9
+];
 
 export default {
   england,
-} 
+};

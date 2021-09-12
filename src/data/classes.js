@@ -2,7 +2,7 @@ class Person {
   type = {
     grappler: 50,
     striker: 50,
-  }
+  };
   legs = [
     {
       power: null,
@@ -77,7 +77,6 @@ class Person {
   };
   skill = {
     anticipation: null,
-    leadership: null,
     positioning: null,
     decisions: null,
     vision: null,
@@ -91,8 +90,6 @@ class Person {
     bodyType: null,
   };
 }
-
-
 
 export default {
   Fighter: class extends Person {
@@ -122,9 +119,8 @@ export default {
       instructions: {},
     };
 
-    constructor(id, nickname, name, age, nationality, height) {
+    constructor(nickname, name, age, nationality, height) {
       super();
-      this.id = id;
       this.nickname = nickname;
       this.personal.name = name;
       this.personal.age = age;
@@ -141,9 +137,8 @@ export default {
     };
     contract = false;
 
-    constructor(id, name, age, nationality) {
+    constructor(name, age, nationality) {
       super();
-      this.id = id;
       this.personal.name = name;
       this.personal.age = age;
       this.personal.nationality = nationality;
@@ -170,9 +165,19 @@ export default {
     reputation;
     squad = [];
     tactic;
+    competitions = {
+      league: {
+        matches: 0,
+        pointsNet: 0,
+        pointsFor: 0,
+        pointsAgainst: 0,
+        form: [],
+        finishes: 0,
+      },
+      cup: {},
+    };
 
-    constructor(id, name, nationality) {
-      this.id = id;
+    constructor(name, nationality) {
       this.name = name;
       this.nationality = nationality;
     }
@@ -194,32 +199,18 @@ export default {
   Tactic: class {
     clubId;
     instructions = {
-      mentality: null,
-      risk: null,
-      gamesmanship: null,
+      mentality: 0,
+      risk: 0,
+      gamesmanship: 0,
     };
     selection = {
-
-      left: null,
-      center: null,
-      right: null,
+      left: 0,
+      center: 0,
+      right: 0,
     };
 
     constructor(clubId) {
       this.clubId = clubId;
     }
   },
-
-  // Task: class Task {
-  //   id;
-  //   name = "";
-  //   assigned = "";
-  //   status = false;
-  //   date = undefined;
-
-  //   constructor(id, date) {
-  //     this.id = id;
-  //     this.date = date;
-  //   }
-  // },
 };

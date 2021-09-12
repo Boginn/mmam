@@ -2,233 +2,100 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card>
-          <v-card-title>
-            {{ firstName }} '{{ fighter.nickname }}' {{ lastName }} ({{
-              fighter.personal.age
-            }}) - {{ fighter.personal.height }}cm -
-            {{ fighter.personal.nationality }}
+        <v-card class="sixth">
+          <v-card-title class="justify-space-between eight">
+            <span class="font-shadow"
+              >{{ firstName }} '{{ fighter.nickname }}' {{ lastName }} ({{
+                fighter.personal.age
+              }})</span
+            >
+
+            <v-icon class="close" large @click="$router.go(-1)"
+              >mdi-close</v-icon
+            >
+          </v-card-title>
+          <v-card-title class="justify-space-between ">
+            <v-chip class="sixth darken-1 "
+              >Height:<b> {{ fighter.personal.height }}</b
+              >cm</v-chip
+            >
+            <v-chip class="sixth darken-1 ">
+              Nationality:
+              <b>{{ fighter.personal.nationality }}</b>
+            </v-chip>
           </v-card-title>
           <v-row>
-   
-
             <v-col>
-              <v-card-text>
-                <div>
-                  Head: Durability:<b>{{ fighter.head.durability }}</b> Chin:
+              <v-card-text
+                class="justify-space-between seventh ma-2"
+                style="width: 75%"
+              >
+                <div class="justify-space-between d-flex">
+                  Body:
+                  <b>{{ fighter.body.durability }}</b>
+                </div>
+                <div class="justify-space-between d-flex">
+                  Head: <b>{{ fighter.head.durability }}</b>
+                </div>
+                <div class="justify-space-between d-flex">
+                  Chin:
                   <b>{{ fighter.head.chin }}</b>
                 </div>
-                <div>
-                  Left arm: Power: <b>{{ fighter.arms[0].power }}</b> Reach:
-                  <b>{{ fighter.arms[0].reach }}</b> Durability:
-                  <b>{{ fighter.arms[0].durability }}</b>
-                </div>
-                <div>
-                  Right arm: Power: <b>{{ fighter.arms[1].power }}</b> Reach:
-                  <b>{{ fighter.arms[1].reach }}</b> Durability:
-                  <b>{{ fighter.arms[1].durability }}</b>
-                </div>
-
-                <div>
-                  Body: Durability: <b>{{ fighter.body.durability }}</b>
-                </div>
-
-                <div>
-                  Left leg: Power: <b>{{ fighter.legs[0].power }}</b> Reach:
-                  <b>{{ fighter.legs[0].reach }}</b> Durability:
-                  <b>{{ fighter.legs[0].durability }}</b>
-                </div>
-                <div>
-                  Right leg: Power: <b>{{ fighter.legs[1].power }}</b> Reach:
-                  <b>{{ fighter.legs[1].reach }}</b> Durability:
-                  <b>{{ fighter.legs[1].durability }}</b>
+                <div class="justify-space-between d-flex">
+                  Power:<b>{{ fighter.body.power }}</b>
                 </div>
               </v-card-text>
             </v-col>
+            <v-col style="flex: 3">
+              <v-row style="width: 100%;">
+                <!-- mental -->
 
-            <!-- mental -->
-            <v-col>
+                <v-col class="secondary ma-1 mb-5">
+                  <div
+                    class="justify-space-between d-flex mb-2"
+                    v-for="attribute in mental"
+                    :key="attribute.name"
+                  >
+                    {{ attribute.name }}
+                    <b>
+                      {{ attribute.value }}
+                    </b>
+                  </div>
+                </v-col>
 
-              <v-row>
-                <v-col>
-                  Adaptability
+                <!-- physical -->
+                <v-col class="tertiary ma-1 mb-5">
+                  <div
+                    class="justify-space-between d-flex mb-2"
+                    v-for="attribute in physical"
+                    :key="attribute.name"
+                  >
+                    {{ attribute.name }}
+                    <b>
+                      {{ attribute.value }}
+                    </b>
+                  </div>
                 </v-col>
-                <v-col>
-                  {{ fighter.mental.adaptability }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  Determination
-                </v-col>
-                <v-col>
-                  {{ fighter.mental.determination }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  Ambition
-                </v-col>
-                <v-col>
-                  {{ fighter.mental.ambition }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  Loyalty
-                </v-col>
-                <v-col>
-                  {{ fighter.mental.loyalty }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  Pressure
-                </v-col>
-                <v-col>
-                  {{ fighter.mental.pressure }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  Professionalism
-                </v-col>
-                <v-col>
-                  {{ fighter.mental.professionalism }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  Sportsmanship
-                </v-col>
-                <v-col>
-                  {{ fighter.mental.sportsmanship }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  Temperement
-                </v-col>
-                <v-col>
-                  {{ fighter.mental.temperement }}
-                </v-col>
-              </v-row>
-              
-            </v-col>
-<!-- physical -->
-            <v-col>
-              <v-row>
-                <v-col>
-                  Flair
-                </v-col>
-                <v-col>
-                  {{ fighter.physical.flair }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  Agility
-                </v-col>
-                <v-col>
-                  {{ fighter.physical.agility }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  Strength
-                </v-col>
-                <v-col>
-                  {{ fighter.physical.strength }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  Stamina
-                </v-col>
-                <v-col>
-                  {{ fighter.physical.stamina }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  Pace
-                </v-col>
-                <v-col>
-                  {{ fighter.physical.pace }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  Acceleration
-                </v-col>
-                <v-col>
-                  {{ fighter.physical.acceleration }}
+
+                <!-- skill -->
+                <v-col class="fourth ma-1 mb-5">
+                  <div
+                    class="justify-space-between d-flex mb-2"
+                    v-for="attribute in skill"
+                    :key="attribute.name"
+                  >
+                    {{ attribute.name }}
+                    <b>
+                      {{ attribute.value }}
+                    </b>
+                  </div>
                 </v-col>
               </v-row>
             </v-col>
-
-  
-<!-- skill -->
-            <v-col>
-              <v-row>
-                <v-col>
-                  Anticipation
-                </v-col>
-                <v-col>
-                  {{ fighter.skill.anticipation }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  Leadership
-                </v-col>
-                <v-col>
-                  {{ fighter.skill.leadership }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  Positioning
-                </v-col>
-                <v-col>
-                  {{ fighter.skill.positioning }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  Decisions
-                </v-col>
-                <v-col>
-                  {{ fighter.skill.decisions }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  Vision
-                </v-col>
-                <v-col>
-                  {{ fighter.skill.vision }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  Versatility
-                </v-col>
-                <v-col>
-                  {{ fighter.skill.versatility }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  Finishing
-                </v-col>
-                <v-col>
-                  {{ fighter.skill.finishing }}
-                </v-col>
-              </v-row>
+            <v-col class="text-center">
+              Interaction
             </v-col>
           </v-row>
-
         </v-card>
       </v-col>
     </v-row>
@@ -236,24 +103,139 @@
 </template>
 
 <script>
-
 export default {
-  name: "Unit",
+  name: 'Unit',
 
-  props: {
-  },
+  props: {},
 
   computed: {
-
-       fighter() {
+    fighter() {
       return this.$store.getters.getFighterById(this.$route.params.id);
     },
 
     firstName() {
-      return this.fighter.personal.name.split(" ")[0];
+      return this.fighter.personal.name.split(' ')[0];
     },
     lastName() {
-      return this.fighter.personal.name.split(" ")[1];
+      return this.fighter.personal.name.split(' ')[1];
+    },
+    mental() {
+      let mental = [];
+      mental.push(
+        {
+          name: 'Adaptability',
+          value: this.fighter.mental.adaptability,
+        },
+        {
+          name: 'Determination',
+          value: this.fighter.mental.determination,
+        },
+        {
+          name: 'Ambition',
+          value: this.fighter.mental.ambition,
+        },
+        {
+          name: 'Loyalty',
+          value: this.fighter.mental.loyalty,
+        },
+        {
+          name: 'Pressure',
+          value: this.fighter.mental.pressure,
+        },
+        {
+          name: 'Professionalism',
+          value: this.fighter.mental.professionalism,
+        },
+        {
+          name: 'Sportsmanship',
+          value: this.fighter.mental.sportsmanship,
+        },
+        {
+          name: 'Temperement',
+          value: this.fighter.mental.temperement,
+        },
+        {
+          name: 'Dirtiness',
+          value: this.fighter.mental.dirtiness,
+        }
+      );
+      return mental;
+    },
+    physical() {
+      let physical = [];
+      physical.push(
+        {
+          name: 'Flair',
+          value: this.fighter.physical.flair,
+        },
+        {
+          name: 'Agility',
+          value: this.fighter.physical.agility,
+        },
+        {
+          name: 'Strength',
+          value: this.fighter.physical.strength,
+        },
+        {
+          name: 'Stamina',
+          value: this.fighter.physical.stamina,
+        },
+        {
+          name: 'Pace',
+          value: this.fighter.physical.pace,
+        },
+        {
+          name: 'Acceleration',
+          value: this.fighter.physical.acceleration,
+        },
+        {
+          name: 'Explosiveness',
+          value: this.fighter.physical.explosiveness,
+        }
+      );
+      return physical;
+    },
+    skill() {
+      let skill = [];
+      skill.push(
+        {
+          name: 'Anticipation',
+          value: this.fighter.skill.anticipation,
+        },
+        {
+          name: 'Positioning',
+          value: this.fighter.skill.positioning,
+        },
+        {
+          name: 'Decisions',
+          value: this.fighter.skill.decisions,
+        },
+        {
+          name: 'Vision',
+          value: this.fighter.skill.vision,
+        },
+        {
+          name: 'Versatility',
+          value: this.fighter.skill.versatility,
+        },
+        {
+          name: 'Finishing',
+          value: this.fighter.skill.finishing,
+        },
+        {
+          name: 'Footwork',
+          value: this.fighter.skill.footwork,
+        },
+        {
+          name: 'Fluidity',
+          value: this.fighter.skill.fluidity,
+        },
+        {
+          name: 'Sharpness',
+          value: this.fighter.skill.sharpness,
+        }
+      );
+      return skill;
     },
   },
 

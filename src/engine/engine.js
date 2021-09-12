@@ -1,12 +1,7 @@
-import classes from "../data/classes.js";
-import data from "../data/data.js";
+import classes from '../data/classes.js';
+import data from '../data/data.js';
 
 export default {
-
-
-
- 
-
   returnPlayerClub: (league, selectedClubId) => {
     var playerClub;
     league.forEach((club) => {
@@ -21,20 +16,21 @@ export default {
   initialize: (idCodeFighter, idCodeClub) => {
     var FIGHTER_ID = idCodeFighter;
     data.fighters.roster.forEach((element) => {
-      element.id = FIGHTER_ID;
       FIGHTER_ID++;
+      element.id = FIGHTER_ID;
     });
 
     var CLUB_ID = idCodeClub;
     data.clubs.england.forEach((element) => {
-      element.id = CLUB_ID;
       CLUB_ID++;
+      element.id = CLUB_ID;
     });
   },
 
   seedRosterToTeams: (teams, roster) => {
     teams.forEach((team) => {
       let counter = Math.floor(roster.length / teams.length);
+      console.log(counter);
 
       for (let i = 0; i < counter; i++) {
         if (roster[i].contract) {
@@ -45,20 +41,179 @@ export default {
         }
       }
     });
-    console.log("engine.seedRosterToTeams");
+    console.log('engine.seedRosterToTeams');
     console.log(roster);
   },
 
   seedSchedule: (league, idCodeMatch) => {
+    let schedule = [];
+    let date = 0;
+    // week 1
+    date += 6;
+    schedule.push(new classes.Match([league[0].id, league[5].id], date));
+    schedule.push(new classes.Match([league[1].id, league[6].id], date));
+    date += 1;
+    schedule.push(new classes.Match([league[2].id, league[9].id], date));
+    schedule.push(new classes.Match([league[3].id, league[4].id], date));
+    // week 2
+    date += 6;
+    schedule.push(new classes.Match([league[0].id, league[6].id], date));
+    schedule.push(new classes.Match([league[1].id, league[7].id], date));
+    date += 1;
+    schedule.push(new classes.Match([league[2].id, league[3].id], date));
+    schedule.push(new classes.Match([league[4].id, league[5].id], date));
+    schedule.push(new classes.Match([league[8].id, league[9].id], date));
+    // week 3
+    date += 6;
+    schedule.push(new classes.Match([league[1].id, league[8].id], date));
+    schedule.push(new classes.Match([league[2].id, league[4].id], date));
+    date += 1;
+    schedule.push(new classes.Match([league[0].id, league[7].id], date));
+    schedule.push(new classes.Match([league[3].id, league[6].id], date));
+    schedule.push(new classes.Match([league[5].id, league[9].id], date));
+    // week 4
+    date += 6;
+    schedule.push(new classes.Match([league[0].id, league[8].id], date));
+    schedule.push(new classes.Match([league[1].id, league[9].id], date));
+    date += 1;
+    schedule.push(new classes.Match([league[2].id, league[5].id], date));
+    schedule.push(new classes.Match([league[3].id, league[7].id], date));
+    schedule.push(new classes.Match([league[4].id, league[6].id], date));
+    // week 5
+    date += 6;
+    schedule.push(new classes.Match([league[0].id, league[9].id], date));
+    schedule.push(new classes.Match([league[1].id, league[2].id], date));
+    date += 1;
+    schedule.push(new classes.Match([league[3].id, league[8].id], date));
+    schedule.push(new classes.Match([league[5].id, league[7].id], date));
+    // week 6
+    date += 6;
+    schedule.push(new classes.Match([league[7].id, league[9].id], date));
+    date += 1;
+    schedule.push(new classes.Match([league[6].id, league[8].id], date));
+    schedule.push(new classes.Match([league[0].id, league[2].id], date));
+    // week 7
+    date += 6;
+    schedule.push(new classes.Match([league[4].id, league[8].id], date));
+    schedule.push(new classes.Match([league[3].id, league[9].id], date));
+    date += 1;
+    schedule.push(new classes.Match([league[2].id, league[7].id], date));
+    schedule.push(new classes.Match([league[0].id, league[1].id], date));
+    schedule.push(new classes.Match([league[5].id, league[6].id], date));
+    // week 8
+    date += 6;
+    schedule.push(new classes.Match([league[1].id, league[4].id], date));
+    schedule.push(new classes.Match([league[2].id, league[8].id], date));
+    date += 1;
+    schedule.push(new classes.Match([league[3].id, league[5].id], date));
+    schedule.push(new classes.Match([league[6].id, league[7].id], date));
+    // week 9
+    date += 6;
+    schedule.push(new classes.Match([league[0].id, league[3].id], date));
+    schedule.push(new classes.Match([league[1].id, league[5].id], date));
+    schedule.push(new classes.Match([league[4].id, league[9].id], date));
+    date += 1;
+    schedule.push(new classes.Match([league[2].id, league[6].id], date));
+    schedule.push(new classes.Match([league[7].id, league[8].id], date));
+    // week 10
+    date += 6;
+    schedule.push(new classes.Match([league[0].id, league[4].id], date));
+    schedule.push(new classes.Match([league[1].id, league[3].id], date));
+    date += 1;
+    schedule.push(new classes.Match([league[4].id, league[7].id], date));
+    schedule.push(new classes.Match([league[5].id, league[8].id], date));
+    schedule.push(new classes.Match([league[6].id, league[9].id], date));
+    // MIDSEASON
+    // week 11
+    date += 6;
+    schedule.push(new classes.Match([league[5].id, league[0].id], date));
+    schedule.push(new classes.Match([league[8].id, league[6].id], date));
+    date += 1;
+    schedule.push(new classes.Match([league[9].id, league[7].id], date));
+    schedule.push(new classes.Match([league[4].id, league[3].id], date));
+    // week 12
+    date += 6;
+    schedule.push(new classes.Match([league[6].id, league[0].id], date));
+    schedule.push(new classes.Match([league[7].id, league[1].id], date));
+    date += 1;
+    schedule.push(new classes.Match([league[3].id, league[2].id], date));
+    schedule.push(new classes.Match([league[5].id, league[4].id], date));
+    schedule.push(new classes.Match([league[9].id, league[8].id], date));
+    // week 13
+    date += 6;
+    schedule.push(new classes.Match([league[7].id, league[0].id], date));
+    schedule.push(new classes.Match([league[8].id, league[1].id], date));
+    date += 1;
+    schedule.push(new classes.Match([league[4].id, league[2].id], date));
+    schedule.push(new classes.Match([league[6].id, league[3].id], date));
+    schedule.push(new classes.Match([league[9].id, league[5].id], date));
+    // week 14
+    date += 6;
+    schedule.push(new classes.Match([league[8].id, league[0].id], date));
+    schedule.push(new classes.Match([league[9].id, league[1].id], date));
+    date += 1;
+    schedule.push(new classes.Match([league[5].id, league[2].id], date));
+    schedule.push(new classes.Match([league[7].id, league[3].id], date));
+    schedule.push(new classes.Match([league[6].id, league[4].id], date));
+    // week 15
+    date += 6;
+    schedule.push(new classes.Match([league[9].id, league[0].id], date));
+    schedule.push(new classes.Match([league[2].id, league[1].id], date));
+    date += 1;
+    schedule.push(new classes.Match([league[8].id, league[3].id], date));
+    schedule.push(new classes.Match([league[7].id, league[5].id], date));
+    // week 16
+    date += 6;
+    schedule.push(new classes.Match([league[6].id, league[1].id], date));
+    schedule.push(new classes.Match([league[2].id, league[0].id], date));
+    date += 1;
+    schedule.push(new classes.Match([league[8].id, league[2].id], date));
+    // week 17
+    date += 6;
+    schedule.push(new classes.Match([league[1].id, league[0].id], date));
+    schedule.push(new classes.Match([league[7].id, league[2].id], date));
+    date += 1;
+    schedule.push(new classes.Match([league[9].id, league[3].id], date));
+    schedule.push(new classes.Match([league[8].id, league[4].id], date));
+    schedule.push(new classes.Match([league[6].id, league[5].id], date));
+    // week 18
+    date += 6;
+    schedule.push(new classes.Match([league[4].id, league[1].id], date));
+    schedule.push(new classes.Match([league[9].id, league[2].id], date));
+    date += 1;
+    schedule.push(new classes.Match([league[5].id, league[3].id], date));
+    schedule.push(new classes.Match([league[7].id, league[6].id], date));
+    // week 19
+    date += 6;
+    schedule.push(new classes.Match([league[3].id, league[0].id], date));
+    schedule.push(new classes.Match([league[5].id, league[1].id], date));
+    date += 1;
+    schedule.push(new classes.Match([league[6].id, league[2].id], date));
+    schedule.push(new classes.Match([league[9].id, league[4].id], date));
+    schedule.push(new classes.Match([league[8].id, league[7].id], date));
+    // week 20
+    date += 6;
+    schedule.push(new classes.Match([league[4].id, league[0].id], date));
+    schedule.push(new classes.Match([league[3].id, league[1].id], date));
+    date += 1;
+    schedule.push(new classes.Match([league[7].id, league[4].id], date));
+    schedule.push(new classes.Match([league[8].id, league[5].id], date));
+    schedule.push(new classes.Match([league[9].id, league[6].id], date));
+
+    let MATCH_ID = idCodeMatch;
+    schedule.forEach((element) => {
+      MATCH_ID++;
+      element.id = MATCH_ID;
+    });
+
+    return schedule;
+  },
+
+  oldSeedSchedule: (league) => {
     // To get proper schedling it only works with 4 teams using a // fix below
     // It's still deeply flawed though, some teams get more away and less home games
 
     var schedule = [];
-
-
-
-   
-
 
     //  league.forEach((homeClub) => {
     //    var date = 3;
@@ -133,19 +288,9 @@ export default {
 
     console.log(league);
 
-    console.log("engine.seedSchedule");
+    console.log('engine.seedSchedule');
     console.log(schedule);
-
-    var MATCH_ID = idCodeMatch;
-    schedule.forEach((element) => {
-      element.id = MATCH_ID;
-      MATCH_ID++;
-    });
-
-    return schedule;
   },
-
-
 
   //indeces
   findPlayerClub: (array) => {
@@ -165,7 +310,7 @@ export default {
   findFighterById: (roster, id) => {
     var fighter;
     if (!id) {
-      fighter = new classes.Fighter(0, "", "Select", "", "", "");
+      fighter = {};
     }
     roster.forEach((element) => {
       if (element.id == id) {
@@ -178,7 +323,7 @@ export default {
   findCoachById: (staff, id) => {
     var coach;
     if (!id) {
-      coach = new classes.Coach(0, "", "Select", "", "", "");
+      coach = {};
     }
     staff.forEach((element) => {
       if (element.id == id) {
@@ -191,7 +336,7 @@ export default {
   findJudgeById: (commission, id) => {
     var judge;
     if (!id) {
-      judge = new classes.Judge(0, "", "Select", "", "", "");
+      judge = {};
     }
     commission.forEach((element) => {
       if (element.id == id) {

@@ -1,6 +1,5 @@
 <template>
   <v-container>
-
     <v-row class="mt-10">
       <v-col>
         <v-data-table
@@ -13,17 +12,16 @@
         >
           <!-- eslint-disable-next-line -->
           <template v-slot:item.personal.name="{ item }">
-
             <router-link :to="`/squad/${item.id}`" class="white--text">
-            <div class="grey darken-1 pa-2">
-              {{ item.personal.name }}
-            </div>
+              <div class="grey darken-1 pa-2">
+                {{ item.personal.name }}
+              </div>
             </router-link>
           </template>
 
           <!-- eslint-disable-next-line -->
           <template v-slot:item.selection="{ item }">
-            <v-row >
+            <v-row>
               <v-btn
                 x-small
                 class="ma-1"
@@ -56,11 +54,17 @@
           </template>
 
           <!-- eslint-disable-next-line -->
+          <template v-slot:header.selection="{}">
+            <span @click="clearSelection()" class="clear-selection"
+              >Clear Selection</span
+            >
+          </template>
+
+          <!-- eslint-disable-next-line -->
           <template v-slot:footer>
             <v-container class="grey darken-1">
               <v-col>
                 <v-row class="white--text pl-2 mb-1 mt-1 grey darken-2">
-
                   Mentality:
                   <v-spacer></v-spacer>
                   <v-btn
@@ -85,7 +89,7 @@
                     >Contain
                   </v-btn>
                 </v-row>
-                <v-row  class="white--text pl-2 mb-1 mt-1 grey darken-2">
+                <v-row class="white--text pl-2 mb-1 mt-1 grey darken-2">
                   Risk:
                   <v-spacer></v-spacer>
                   <v-btn
@@ -147,18 +151,22 @@
         </v-data-table>
       </v-col>
       <v-col>
-        <v-card elevation="10" class="grey darken-1">
-          <v-card-text>
-            <v-row align="center" style="height: 150px;">
-              <v-col align="center" class="tactics primary">{{
-                getFighter(this.tactic.selection.left).personal.name
-              }}</v-col>
-              <v-col align="center" class="tactics primary">{{
-                getFighter(this.tactic.selection.center).personal.name
-              }}</v-col>
-              <v-col align="center" class="tactics primary"
-                >{{ getFighter(this.tactic.selection.right).personal.name }}
+        <v-col>
+          <v-card elevation="10" class="grey darken-1">
+            <v-row align="center">
+              <v-col align="center">
+                <div class="positions ">
+                  <v-col align="center pt-10"> </v-col>
+                </div>
               </v-col>
+              <v-col align="center">
+                <div class="positions ">
+                  <v-col align="center"> </v-col></div
+              ></v-col>
+              <v-col align="center">
+                <div class="positions centesition ">
+                  <v-col align="center"> </v-col></div
+              ></v-col>
             </v-row>
             <v-row>
               <v-col align="center">
@@ -167,39 +175,83 @@
                 {{ gamesmanship }}
               </v-col>
             </v-row>
-          </v-card-text>
-        </v-card>
+            <v-row align="center" class="ma-0 pt-0">
+              <v-col
+                align="center"
+                v-for="(fighter, index) in selection"
+                :key="index"
+              >
+                <div class="secondary font-shadow body-1 pt-1" v-if="fighter">
+                  <div>
+                    {{ getFighter(fighter).personal.name }}
+                  </div>
+
+                  <div>
+                    Fitness
+                    <b
+                      class="font-shadow "
+                      v-bind:class="{
+                        'red--text': getFighter(fighter).fitness < 50,
+                        'yellow--text':
+                          getFighter(fighter).fitness < 75 &&
+                          getFighter(fighter).fitness >= 50,
+                        'green--text': getFighter(fighter).fitness >= 75,
+                      }"
+                    >
+                      {{ getFighter(fighter).fitness }}
+                    </b>
+                  </div>
+                  <div>
+                    <v-progress-linear
+                      height="15"
+                      v-model="getFighter(fighter).match.condition"
+                      :buffer-value="100"
+                      color="green"
+                      background-color="red"
+                    ></v-progress-linear>
+                  </div></div
+              ></v-col>
+            </v-row>
+          </v-card>
+        </v-col>
       </v-col>
     </v-row>
     <v-row class="justify-center">
-      <v-btn :disabled="!this.checkTactic" v-if="this.matchday" @click="go()"
+      <v-btn
+        :disabled="!this.checkTactic"
+        v-if="this.isMatchday"
+        @click="goToMatch()"
         >Confirm and Kick Off!</v-btn
       >
-      <v-btn @click="defaultSelection()">Default</v-btn>
+      <v-btn
+        x-large
+        @click="defaultSelection()"
+        v-if="isDeveloper"
+        class="secondary"
+        style="position: absolute; top: 10%; right: 10%"
+        >Default</v-btn
+      >
     </v-row>
   </v-container>
 </template>
 
 <script>
-import data from "@/data/data.js";
-import classes from "@/data/classes.js";
+import data from '@/data/data.js';
+import classes from '@/data/classes.js';
 
 export default {
-  name: "Tactics",
+  name: 'Tactics',
 
   created() {
     if (!this.$route.params.id) {
       this.id = this.playerClubId;
       this.club = this.getClub(this.playerClubId);
-      console.log(this.club);
     } else {
       this.id = this.$route.params.id;
       this.club = this.getClub(this.id);
     }
 
-    if (!this.club.tactic) {
-      this.tactic = new classes.Tactic();
-    }
+    this.tactic = this.club.tactic ? this.club.tactic : new classes.Tactic();
   },
 
   components: {},
@@ -211,11 +263,21 @@ export default {
     currentMatch() {
       return this.$store.getters.currentMatch;
     },
-    matchday() {
-      return this.$store.getters.matchday;
+    isMatchday() {
+      return this.$store.getters.isMatchday;
+    },
+    isDeveloper() {
+      return this.$store.getters.isDeveloper;
     },
     playerClubId() {
       return this.$store.getters.selectedClubId;
+    },
+    selection() {
+      let selection = [];
+      selection.push(this.tactic.selection.left);
+      selection.push(this.tactic.selection.center);
+      selection.push(this.tactic.selection.right);
+      return selection;
     },
 
     squad() {
@@ -230,33 +292,33 @@ export default {
     mentality() {
       var string;
       if (this.tactic.instructions.mentality == 1) {
-        string = "Containing";
+        string = 'Containing';
       } else if (this.tactic.instructions.mentality == 2) {
-        string = "Defending";
+        string = 'Defending';
       } else if (this.tactic.instructions.mentality == 3) {
-        string = "Attacking";
+        string = 'Attacking';
       }
       return string;
     },
     risk() {
       var string;
       if (this.tactic.instructions.risk == 1) {
-        string = "Safe";
+        string = 'Safe';
       } else if (this.tactic.instructions.risk == 2) {
-        string = "Normal";
+        string = 'Normal';
       } else if (this.tactic.instructions.risk == 3) {
-        string = "Reckless";
+        string = 'Reckless';
       }
       return string;
     },
     gamesmanship() {
       var string;
       if (this.tactic.instructions.gamesmanship == 1) {
-        string = "Clean";
+        string = 'Clean';
       } else if (this.tactic.instructions.gamesmanship == 2) {
-        string = "Neutral";
+        string = 'Neutral';
       } else if (this.tactic.instructions.gamesmanship == 3) {
-        string = "Dirty";
+        string = 'Dirty';
       }
       return string;
     },
@@ -278,7 +340,6 @@ export default {
   data: () => ({
     id: undefined,
     club: undefined,
-
     tactic: undefined,
   }),
 
@@ -290,9 +351,13 @@ export default {
       return this.$store.getters.getFighterById(id);
     },
 
+    savedTactic() {
+      return this.$store.getters.tactic;
+    },
+
     setSelected() {
       this.tactic.clubId = this.id;
-      this.$store.dispatch("setSelectedTactic", this.tactic);
+      this.$store.dispatch('setSelectedTactic', this.tactic);
     },
     defaultSelection() {
       //for lazy
@@ -302,11 +367,19 @@ export default {
       this.setGamesmanship(1);
 
       this.tactic.selection = {
-        left: 9006,
-        center: 9007,
-        right: 9008,
+        left: this.club.squad[0],
+        center: this.club.squad[1],
+        right: this.club.squad[2],
       };
-      this.$store.dispatch("setSelectedTactic", this.tactic);
+      this.$store.dispatch('setSelectedTactic', this.tactic);
+    },
+    clearSelection() {
+      this.tactic.selection = {
+        left: 0,
+        center: 0,
+        right: 0,
+      };
+      this.$store.dispatch('setSelectedTactic', this.tactic);
     },
 
     setLeft(id) {
@@ -379,7 +452,7 @@ export default {
       this.setSelected(this.tactic);
     },
 
-    go() {
+    goToMatch() {
       // !
       this.$router.push(`/match/${this.currentMatch}`);
     },
@@ -396,5 +469,20 @@ export default {
 .instructions {
   width: 75px;
   margin: 1px;
+}
+.positions {
+  width: 90px;
+  height: 90px;
+  margin: 25px;
+
+  background-color: rgb(80, 76, 21);
+  border-radius: 100%;
+}
+.clear-selection {
+  padding-right: 15px;
+}
+.clear-selection:hover {
+  color: white;
+  cursor: pointer;
 }
 </style>

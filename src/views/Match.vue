@@ -139,19 +139,19 @@
 </template>
 
 <script>
-import data from "@/data/data.js";
-import matchEngine from "@/engine/matchEngine.js";
+import data from '@/data/data.js';
+import matchEngine from '@/engine/matchEngine.js';
 
 export default {
-  name: "Match",
+  name: 'Match',
 
   components: {
-    JudgesCard: () => import("@/components/Match/JudgesCard.vue"),
-    TruePoints: () => import("@/components/Match/TruePoints.vue"),
-    Commentary: () => import("@/components/Match/Commentary.vue"),
-    Overview: () => import("@/components/Match/Overview.vue"),
-    Details: () => import("@/components/Match/Details.vue"),
-    Bench: () => import("@/components/Match/Bench.vue"),
+    JudgesCard: () => import('@/components/Match/JudgesCard.vue'),
+    TruePoints: () => import('@/components/Match/TruePoints.vue'),
+    Commentary: () => import('@/components/Match/Commentary.vue'),
+    Overview: () => import('@/components/Match/Overview.vue'),
+    Details: () => import('@/components/Match/Details.vue'),
+    Bench: () => import('@/components/Match/Bench.vue'),
   },
 
   created() {
@@ -159,8 +159,8 @@ export default {
     this.resetFighterMatchStats();
     this.assignJudges();
     this.setTactics();
-    this.$store.dispatch("setNames", this.names);
-    this.$store.dispatch("setIsLive", true);
+    this.$store.dispatch('setNames', this.names);
+    this.$store.dispatch('setIsLive', true);
 
     this.archivedMatch = new matchEngine.getArchivedMatchBlueprint(
       this.$route.params.id
@@ -267,7 +267,7 @@ export default {
     },
     timestamp() {
       return this.isFullTime
-        ? "full time"
+        ? 'full time'
         : this.showZero
         ? `${this.minute}:0${this.second}`
         : `${this.minute}:${this.second}`;
@@ -462,16 +462,16 @@ export default {
 
     //services
     setIntervalFast() {
-      this.$store.dispatch("setTimeoutInterval", 200);
+      this.$store.dispatch('setTimeoutInterval', 200);
     },
     setIntervalSlow() {
-      this.$store.dispatch("setTimeoutInterval", 750);
+      this.$store.dispatch('setTimeoutInterval', 750);
     },
     firstName(fighter) {
-      return fighter.personal.name.split(" ")[0];
+      return fighter.personal.name.split(' ')[0];
     },
     lastName(fighter) {
-      return fighter.personal.name.split(" ")[1];
+      return fighter.personal.name.split(' ')[1];
     },
     getClub(id) {
       return this.$store.getters.getClubById(id);
@@ -481,7 +481,7 @@ export default {
     },
 
     archiveMatch() {
-      var match = {
+      let match = {
         date: this.match.date,
         clubs: this.match.clubs,
         judges: this.judges,
@@ -491,6 +491,7 @@ export default {
         ringActivity: this.ringActivity,
         //hopefully these fighters will pass their .match
         //especially match.finished to see which side won
+        // it does!
         left: {
           home: this.getFighter(this.homeTactic.selection.left),
           away: this.getFighter(this.awayTactic.selection.left),
@@ -508,7 +509,29 @@ export default {
         },
       };
 
-      this.$store.dispatch("addMatch", match);
+      console.log(match);
+
+      this.$store.dispatch('addMatch', match);
+
+      // figure out how many finishes for home and away
+      // figure out victory or not, [W] [L] [D]
+      //put in points
+      // lose matches: 1,
+
+      let homeClubData = {
+        id: null, // get dat id
+        competitions: {
+          league: {
+            matches: 1,
+            pointsNet: this.score.home - this.score.away,
+            pointsFor: this.score.home,
+            pointsAgainst: this.score.away,
+            form: ['W'],
+            finishes: 0,
+          },
+        },
+      };
+      this.$store.dispatch('addClubData', homeClubData);
     },
 
     //basics
@@ -568,11 +591,11 @@ export default {
     },
     endMatch() {
       // this.resetFighterMatchStats();
-     
+
       this.archiveMatch();
-      this.$store.dispatch("setIsLive", false);
-      this.$store.dispatch("setMatchday", false);
-      this.$router.push("/");
+      this.$store.dispatch('setIsLive', false);
+      this.$store.dispatch('setIsMatchday', false);
+      this.$router.push('/');
     },
 
     endRound() {
@@ -583,14 +606,14 @@ export default {
         this.decision();
       }
       this.$store.dispatch(
-        "addMatchMessage",
+        'addMatchMessage',
         `That's the end of round ${this.round}`
       );
     },
     startRound() {
       this.round++;
       this.isBetweenRounds = false;
-      this.$store.dispatch("addMatchMessage", `Round ${this.round} Fight!`);
+      this.$store.dispatch('addMatchMessage', `Round ${this.round} Fight!`);
       setTimeout(() => {
         if (!this.isFullTime) {
           this.getOn();
@@ -626,7 +649,7 @@ export default {
         msg = `${
           this.getFighter(this.awayTactic.selection.center).personal.name
         } comes on!`;
-        this.$store.dispatch("addMatchMessage", msg);
+        this.$store.dispatch('addMatchMessage', msg);
       } else {
         if (this.homeSubs[0] == this.homeTactic.selection.left) {
           this.homeTactic.selection.left = this.homeTactic.selection.center;
@@ -639,7 +662,7 @@ export default {
         msg = `${
           this.getFighter(this.homeTactic.selection.center).personal.name
         } comes on!`;
-        this.$store.dispatch("addMatchMessage", msg);
+        this.$store.dispatch('addMatchMessage', msg);
       }
 
       this.ringFinishedCenter = false;
@@ -669,15 +692,15 @@ export default {
         );
 
         if (this.ringFinishedLeft) {
-          this.cards.leftMsg = "Finish";
+          this.cards.leftMsg = 'Finish';
         } else if (this.ringFinishedCenter) {
-          this.cards.centerMsg = "Finish";
+          this.cards.centerMsg = 'Finish';
         } else if (this.ringFinishedRight) {
-          this.cards.rightMsg = "Finish";
+          this.cards.rightMsg = 'Finish';
         }
 
         this.isDecision = true; // opens Judges' Cards
-        this.$store.dispatch("setScore", this.score);
+        this.$store.dispatch('setScore', this.score);
 
         setTimeout(() => {
           // timeout because component JudgesCard saves the list needed to the state
@@ -698,16 +721,15 @@ export default {
           this.ringActivity[ring - 1].awaySignificant += 1;
         }
       }
-
     },
     countScore() {
       let messager = function(winner, loser) {
         if (loser == 0 && winner == 3) {
-          return "Unanimous Decision";
+          return 'Unanimous Decision';
         } else if (loser == 0 || winner == 1) {
-          return "Majority Decision";
+          return 'Majority Decision';
         } else {
-          return "Split Decision";
+          return 'Split Decision';
         }
       };
 
@@ -732,7 +754,7 @@ export default {
             this.cards.leftMsg = messager(awayCount, homeCount);
           }
         } else {
-          this.cards.leftMsg = "Draw";
+          this.cards.leftMsg = 'Draw';
         }
         console.log(homeCount);
         console.log(awayCount);
@@ -759,7 +781,7 @@ export default {
             this.cards.rightMsg = messager(awayCount, homeCount);
           }
         } else {
-          this.cards.rightMsg = "Draw";
+          this.cards.rightMsg = 'Draw';
         }
 
         console.log(homeCount);
@@ -783,7 +805,7 @@ export default {
       if (homeCount == awayCount) {
         this.score.home += 1;
         this.score.away += 1;
-        this.cards.centerMsg = "Draw";
+        this.cards.centerMsg = 'Draw';
       } else {
         if (homeCount > awayCount) {
           this.score.home += 3;
@@ -842,7 +864,7 @@ export default {
           home = this.getFighter(this.homeTactic.selection.right);
           away = this.getFighter(this.awayTactic.selection.right);
         }
-        this.$store.dispatch("addMatchMessage", `${this.timestamp} ${msg}`);
+        this.$store.dispatch('addMatchMessage', `${this.timestamp} ${msg}`);
 
         //pick fighter initiative
         var homeInitiative = matchEngine.checkInitiative(home);
@@ -871,7 +893,7 @@ export default {
 
         msg = `${attacker.nickname} attacks ${defender.nickname}`;
         setTimeout(() => {
-          this.$store.dispatch("addMatchMessage", msg);
+          this.$store.dispatch('addMatchMessage', msg);
         }, this.timeoutInterval); // INTERVAL
 
         //pick method of attack
@@ -885,8 +907,8 @@ export default {
         //OUTCOME
         //sort out the outcome,
         setTimeout(() => {
-          this.$store.dispatch("addMatchMessage", outcome.msg);
-          this.$store.dispatch("addMatchMessageToRing", {
+          this.$store.dispatch('addMatchMessage', outcome.msg);
+          this.$store.dispatch('addMatchMessageToRing', {
             ring: ring,
             msg: outcome.msg,
           });
@@ -896,7 +918,7 @@ export default {
         //check for disengage // could be part of updateFighterMatchStats?
         // all it's doing is giving exposed back.. could be called sth else
         if (outcome.disengage) {
-          console.log("disengaging");
+          console.log('disengaging');
           defender.match.exposed -= matchEngine.disengage(defender);
           if (defender.match.exposed < 0) {
             defender.match.exposed = 0;
@@ -924,7 +946,7 @@ export default {
           timeoutIntervalMultiplier
         );
 
-        this.$store.dispatch("setScore", this.score);
+        this.$store.dispatch('setScore', this.score);
 
         if (outcome.point) {
           // TODO
@@ -985,7 +1007,7 @@ export default {
         this.isPaused = true;
         fighter.match.finished = true;
         setTimeout(() => {
-          this.$store.dispatch("addMatchMessage", fighterResult.msg);
+          this.$store.dispatch('addMatchMessage', fighterResult.msg);
         }, this.timeoutInterval * timeoutIntervalMultiplier);
         timeoutIntervalMultiplier += 0.1;
 
@@ -1009,7 +1031,7 @@ export default {
               this.isFullTime = true;
 
               setTimeout(() => {
-                this.$store.dispatch("addMatchMessage", msg);
+                this.$store.dispatch('addMatchMessage', msg);
                 this.isDisabled = false;
               }, this.timeoutInterval * timeoutIntervalMultiplier);
             }
@@ -1022,7 +1044,7 @@ export default {
               this.isFullTime = true;
 
               setTimeout(() => {
-                this.$store.dispatch("addMatchMessage", msg);
+                this.$store.dispatch('addMatchMessage', msg);
                 this.isDisabled = false;
               }, this.timeoutInterval * timeoutIntervalMultiplier);
             }
@@ -1150,7 +1172,7 @@ export default {
           }
         }
       } else if (ring == 3) {
-        console.log("hm");
+        console.log('hm');
 
         // RIGHT
         if (this.isHomeAttack) {
@@ -1172,7 +1194,7 @@ export default {
 
 <style>
 .unispace {
-  font-family: "Courier New", Courier, monospace;
+  font-family: 'Courier New', Courier, monospace;
   font-size: 8pt;
 }
 

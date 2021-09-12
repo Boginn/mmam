@@ -1,6 +1,6 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import engine from "../engine/engine.js";
+import Vue from 'vue';
+import Vuex from 'vuex';
+import engine from '../engine/engine.js';
 
 Vue.use(Vuex);
 
@@ -19,7 +19,7 @@ export default new Vuex.Store({
     matches: [],
 
     //match
-    matchday: false,
+    isMatchday: false,
     isLive: false,
 
     currentMatch: undefined,
@@ -29,7 +29,7 @@ export default new Vuex.Store({
     //matchData
     timeoutInterval: 1000,
     score: { home: 0, away: 0 },
-    names: { home: "", away: "" },
+    names: { home: '', away: '' },
     minute: null,
 
     //id
@@ -65,8 +65,8 @@ export default new Vuex.Store({
       return state.currentMatch;
     },
 
-    matchday(state) {
-      return state.matchday;
+    isMatchday(state) {
+      return state.isMatchday;
     },
 
     isLive(state) {
@@ -95,24 +95,11 @@ export default new Vuex.Store({
       return state.staff;
     },
     schedule(state) {
-      state.schedule.forEach((match) => {
-        match.clubs.forEach((id) => {
-          if (id == state.selectedClubId) {
-            match.npc = false;
-          }
-        });
-      });
-      return state.schedule;
+      return state.schedule.filter((match) => match.date >= state.day);
     },
     playerClub(state) {
       return engine.returnPlayerClub(state.league, state.selectedClubId);
     },
-    // squad: (state) => (id) => {
-    //   return engine.returnSquad(
-    //     engine.findClubById(state.league, id),
-    //     state.roster
-    //   );
-    // },
 
     //archive
     matches(state) {
@@ -156,92 +143,95 @@ export default new Vuex.Store({
   actions: {
     //init
     selectClub(context, payload) {
-      context.commit("SEL_CLUB", payload);
+      context.commit('SEL_CLUB', payload);
     },
     setLeague(context, payload) {
-      context.commit("SET_LEAGUE", payload);
+      context.commit('SET_LEAGUE', payload);
     },
     setRoster(context, payload) {
-      context.commit("SET_ROSTER", payload);
+      context.commit('SET_ROSTER', payload);
     },
     setCommission(context, payload) {
-      context.commit("SET_COMMISSION", payload);
+      context.commit('SET_COMMISSION', payload);
     },
     setStaff(context, payload) {
-      context.commit("SET_STAFF", payload);
+      context.commit('SET_STAFF', payload);
     },
     setSchedule(context, payload) {
-      context.commit("SET_SCHEDULE", payload);
+      context.commit('SET_SCHEDULE', payload);
     },
     setTactics(context, payload) {
-      context.commit("SET_TACTICS", payload);
+      context.commit('SET_TACTICS', payload);
     },
     setLive(context, payload) {
-      context.commit("SET_LIVE", payload);
+      context.commit('SET_LIVE', payload);
     },
 
     //match
     setIsLive(context, payload) {
-      context.commit("SET_IS_LIVE", payload);
+      context.commit('SET_IS_LIVE', payload);
     },
     addMatchMessage(context, payload) {
-      context.commit("ADD_MATCH_MESSAGE", payload);
+      context.commit('ADD_MATCH_MESSAGE', payload);
     },
     addMatchMessageToRing(context, payload) {
       console.log(payload);
-      context.commit("ADD_MATCH_MESSAGE_TO_RING", payload);
+      context.commit('ADD_MATCH_MESSAGE_TO_RING', payload);
     },
 
     addToSquad(context, payload) {
-      context.commit("ADD_SQUAD", payload);
+      context.commit('ADD_SQUAD', payload);
     },
 
-    setMatchday(context, payload) {
-      context.commit("SET_MATCHDAY", payload);
+    setIsMatchday(context, payload) {
+      context.commit('SET_IS_MATCHDAY', payload);
     },
 
     continue(context, payload) {
       payload;
-      context.commit("PASS_DAY");
+      context.commit('PASS_DAY');
     },
     setCurrentMatch(context, payload) {
-      context.commit("SET_CURRENTMATCH", payload);
+      context.commit('SET_CURRENTMATCH', payload);
     },
     setSelectedTactic(context, payload) {
-      context.commit("SET_SELECTED_TACTIC", payload);
+      context.commit('SET_SELECTED_TACTIC', payload);
     },
     setTimeoutInterval(context, payload) {
-      context.commit("SET_TIMEOUT_INTERVAL", payload);
+      context.commit('SET_TIMEOUT_INTERVAL', payload);
     },
 
     //matchData
     setScore(context, payload) {
-      context.commit("SET_SCORE", payload);
+      context.commit('SET_SCORE', payload);
     },
     setNames(context, payload) {
-      context.commit("SET_NAMES", payload);
+      context.commit('SET_NAMES', payload);
     },
 
     //archive
     addMatch(context, payload) {
-      context.commit("ADD_MATCH", payload);
+      context.commit('ADD_MATCH', payload);
+    },
+    addClubData(context, payload) {
+      context.commit('ADD_CLUB_DATA', payload);
     },
 
     //id
     setFighterId(context, payload) {
-      context.commit("SET_FIGHTER_ID", payload);
+      context.commit('SET_FIGHTER_ID', payload);
     },
     setCommissionId(context, payload) {
-      context.commit("SET_COMMISSION_ID", payload);
+      context.commit('SET_COMMISSION_ID', payload);
     },
     setStaffId(context, payload) {
-      context.commit("SET_STAFF_ID", payload);
+      context.commit('SET_STAFF_ID', payload);
     },
     setClubId(context, payload) {
-      context.commit("SET_CLUB_ID", payload);
+      context.commit('SET_CLUB_ID', payload);
     },
     setMatchId(context, payload) {
-      context.commit("SET_MATCH_ID", payload);
+      context.commit('SET_MATCH_ID', payload);
     },
   },
 
@@ -268,6 +258,13 @@ export default new Vuex.Store({
       state.staff = payload;
     },
     SET_SCHEDULE(state, payload) {
+      payload.forEach((match) => {
+        match.clubs.forEach((id) => {
+          if (id == state.selectedClubId) {
+            match.npc = false;
+          }
+        });
+      });
       state.schedule = payload;
     },
     SET_TACTICS(state, payload) {
@@ -303,8 +300,8 @@ export default new Vuex.Store({
       state.squad.push(payload);
     },
 
-    SET_MATCHDAY(state, payload) {
-      state.matchday = payload;
+    SET_IS_MATCHDAY(state, payload) {
+      state.isMatchday = payload;
     },
 
     PASS_DAY(state, payload) {
@@ -336,9 +333,17 @@ export default new Vuex.Store({
 
     //archive
     ADD_MATCH(state, payload) {
+      console.log('added match');
+      console.log(payload);
       state.matches.push(payload);
     },
-
+    ADD_CLUB_DATA(state, payload) {
+      state, payload;
+      // check against payload.id
+      // spread unto the club object
+      // make sure to increment, not overwrite
+      // yepyep
+    },
 
     //id
     SET_FIGHTER_ID(state, payload) {

@@ -1,0 +1,131 @@
+week 1
+Kimborough vs Groicester
+Fetterton vs Limmage
+Pussex vs Mannshire
+Scough vs Kennick
+
+week 2
+Kimborough vs Limmage
+Fetterton vs Tarkney
+Pussex vs Scough
+Kennick vs Groicester
+West Keynes vs Mannshire
+
+week 3
+Kimborough vs Tarkney
+Fetterton vs West Keynes
+Pussex vs Kennick
+Scough vs Limmage
+Groicester vs Mannshire
+
+week 4
+Kimborough vs West Keynes
+Fetterton vs Mannshire
+Pussex vs Groicester
+Scough vs Tarkney
+Kennick vs Limmage
+
+week 5
+Kimborough vs Mannshire
+Fetterton vs Pussex
+Scough vs West Keynes
+Groicester vs Tarkney
+
+week 6
+Tarkney vs Mannshire
+Limmage vs West Keynes
+Kimborough vs Pussex
+
+week 7
+Kimborough vs Fetterton
+Pussex vs Tarkney
+Scough vs Mannshire
+Kennick vs West Keynes
+Groicester vs Limmage
+
+week 8
+Fetterton vs Kennick
+Pussex vs West Keynes
+Scough vs Groicester
+Limmage vs Tarkney
+
+week 9
+Kimborough vs Scough
+Fetterton vs Groicester
+Pussex vs Limmage
+Kennick vs Mannshire
+Tarkney vs West Keynes
+
+week 10
+Kimborough vs Kennick
+Fetterton vs Scough
+Kennick vs Tarkney
+Groicester vs West Keynes
+Limmage vs Mannshire
+
+MIDSEASON
+
+week 11
+Groicester vs Kimborough
+West Keynes vs Limmage
+Mannshire vs Tarkney
+Kennick vs Scough
+
+week 12
+Limmage vs Kimborough
+Tarkney vs Fetterton
+Scough vs Pussex
+Groicester vs Kennick
+Mannshire vs West Keynes
+
+week 13
+Tarkney vs Kimborough
+West Keynes vs Fetterton
+Kennick vs Pussex
+Limmage vs Scough
+Mannshire vs Groicester
+
+week 14
+West Keynes vs Kimborough
+Mannshire vs Fetterton
+Groicester vs Pussex
+Tarkney vs Scough
+Limmage vs Kennick
+
+week 15
+Mannshire vs Kimborough
+Pussex vs Fetterton
+West Keynes vs Scough
+Tarkney vs Groicester
+
+week 16
+West Keynes vs Pussex
+Limmage vs Fetterton
+Pussex vs Kimborough
+
+week 17
+Fetterton vs Kimborough
+Tarkney vs Pussex
+Mannshire vs Scough
+West Keynes vs Kennick
+Limmage vs Groicester
+
+week 18
+Kennick vs Fetterton
+Mannshire vs Pussex
+Groicester vs Scough
+Tarkney vs Limmage
+
+week 19
+Scough vs Kimborough
+Groicester vs Fetterton
+Limmage vs Pussex
+Mannshire vs Kennick
+West Keynes vs Tarkney
+
+week 20
+Kennick vs Kimborough
+Scough vs Fetterton
+Tarkney vs Kennick
+West Keynes vs Groicester
+Mannshire vs Limmage

@@ -2,32 +2,22 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card>
-          <v-card-title>
-
-            {{ club.name }}
-            {{ club.nationality }}
+        <v-card class="pa-5">
+          <v-card-title class="justify-space-between">
+            <p>{{ club.name }}</p>
+            <p>{{ club.nationality }}</p>
           </v-card-title>
 
-            <v-card-text>
-<v-data-table
-        :headers="headers"
-        :items="squad"
-        :items-per-page="10"
-        item-key="name"
-        class="elevation-6 seventh ma-5 pa-4 mt-8 fill-width  font-shadow"
-      >
-
-         <!-- eslint-disable-next-line -->
-        <template v-slot:item.personal.name="{ item }">
-          <router-link :to="`/squad/${item.id}`" class="table">
-            <v-icon class="mb-1" small>mdi-arrow-top-left</v-icon>
-        {{ item.personal.name }}
-          </router-link>
-        </template>
-      </v-data-table>
-            </v-card-text>
-
+          <v-card
+            class="secondary ma-1"
+            v-for="fighter in squad"
+            :key="fighter.id"
+          >
+            <v-card-title class="justify-space-between">
+              <span>{{ getFighter(fighter).personal.name }}</span>
+              <span>{{ getFighter(fighter).personal.nationality }}</span>
+            </v-card-title>
+          </v-card>
         </v-card>
       </v-col>
     </v-row>
@@ -37,25 +27,28 @@
 <script>
 import data from '@/data/data.js';
 export default {
-  name: "Club",
+  name: 'Club',
 
-  props: {
-  },
+  props: {},
 
   computed: {
     headers() {
       return data.headers.squad;
     },
     squad() {
-      return this.$store.getters.squad(this.$route.params.id);
+      return this.club.squad;
     },
-       club() {
+    club() {
       return this.$store.getters.getClubById(this.$route.params.id);
     },
 
+    data: () => ({}),
+  },
 
-
-  data: () => ({}),
-},
+  methods: {
+    getFighter(id) {
+      return this.$store.getters.getFighterById(id);
+    },
+  },
 };
 </script>

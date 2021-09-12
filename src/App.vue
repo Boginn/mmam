@@ -1,27 +1,21 @@
 <template>
-  <v-app >
-
-    <ScoreBanner v-if="isLive" :names="names" :score="score" class="ma-0"/>
-
+  <v-app>
+    <ScoreBanner v-if="isLive" :names="names" :score="score" class="ma-0" />
 
     <v-app-bar app class="abcolor " dark v-else>
-      
-         <router-link
-            :to="`/`"
-          >
-        <v-btn class="primary">
+      <router-link :to="`/`">
+        <v-btn :disabled="isMatchday" class="primary">
           {{ selectedClub.name }}
         </v-btn>
-        </router-link>
-        <ButtonsSmall :routes="routes" />
-        <v-col class="text-end">
-          <v-btn class="warning" :disabled="matchday" @click="this.continue"
-            ><span v-if="matchday"> Match Day</span>
-            <span v-else>Day: {{ day }} Continue</span></v-btn
-          >
-        </v-col>
+      </router-link>
+      <ButtonsSmall :routes="routes" :disabled="isMatchday" />
+      <v-col class="text-end">
+        <v-btn class="warning" :disabled="isMatchday" @click="this.continue"
+          ><span v-if="isMatchday"> Match Day</span>
+          <span v-else>Day: {{ day }} Continue</span></v-btn
+        >
+      </v-col>
     </v-app-bar>
-
 
     <v-main class="bgcolor">
       <router-view />
@@ -30,23 +24,22 @@
 </template>
 
 <script>
-import classes from "@/data/classes.js";
-import engine from "@/engine/engine.js";
-import data from "@/data/data.js";
-import ButtonsSmall from "@/components/ButtonsSmall.vue";
-import ScoreBanner from "@/components/Match/ScoreBanner.vue";
-import matchData from "@/data/matchData.js";
+import classes from '@/data/classes.js';
+import engine from '@/engine/engine.js';
+import data from '@/data/data.js';
+import ButtonsSmall from '@/components/ButtonsSmall.vue';
+import ScoreBanner from '@/components/Match/ScoreBanner.vue';
+import matchData from '@/data/matchData.js';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
     ButtonsSmall,
-ScoreBanner
+    ScoreBanner,
   },
   created() {
-    this.test();
     if (!this.live) {
-      engine.initialize(this.idCodeFighter, this.idCodeClub);
+      engine.initialize(this.idCodes.fighter, this.idCodes.club);
 
       this.setRoster(this.selectedRoster);
       this.setLeague(this.selectedLeague);
@@ -57,21 +50,16 @@ ScoreBanner
       engine.seedRosterToTeams(this.league, this.roster); // temp
       this.setTactics();
 
-      var schedule = engine.seedSchedule(this.league, this.idCodeMatch);
+      const schedule = engine.seedSchedule(this.league, this.idCodes.match);
       this.setSchedule(schedule);
-      this.$store.dispatch("setLive", true);
+      this.$store.dispatch('setLive', true);
     }
   },
 
   data: () => ({
-    selectedClubId: 1002,
+    selectedClubId: 1001,
     selectedLeague: data.clubs.england,
     selectedRoster: data.fighters.roster,
-    idCodeFighter: 9000,
-    idCommissionClub: 2000,
-    idStaffClub: 6000,
-    idCodeClub: 1000,
-    idCodeMatch: 41000,
   }),
 
   computed: {
@@ -93,8 +81,8 @@ ScoreBanner
     day() {
       return this.$store.getters.day;
     },
-    matchday() {
-      return this.$store.getters.matchday;
+    isMatchday() {
+      return this.$store.getters.isMatchday;
     },
     league() {
       return this.$store.getters.league;
@@ -104,6 +92,9 @@ ScoreBanner
     },
     routes() {
       return data.routes.appbar;
+    },
+    idCodes() {
+      return data.idCodes;
     },
 
     selectedClub() {
@@ -125,7 +116,26 @@ ScoreBanner
       return this.$store.getters.getClubById(id);
     },
     selectClub() {
-      this.$store.dispatch("selectClub", this.selectedClubId);
+      this.$store.dispatch('selectClub', this.selectedClubId);
+    },
+    checkIfMatchday() {
+      this.schedule.forEach((match) => {
+        if (match.date == this.day) {
+          // simulate all non npc matches
+        }
+      });
+
+      // find non npc match
+      const playerMatch = this.schedule.filter(
+        (match) => !match.npc && match.date == this.day
+      );
+      if (playerMatch.length) {
+        this.$store.dispatch('setIsMatchday', true);
+
+        this.$store.dispatch('setCurrentMatch', playerMatch[0].id);
+
+        this.$router.push(`/tactics`);
+      }
     },
 
     //seeding
@@ -158,81 +168,61 @@ ScoreBanner
         if (club.npc == true) {
           var x = this.generateTactic(club.id);
           console.log(x);
-          this.$store.dispatch("setTactics", this.generateTactic(club.id));
+          this.$store.dispatch('setTactics', this.generateTactic(club.id));
         }
       });
       console.log(this.league);
     },
 
     setLeague(league) {
-      this.$store.dispatch("setLeague", league);
-      this.$store.dispatch("setClubId", this.idCodeClub + this.league.length);
+      this.$store.dispatch('setLeague', league);
+      this.$store.dispatch('setClubId', this.idCodes.club + this.league.length);
 
       // console.log(this.$store.getters.nextClubId);
     },
 
     setRoster() {
-      this.$store.dispatch("setRoster", this.selectedRoster);
+      this.$store.dispatch('setRoster', this.selectedRoster);
       this.$store.dispatch(
-        "setFighterId",
-        this.idCodeFighter + this.roster.length
+        'setFighterId',
+        this.idCodes.fighter + this.roster.length
       );
     },
 
     setCommission() {
-      this.$store.dispatch("setCommission", data.commission.judges);
+      this.$store.dispatch('setCommission', data.commission.judges);
       this.$store.dispatch(
-        "setCommissionId",
-        this.idCommissionClub + this.commission.length
+        'setCommissionId',
+        this.idCodes.commission + this.commission.length
       );
     },
 
     setStaff() {
-      this.$store.dispatch("setStaff", data.staff.coaches);
-      this.$store.dispatch("setStaffId", this.idStaffClub + this.staff.length);
+      this.$store.dispatch('setStaff', data.staff.coaches);
+      this.$store.dispatch('setStaffId', this.idStaffClub + this.staff.length);
     },
 
     setSchedule(schedule) {
-      this.$store.dispatch("setSchedule", schedule);
+      this.$store.dispatch('setSchedule', schedule);
       this.$store.dispatch(
-        "setMatchId",
-        this.idCodeMatch + this.schedule.length
+        'setMatchId',
+        this.idCodes.match + this.schedule.length
       );
     },
 
     // game loop
     continue() {
-      this.$store.dispatch("continue");
+      this.$store.dispatch('continue');
 
-      this.schedule.forEach((match) => {
-        if (match.date == this.day) {
-          // console.log(match.date, this.day)
-          this.$store.dispatch("setMatchday", true);
-          // console.log(this.matchday);
-        }
-      });
-
-      if (this.matchday) {
-        console.log("MATCHDAYT!");
-
-        this.schedule.forEach((match) => {
-          if (!match.npc && this.day == match.date) {
-            // this.$router.push(`/match/${match.id}`);
-            this.$store.dispatch("setCurrentMatch", match.id);
-            if (this.$route.path != "/tactics") {
-              this.$router.push(`/tactics`);
-            }
-          }
-        });
-      }
+      this.checkIfMatchday();
 
       //end day
     },
 
     test() {
       console.log(matchData.engage.closeDistance[0].value);
-      var functionName = "this." + matchData.engage.closeDistance[0].value;
-      eval(functionName)("jo");
+      var functionName = 'this.' + matchData.engage.closeDistance[0].value;
+      eval(functionName)('jo');
     },
     grapple(mfg) {
       console.log(mfg);
@@ -243,7 +233,7 @@ ScoreBanner
 
 <style>
 .close:hover {
-opacity: 0.5;
+  opacity: 0.5;
 }
 a {
   text-decoration: none;
