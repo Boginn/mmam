@@ -248,8 +248,8 @@ export default new Vuex.Store({
     addClubData(context, payload) {
       context.commit('ADD_CLUB_DATA', payload);
     },
-    addFighterConditionData(context, payload) {
-      context.commit('ADD_FIGHTER_CONDITION_DATA', payload);
+    addFighterData(context, payload) {
+      context.commit('ADD_FIGHTER_DATA', payload);
     },
 
     //id
@@ -387,11 +387,19 @@ export default new Vuex.Store({
       payload = { ...payload, id: id };
       state.matches.push(payload);
     },
-    ADD_FIGHTER_CONDITION_DATA(state, payload) {
+    ADD_FIGHTER_DATA(state, payload) {
       state.roster.forEach((element) => {
         payload.forEach((fighter) => {
           if (element.id == fighter.id) {
             element.condition = fighter.condition;
+            element.appearances.overall.league += fighter.league;
+            element.appearances.overall.cup += fighter.cup;
+            element.appearances.overall.international += fighter.international;
+            element.appearances.overall.finishes += fighter.finishes;
+            element.appearances.season.league += fighter.league;
+            element.appearances.season.cup += fighter.cup;
+            element.appearances.season.international += fighter.international;
+            element.appearances.season.finishes += fighter.finishes;
           }
         });
       });

@@ -21,11 +21,35 @@
             >
             <v-chip class="sixth darken-1 ">
               Nationality:
-              <b>{{ fighter.personal.nationality }}</b>
+              <b> {{ fighter.personal.nationality }}</b>
             </v-chip>
           </v-card-title>
           <v-row>
             <v-col>
+              <v-col class=" pb-0 pt-0">
+                <v-card-text
+                  class="justify-space-between fifth ma-2"
+                  style="width: 75%"
+                >
+                  <div class="justify-center d-flex">
+                    <b class="font-shadow ">{{ typeOfFighter(fighter) }}</b>
+                  </div>
+                </v-card-text>
+              </v-col>
+              <v-col class="pb-0 pt-0">
+                <v-card-text
+                  class="justify-space-between primary ma-2"
+                  style="width: 75%"
+                >
+                  <div class="justify-space-between d-flex">
+                    Condition:
+                    <b>{{ fighter.condition }}</b>
+                  </div>
+                  <div class="justify-space-between d-flex">
+                    Fitness: <b>{{ fighter.fitness }}</b>
+                  </div>
+                </v-card-text>
+              </v-col>
               <v-col>
                 <v-card-text
                   class="justify-space-between seventh ma-2"
@@ -44,20 +68,6 @@
                   </div>
                   <div class="justify-space-between d-flex">
                     Power:<b>{{ fighter.body.power }}</b>
-                  </div>
-                </v-card-text>
-              </v-col>
-              <v-col>
-                <v-card-text
-                  class="justify-space-between primary ma-2"
-                  style="width: 75%"
-                >
-                  <div class="justify-space-between d-flex">
-                    Condition:
-                    <b>{{ fighter.condition }}</b>
-                  </div>
-                  <div class="justify-space-between d-flex">
-                    Fitness: <b>{{ fighter.fitness }}</b>
                   </div>
                 </v-card-text>
               </v-col>
@@ -136,6 +146,7 @@ export default {
     lastName() {
       return engine.lastName(this.fighter);
     },
+
     mental() {
       let mental = [];
       mental.push(
@@ -261,5 +272,11 @@ export default {
   },
 
   data: () => ({}),
+
+  methods: {
+    typeOfFighter(fighter) {
+      return engine.typeOfFighter(fighter);
+    },
+  },
 };
 </script>

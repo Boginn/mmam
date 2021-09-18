@@ -12,9 +12,60 @@
         >
           <!-- eslint-disable-next-line -->
           <template v-slot:item.personal.name="{ item }">
-            <router-link :to="`/squad/${item.id}`" class="white--text">
-              <div class="grey darken-3 pa-2">
-                {{ item.personal.name }}
+            <router-link :to="`/roster/${item.id}`" class="white--text">
+              <div class="grey darken-3 pa-2 d-flex justify-space-between ">
+                <div style="flex: 2;">
+                  <div>
+                    {{ item.personal.name }}
+                  </div>
+                  <div class="yellow--text">
+                    {{ typeOfFighter(item) }}
+                  </div>
+                </div>
+
+                <div class="text-end mr-3 ">
+                  <div class="grey--text">
+                    APP
+                    <b class=" yellow--text font-shadow">
+                      {{ item.appearances.season.league }}
+                    </b>
+                  </div>
+                  <div class="grey--text">
+                    FIN
+                    <b class=" blue--text font-shadow">
+                      {{ item.appearances.season.finishes }}
+                    </b>
+                  </div>
+                </div>
+                <div class="text-end">
+                  <div class="grey--text">
+                    FIT
+                    <b
+                      class="font-shadow "
+                      v-bind:class="{
+                        'red--text': item.fitness < 50,
+                        'yellow--text': item.fitness < 75 && item.fitness >= 50,
+                        'green--text': item.fitness >= 75,
+                      }"
+                    >
+                      {{ item.fitness }}
+                    </b>
+                  </div>
+                  <div class="grey--text">
+                    CON
+                    <b
+                      class="font-shadow "
+                      v-bind:class="{
+                        'red--text': item.condition < 50,
+                        'yellow--text':
+                          item.condition < 75 && item.condition >= 50,
+                        'green--text': item.condition >= 75,
+                      }"
+                    >
+                      {{ item.fitness }}
+                    </b>
+                  </div>
+                </div>
               </div>
             </router-link>
           </template>
@@ -123,22 +174,105 @@
       <v-col>
         <v-col>
           <v-card elevation="10" class="grey darken-1">
-            <v-row align="center" class="pt-16 pb-16">
+            <v-row align="center" class="pt-16 ">
               <v-col align="center">
-                <div class="positions ">
-                  <v-col align="center pt-10"> L</v-col>
+                <div class="positions">
+                  <v-col v-if="selection[0]">
+                    <div
+                      class="  mt-2  font-shadow body-1 pt-1"
+                      style="width: 120px"
+                    >
+                      <div>
+                        {{ getFighter(selection[0]).personal.name }}
+                      </div>
+
+                      <div>
+                        <v-progress-linear
+                          height="15"
+                          v-model="getFighter(selection[0]).fitness"
+                          :buffer-value="100"
+                          color="balance"
+                          background-color="red"
+                        ></v-progress-linear>
+                      </div>
+                      <div>
+                        <v-progress-linear
+                          height="15"
+                          v-model="getFighter(selection[0]).condition"
+                          :buffer-value="100"
+                          color="green"
+                          background-color="red"
+                        ></v-progress-linear>
+                      </div></div
+                  ></v-col>
                 </div>
               </v-col>
               <v-col align="center">
                 <div class="positions ">
-                  <v-col align="center"> </v-col>R
-                </div></v-col
-              >
+                  <v-col v-if="selection[2]">
+                    <div
+                      class="mt-2  font-shadow body-1 pt-1"
+                      style="width: 120px"
+                    >
+                      <div>
+                        {{ getFighter(selection[2]).personal.name }}
+                      </div>
+
+                      <div>
+                        <v-progress-linear
+                          height="15"
+                          v-model="getFighter(selection[2]).fitness"
+                          :buffer-value="100"
+                          color="balance"
+                          background-color="red"
+                        ></v-progress-linear>
+                      </div>
+                      <div>
+                        <v-progress-linear
+                          height="15"
+                          v-model="getFighter(selection[2]).condition"
+                          :buffer-value="100"
+                          color="green"
+                          background-color="red"
+                        ></v-progress-linear>
+                      </div>
+                    </div>
+                  </v-col></div
+              ></v-col>
+            </v-row>
+            <v-row class="pb-16">
               <v-col align="center">
-                <div class="positions centerPosition">
-                  <v-col align="center"> </v-col>C
-                </div></v-col
-              >
+                <div class="positions ">
+                  <v-col v-if="selection[1]">
+                    <div
+                      class=" mt-2  font-shadow body-1 pt-1"
+                      style="width: 120px"
+                    >
+                      <div>
+                        {{ getFighter(selection[1]).personal.name }}
+                      </div>
+
+                      <div>
+                        <v-progress-linear
+                          height="15"
+                          v-model="getFighter(selection[1]).fitness"
+                          :buffer-value="100"
+                          color="balance"
+                          background-color="red"
+                        ></v-progress-linear>
+                      </div>
+                      <div>
+                        <v-progress-linear
+                          height="15"
+                          v-model="getFighter(selection[1]).condition"
+                          :buffer-value="100"
+                          color="green"
+                          background-color="red"
+                        ></v-progress-linear>
+                      </div>
+                    </div>
+                  </v-col></div
+              ></v-col>
             </v-row>
             <v-row>
               <v-col align="center">
@@ -166,43 +300,6 @@
                 </v-card>
               </v-col>
             </v-row>
-            <v-row align="center" class="ma-0 pt-0">
-              <v-col
-                align="center"
-                v-for="(fighter, index) in selection"
-                :key="index"
-              >
-                <div class="secondary font-shadow body-1 pt-1" v-if="fighter">
-                  <div>
-                    {{ getFighter(fighter).personal.name }}
-                  </div>
-
-                  <div>
-                    Fitness
-                    <b
-                      class="font-shadow "
-                      v-bind:class="{
-                        'red--text': getFighter(fighter).fitness < 50,
-                        'yellow--text':
-                          getFighter(fighter).fitness < 75 &&
-                          getFighter(fighter).fitness >= 50,
-                        'green--text': getFighter(fighter).fitness >= 75,
-                      }"
-                    >
-                      {{ getFighter(fighter).fitness }}
-                    </b>
-                  </div>
-                  <div>
-                    <v-progress-linear
-                      height="15"
-                      v-model="getFighter(fighter).condition"
-                      :buffer-value="100"
-                      color="green"
-                      background-color="red"
-                    ></v-progress-linear>
-                  </div></div
-              ></v-col>
-            </v-row>
           </v-card>
         </v-col>
       </v-col>
@@ -228,19 +325,20 @@
 
 <script>
 import data from '@/data/data.js';
+import engine from '@/engine/engine.js';
 import classes from '@/data/classes.js';
 
 export default {
   name: 'Tactics',
 
   created() {
-    if (!this.$route.params.id) {
-      this.id = this.playerClubId;
-      this.club = this.getClub(this.playerClubId);
-    } else {
-      this.id = this.$route.params.id;
-      this.club = this.getClub(this.id);
-    }
+    // if (!this.$route.params.id) {
+    //   this.id = this.playerClubId;
+    //   this.club = this.getClub(this.playerClubId);
+    // } else {
+    //   this.id = this.$route.params.id;
+    //   this.club = this.getClub(this.id);
+    // }
 
     this.tactic = this.club.tactic ? this.club.tactic : new classes.Tactic();
   },
@@ -250,6 +348,9 @@ export default {
   },
 
   computed: {
+    club() {
+      return this.getClub(this.id);
+    },
     headers() {
       return data.headers.tactics;
     },
@@ -262,7 +363,7 @@ export default {
     isDeveloper() {
       return this.$store.getters.isDeveloper;
     },
-    playerClubId() {
+    id() {
       return this.$store.getters.selectedClubId;
     },
 
@@ -359,8 +460,8 @@ export default {
     },
   },
   data: () => ({
-    id: undefined,
-    club: undefined,
+    // id: undefined,
+    // club: undefined,
     tactic: undefined,
 
     //ui
@@ -378,6 +479,9 @@ export default {
 
     savedTactic() {
       return this.$store.getters.tactic;
+    },
+    typeOfFighter(fighter) {
+      return engine.typeOfFighter(fighter);
     },
 
     //ui
@@ -475,39 +579,87 @@ export default {
 
     setMentality(selection) {
       if (this.isTabGeneral) {
-        this.tactic.instructions.general.mentality = selection;
+        if (this.tactic.instructions.general.mentality == selection) {
+          this.tactic.instructions.general.mentality = 0;
+        } else {
+          this.tactic.instructions.general.mentality = selection;
+        }
       } else if (this.isTabLeft) {
-        this.tactic.instructions.left.mentality = selection;
+        if (this.tactic.instructions.left.mentality == selection) {
+          this.tactic.instructions.left.mentality = 0;
+        } else {
+          this.tactic.instructions.left.mentality = selection;
+        }
       } else if (this.isTabCenter) {
-        this.tactic.instructions.center.mentality = selection;
+        if (this.tactic.instructions.center.mentality == selection) {
+          this.tactic.instructions.center.mentality = 0;
+        } else {
+          this.tactic.instructions.center.mentality = selection;
+        }
       } else if (this.isTabRight) {
-        this.tactic.instructions.right.mentality = selection;
+        if (this.tactic.instructions.right.mentality == selection) {
+          this.tactic.instructions.right.mentality = 0;
+        } else {
+          this.tactic.instructions.right.mentality = selection;
+        }
       }
 
       this.setSelected(this.tactic);
     },
     setRisk(selection) {
       if (this.isTabGeneral) {
-        this.tactic.instructions.general.risk = selection;
+        if (this.tactic.instructions.general.risk == selection) {
+          this.tactic.instructions.general.risk = 0;
+        } else {
+          this.tactic.instructions.general.risk = selection;
+        }
       } else if (this.isTabLeft) {
-        this.tactic.instructions.left.risk = selection;
+        if (this.tactic.instructions.left.risk == selection) {
+          this.tactic.instructions.left.risk = 0;
+        } else {
+          this.tactic.instructions.left.risk = selection;
+        }
       } else if (this.isTabCenter) {
-        this.tactic.instructions.center.risk = selection;
+        if (this.tactic.instructions.center.risk == selection) {
+          this.tactic.instructions.center.risk = 0;
+        } else {
+          this.tactic.instructions.center.risk = selection;
+        }
       } else if (this.isTabRight) {
-        this.tactic.instructions.right.risk = selection;
+        if (this.tactic.instructions.right.risk == selection) {
+          this.tactic.instructions.right.risk = 0;
+        } else {
+          this.tactic.instructions.right.risk = selection;
+        }
       }
 
       this.setSelected(this.tactic);
     },
     setGamesmanship(selection) {
       if (this.isTabGeneral) {
-        this.tactic.instructions.general.gamesmanship = selection;
+        if (this.tactic.instructions.general.gamesmanship == selection) {
+          this.tactic.instructions.general.gamesmanship = 0;
+        } else {
+          this.tactic.instructions.general.gamesmanship = selection;
+        }
       } else if (this.isTabLeft) {
-        this.tactic.instructions.left.gamesmanship = selection;
+        if (this.tactic.instructions.left.gamesmanship == selection) {
+          this.tactic.instructions.left.gamesmanship = 0;
+        } else {
+          this.tactic.instructions.left.gamesmanship = selection;
+        }
       } else if (this.isTabCenter) {
-        this.tactic.instructions.center.gamesmanship = selection;
+        if (this.tactic.instructions.center.gamesmanship == selection) {
+          this.tactic.instructions.center.gamesmanship = 0;
+        } else {
+          this.tactic.instructions.center.gamesmanship = selection;
+        }
       } else if (this.isTabRight) {
-        this.tactic.instructions.right.gamesmanship = selection;
+        if (this.tactic.instructions.right.gamesmanship == selection) {
+          this.tactic.instructions.right.gamesmanship = 0;
+        } else {
+          this.tactic.instructions.right.gamesmanship = selection;
+        }
       }
       this.setSelected(this.tactic);
     },
@@ -538,14 +690,19 @@ export default {
   width: 33%;
 }
 .positions {
-  width: 135px;
-  height: 135px;
+  width: 170px;
+  height: 170px;
   margin: -35px;
   margin-left: 25px;
   margin-right: 25px;
+  padding-top: 10px;
 
-  background-color: rgb(80, 76, 21);
+  background-color: rgb(63, 63, 57);
   border-radius: 100%;
+}
+.centerPosition {
+  width: 140px;
+  height: 140px;
 }
 .clear-selection {
   padding-right: 15px;

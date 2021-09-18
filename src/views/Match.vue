@@ -10,13 +10,13 @@
     </v-container>
 
     <!-- floating -->
-    <JudgesCard
+    <!-- <JudgesCard
       v-if="isDecision && showJudgesCard"
       :decisions="decisions"
       :judges="judges"
       :cards="cards"
       @closed="showJudgesCard = false"
-    />
+    /> -->
     <!-- floating -->
     <TruePoints :truePoints="truePoints" v-if="isDeveloper" />
 
@@ -142,6 +142,16 @@
           :ringFinishedLeft="ringFinishedLeft"
           :ringFinishedCenter="ringFinishedCenter"
           :ringFinishedRight="ringFinishedRight"
+        />
+
+        <JudgesCard
+          v-if="isTabJudgesCard"
+          :decisions="decisions"
+          :judges="judges"
+          :rounds="rounds"
+          :ringFinishedLeft="ringFinishedLeft"
+          :ringFinishedRight="ringFinishedRight"
+          @countScore="countScore"
         />
       </v-card>
     </v-col>
@@ -279,6 +289,13 @@ export default {
     },
     isTabMatchTactics() {
       return this.tabs[2].value;
+    },
+    isTabJudgesCard() {
+      if (this.isDecision) {
+        return this.tabs[3].value;
+      } else {
+        return false;
+      }
     },
 
     routes() {
@@ -427,7 +444,8 @@ export default {
     resetFighterMatchStats() {
       function reset(item) {
         item.match.exposed = 0;
-        item.match.condition = item.fitness;
+        item.match.condition =
+          item.fitness > item.condition ? item.fitness : item.condition;
         item.match.learned = 0;
         item.match.momentum = false;
         item.match.finished = false;
@@ -498,6 +516,7 @@ export default {
         this.tabs[i].value = false;
       }
       this.tabs[selection].value = true;
+      console.log(this.tabs[selection].value);
     },
 
     //services
@@ -570,33 +589,67 @@ export default {
         },
       };
 
-      const { home } = this.homeTactic;
-      const { away } = this.awayTactic;
-
-      const fighterConditionData = [
+      const fighterData = [
+        //TODO add finishes
         {
-          id: home.left,
-          condition: this.getFighter(home.left).match.condition,
+          league: 1,
+          cup: 0,
+          international: 0,
+          finishes: this.getFighter(this.homeTactic.selection.left).match
+            .finishes,
+          id: this.homeTactic.selection.left,
+          condition: this.getFighter(this.homeTactic.selection.left).match
+            .condition,
         },
         {
-          id: home.center,
-          condition: this.getFighter(home.center).match.condition,
+          league: 1,
+          cup: 0,
+          international: 0,
+          finishes: this.getFighter(this.homeTactic.selection.center).match
+            .finishes,
+          id: this.homeTactic.selection.center,
+          condition: this.getFighter(this.homeTactic.selection.center).match
+            .condition,
         },
         {
-          id: home.right,
-          condition: this.getFighter(home.right).match.condition,
+          league: 1,
+          cup: 0,
+          international: 0,
+          finishes: this.getFighter(this.homeTactic.selection.right).match
+            .finishes,
+          id: this.homeTactic.selection.right,
+          condition: this.getFighter(this.homeTactic.selection.right).match
+            .condition,
         },
         {
-          id: away.left,
-          condition: this.getFighter(away.left).match.condition,
+          league: 1,
+          cup: 0,
+          international: 0,
+          finishes: this.getFighter(this.awayTactic.selection.left).match
+            .finishes,
+          id: this.awayTactic.selection.left,
+          condition: this.getFighter(this.awayTactic.selection.left).match
+            .condition,
         },
         {
-          id: away.center,
-          condition: this.getFighter(away.center).match.condition,
+          league: 1,
+          cup: 0,
+          international: 0,
+          finishes: this.getFighter(this.awayTactic.selection.center).match
+            .finishes,
+          id: this.awayTactic.selection.center,
+          condition: this.getFighter(this.awayTactic.selection.center).match
+            .condition,
         },
         {
-          id: away.right,
-          condition: this.getFighter(away.right).match.condition,
+          league: 1,
+          cup: 0,
+          international: 0,
+          finishes: this.getFighter(this.awayTactic.selection.right).match
+            .finishes,
+          id: this.awayTactic.selection.right,
+          condition: this.getFighter(this.awayTactic.selection.right).match
+            .condition,
         },
       ];
 
@@ -604,7 +657,7 @@ export default {
       this.$store.dispatch('addMatch', match);
       this.$store.dispatch('addClubData', homeClubData);
       this.$store.dispatch('addClubData', awayClubData);
-      this.$store.dispatch('addFighterConditionData', fighterConditionData);
+      this.$store.dispatch('addFighterData', fighterData);
     },
 
     //basics
@@ -791,14 +844,17 @@ export default {
         }
 
         this.isDecision = true; // opens Judges' Cards
-        this.$store.dispatch('setScore', this.score);
+        this.tabs.push({ name: 'judges card', value: false });
+        this.selectTab(3);
+
+        // this.countScore();
 
         setTimeout(() => {
           // timeout because component JudgesCard saves the list needed to the state
           // and it hasnt loaded yet ::thinking::
-          this.countScore();
-        }, this.timeoutInterval);
+        }, 500);
       }
+      this.$store.dispatch('setScore', this.score);
     },
     countActivity(ring, outcome) {
       if (this.isHomeAttack) {
@@ -813,99 +869,9 @@ export default {
         }
       }
     },
-    countScore() {
-      let messager = function(winner, loser) {
-        if (loser == 0 && winner == 3) {
-          return 'Unanimous Decision';
-        } else if (loser == 0 || winner == 1) {
-          return 'Majority Decision';
-        } else {
-          return 'Split Decision';
-        }
-      };
-
-      let homeCount = 0;
-      let awayCount = 0;
-
-      if (!this.ringFinishedLeft) {
-        this.cards.left.forEach((score) => {
-          if (score.home == true && score.away == false) {
-            homeCount += 1;
-          } else if (score.home == false && score.away == true) {
-            awayCount += 1;
-          }
-        });
-
-        if (homeCount != awayCount) {
-          if (homeCount > awayCount) {
-            this.score.home += 1;
-            this.cards.leftMsg = messager(homeCount, awayCount);
-          } else {
-            this.score.away += 1;
-            this.cards.leftMsg = messager(awayCount, homeCount);
-          }
-        } else {
-          this.cards.leftMsg = 'Draw';
-        }
-        console.log(homeCount);
-        console.log(awayCount);
-
-        homeCount = 0;
-        awayCount = 0;
-      }
-
-      if (!this.ringFinishedRight) {
-        this.cards.right.forEach((score) => {
-          if (score.home == true && score.away == false) {
-            homeCount += 1;
-          } else if (score.home == false && score.away == true) {
-            awayCount += 1;
-          }
-        });
-
-        if (homeCount != awayCount) {
-          if (homeCount > awayCount) {
-            this.score.home += 1;
-            this.cards.rightMsg = messager(homeCount, awayCount);
-          } else {
-            this.score.away += 1;
-            this.cards.rightMsg = messager(awayCount, homeCount);
-          }
-        } else {
-          this.cards.rightMsg = 'Draw';
-        }
-
-        console.log(homeCount);
-        console.log(awayCount);
-
-        homeCount = 0;
-        awayCount = 0;
-      }
-
-      this.cards.center.forEach((score) => {
-        if (score.home == true && score.away == false) {
-          homeCount += 1;
-        } else if (score.home == false && score.away == true) {
-          awayCount += 1;
-        }
-      });
-
-      console.log(homeCount);
-      console.log(awayCount);
-
-      if (homeCount == awayCount) {
-        this.score.home += 1;
-        this.score.away += 1;
-        this.cards.centerMsg = 'Draw';
-      } else {
-        if (homeCount > awayCount) {
-          this.score.home += 2;
-          this.cards.centerMsg = messager(homeCount, awayCount);
-        } else {
-          this.score.away += 2;
-          this.cards.centerMsg = messager(awayCount, homeCount);
-        }
-      }
+    countScore(result) {
+      this.score.home = this.score.home + result.home;
+      this.score.away = this.score.away + result.away;
     },
 
     //main loop
@@ -1109,6 +1075,7 @@ export default {
       if (fighterResult.finished) {
         this.isPaused = true;
         fighter.match.finished = true;
+        this.getFighter(winner.id).match.finishes++;
         setTimeout(() => {
           this.$store.dispatch('addMatchMessage', fighterResult.msg);
         }, this.timeoutInterval * timeoutIntervalMultiplier);
@@ -1356,9 +1323,5 @@ export default {
 
   background-color: rgb(80, 76, 21);
   border-radius: 100%;
-}
-.centerPosition {
-  width: 140px;
-  height: 140px;
 }
 </style>

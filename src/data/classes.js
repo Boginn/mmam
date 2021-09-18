@@ -3,32 +3,33 @@ class Person {
     grappler: 50,
     striker: 50,
   };
-  legs = [
-    {
-      power: null,
-      reach: null,
-      durability: null,
-    },
-    {
-      power: null,
-      reach: null,
-      durability: null,
-    },
-  ];
-  arms = [
-    {
-      power: null,
-      reach: null,
-      durability: null,
-    },
-    {
-      power: null,
-      reach: null,
-      durability: null,
-    },
-  ];
+  // legs = [
+  //   {
+  //     power: null,
+  //     reach: null,
+  //     durability: null,
+  //   },
+  //   {
+  //     power: null,
+  //     reach: null,
+  //     durability: null,
+  //   },
+  // ];
+  // arms = [
+  //   {
+  //     power: null,
+  //     reach: null,
+  //     durability: null,
+  //   },
+  //   {
+  //     power: null,
+  //     reach: null,
+  //     durability: null,
+  //   },
+  // ];
   body = [
     {
+      power: null,
       durability: null,
     },
   ];
@@ -105,6 +106,20 @@ export default {
     fieldable = true;
     fitness = 100;
     condition = 100;
+    appearances = {
+      overall: {
+        international: 0,
+        league: 0,
+        cup: 0,
+        finishes: 0,
+      },
+      season: {
+        international: 0,
+        league: 0,
+        cup: 0,
+        finishes: 0,
+      },
+    };
 
     match = {
       momentum: undefined,
@@ -113,6 +128,7 @@ export default {
       learned: undefined,
       finished: undefined,
       substituted: undefined,
+      finishes: 0,
     };
 
     tactic = {

@@ -15,26 +15,33 @@
         v-for="fixture in matchDate"
         :key="fixture.id"
       >
-        <v-col
-          v-bind:class="{
-            'yellow--text': fixture.clubs[0] == selectedClubId,
-          }"
-        >
-          {{ getClub(fixture.clubs[0]).name }}</v-col
-        >
+        <v-col>
+          <router-link
+            :to="`/league/${fixture.clubs[0]}`"
+            class="white--text"
+            v-bind:class="{
+              'yellow--text': fixture.clubs[0] == selectedClubId,
+            }"
+          >
+            {{ getClub(fixture.clubs[0]).name }}
+          </router-link>
+        </v-col>
         <v-col class="text-center" v-if="fixture.score">
           {{ fixture.score.home }} - {{ fixture.score.away }}
         </v-col>
         <v-col class="text-center" v-else>
           vs
         </v-col>
-        <v-col
-          class="text-end"
-          v-bind:class="{
-            'yellow--text': fixture.clubs[1] == selectedClubId,
-          }"
-        >
-          {{ getClub(fixture.clubs[1]).name }}
+        <v-col class="text-end">
+          <router-link
+            :to="`/league/${fixture.clubs[1]}`"
+            class="white--text"
+            v-bind:class="{
+              'yellow--text': fixture.clubs[1] == selectedClubId,
+            }"
+          >
+            {{ getClub(fixture.clubs[1]).name }}
+          </router-link>
         </v-col>
       </v-row>
     </v-card>

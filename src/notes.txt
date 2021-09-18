@@ -7,6 +7,8 @@
 // BUGS
     didnt get the judgse card after a decision (normally, not defaultmode)
 
+    seems to only happen when both left and right have been finished
+
 
 
 
@@ -23,16 +25,13 @@ implement:
     news item, youve been hired
     spruce up squad view, add condition
 
-    implement an actual date or at least spoof it
-
-
-fixtures:
-    get a fixtures screen up 1 day before matchday
-    or npc matches
-    after a match, go to that screen and show results
 
 match:
 
+    after landing a good successfull takedown 
+        give momentum to controling fighter
+        if other fighter gets initiative it is used to get up
+    
 
     momentum triggers -- finishing someone gives momentum hm only if in center ring
     judges need to get activity numbers

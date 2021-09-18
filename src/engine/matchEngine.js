@@ -361,6 +361,8 @@ export default {
   },
 
   //specific checks (skill)
+
+  //takedown
   singleLegSkillCheckAttack(fighter) {
     var array = [];
     array.push(this.getRollWithMod(fighter.skill.positioning));
@@ -379,6 +381,8 @@ export default {
 
     return this.getAverage(array);
   },
+
+  //combo
   oneTwoSkillCheckAttack(fighter) {
     var array = [];
     array.push(this.getRollWithMod(fighter.skill.positioning));
@@ -394,6 +398,46 @@ export default {
     array.push(this.getRollWithMod(fighter.skill.decisions));
     array.push(this.getRollWithMod(fighter.skill.footwork));
     array.push(this.getRollWithMod(fighter.skill.anticipation));
+
+    return this.getAverage(array);
+  },
+  oneTwoThreeSkillCheckAttack(fighter) {
+    var array = [];
+    array.push(this.getRollWithMod(fighter.skill.decisions));
+    array.push(this.getRollWithMod(fighter.skill.footwork));
+    array.push(this.getRollWithMod(fighter.skill.sharpness));
+    array.push(this.getRollWithMod(fighter.skill.workRate));
+
+    return this.getAverage(array);
+  },
+  oneTwoThreeSkillCheckDefend(fighter) {
+    var array = [];
+    array.push(this.getRollWithMod(fighter.skill.positioning));
+    array.push(this.getRollWithMod(fighter.skill.footwork));
+    array.push(this.getRollWithMod(fighter.skill.anticipation));
+    array.push(this.getRollWithMod(fighter.skill.fluidity));
+
+    return this.getAverage(array);
+  },
+  variousComboSkillCheckAttack(fighter) {
+    var array = [];
+    array.push(this.getRollWithMod(fighter.skill.positioning));
+    array.push(this.getRollWithMod(fighter.skill.decisions));
+    array.push(this.getRollWithMod(fighter.skill.footwork));
+    array.push(this.getRollWithMod(fighter.skill.sharpness));
+    array.push(this.getRollWithMod(fighter.skill.workRate));
+    array.push(this.getRollWithMod(fighter.skill.vision));
+
+    return this.getAverage(array);
+  },
+  variousComboSkillCheckDefend(fighter) {
+    var array = [];
+    array.push(this.getRollWithMod(fighter.skill.positioning));
+    array.push(this.getRollWithMod(fighter.skill.decisions));
+    array.push(this.getRollWithMod(fighter.skill.footwork));
+    array.push(this.getRollWithMod(fighter.skill.anticipation));
+    array.push(this.getRollWithMod(fighter.skill.fluidity));
+    array.push(this.getRollWithMod(fighter.skill.workRate));
 
     return this.getAverage(array);
   },
@@ -667,13 +711,9 @@ export default {
     if (combo.value == 'oneTwo') {
       action = this.oneTwo(combo, attacker, defender);
     } else if (combo.value == 'oneTwoThree') {
-      ///TODO
-      action = this.oneTwo(combo, attacker, defender);
-    } else if (combo.value == 'various') {
-      ///TODO
-      action = this.oneTwo(combo, attacker, defender);
-    } else {
-      action = this.oneTwo(combo, attacker, defender);
+      action = this.oneTwoThree(combo, attacker, defender);
+    } else if (combo.value == 'variousCombo') {
+      action = this.variousCombo(combo, attacker, defender);
     }
 
     return action;
@@ -881,7 +921,8 @@ export default {
         //complete , point, significant, big
         outcome.defenderExposed = outcome.defenderExposed + 10;
         outcome.attackerLearned = outcome.attackerLearned + 5;
-        outcome.defenderDamage = outcome.defenderDamage + 15;
+        outcome.defenderDamage =
+          outcome.defenderDamage + 10 + Math.floor(attacker.body.power) / 10;
 
         outcome.significant = true;
         outcome.point = true;
@@ -889,7 +930,8 @@ export default {
       } else if (this.getDifference(finalAttack, finalDefend) >= 10) {
         //complete, point, significant
         outcome.defenderExposed = outcome.defenderExposed + 5;
-        outcome.defenderDamage = outcome.defenderDamage + 9;
+        outcome.defenderDamage =
+          outcome.defenderDamage + 5 + Math.floor(attacker.body.power) / 10;
 
         outcome.significant = true;
         outcome.point = true;
@@ -897,7 +939,8 @@ export default {
       } else {
         //complete, point
         outcome.attackerLearned = outcome.attackerLearned + 5;
-        outcome.defenderDamage = outcome.defenderDamage + 5;
+        outcome.defenderDamage =
+          outcome.defenderDamage + Math.floor(attacker.body.power) / 10;
 
         outcome.point = true;
         outcome.msg = `${attacker.nickname} barely lands a ${action.text} on ${defender.nickname}`;
@@ -910,6 +953,259 @@ export default {
         outcome.defenderLearned = outcome.defenderLearned + 10;
         outcome.msg = `${attacker.nickname} completely fumbles a ${action.text} attempt on ${defender.nickname}`;
       } else if (this.getDifference(finalAttack, finalDefend) >= 10) {
+        //not complete, attacker learns
+        outcome.attackerLearned = outcome.attackerLearned + 5;
+        outcome.msg = `${attacker.nickname} fails to complete a ${action.text} on ${defender.nickname}`;
+      } else {
+        //not complete, defender exposed
+        outcome.defenderExposed = outcome.defenderExposed + 5;
+        outcome.msg = `${attacker.nickname} almost gets the ${action.text} on ${defender.nickname}`;
+      }
+    }
+
+    // attach
+    action = {
+      ...action,
+      ...outcome,
+    };
+
+    return action;
+  },
+
+  oneTwoThree(action, attacker, defender) {
+    let outcome = new Outcome();
+    let finalAttack, finalDefend;
+    let physicalDC = 12;
+    let skillDC = 18;
+
+    // Physical checks
+    let attackPhysMod = this.normalMovePhysicalCheck(attacker);
+    let defendPhysMod = this.normalMovePhysicalCheck(defender);
+
+    if (this.getDifference(attackPhysMod, defendPhysMod) >= physicalDC) {
+      if (attackPhysMod > defendPhysMod) {
+        outcome.defenderExposed = outcome.defenderExposed + physicalDC;
+        outcome.attackerLearned = outcome.attackerLearned + physicalDC;
+      } else {
+        outcome.defenderLearned = outcome.defenderLearned + physicalDC;
+        outcome.attackerExposed = outcome.attackerExposed + physicalDC;
+      }
+    } else if (
+      this.getDifference(attackPhysMod, defendPhysMod) >=
+      physicalDC / 2
+    ) {
+      if (attackPhysMod > defendPhysMod) {
+        outcome.defenderExposed = outcome.defenderExposed + physicalDC / 2;
+        outcome.attackerLearned = outcome.attackerLearned + physicalDC / 2;
+      } else {
+        outcome.defenderLearned = outcome.defenderLearned + physicalDC / 2;
+        outcome.attackerExposed = outcome.attackerExposed + physicalDC / 2;
+      }
+    } else {
+      outcome.defenderLearned = outcome.defenderLearned + defendPhysMod;
+      outcome.attackerLearned = outcome.attackerLearned + attackPhysMod;
+    }
+
+    // Skill checks
+    let attackSkillMod = this.oneTwoThreeSkillCheckAttack(attacker);
+    let defendSkillMod = this.oneTwoThreeSkillCheckDefend(defender);
+
+    if (
+      this.getRollWithMod(attacker.skill.footwork) >=
+      this.getRollWithMod(defender.skill.anticipation)
+    ) {
+      attackSkillMod = attackSkillMod + skillDC;
+    } else if (
+      this.getRollWithMod(attacker.skill.sharpness) >=
+      this.getRollWithMod(defender.skill.versatility)
+    ) {
+      attackSkillMod = attackSkillMod + skillDC;
+    } else {
+      defendSkillMod = defendSkillMod + skillDC;
+    }
+
+    if (
+      this.getRollWithMod(attacker.mental.determination) >=
+      this.getRollWithMod(defender.mental.pressure)
+    ) {
+      attackSkillMod = attackSkillMod + skillDC;
+    } else {
+      defendSkillMod = defendSkillMod + skillDC;
+    }
+
+    // Final outcome
+    finalAttack = attackSkillMod + attackPhysMod;
+    finalDefend = defendSkillMod + defendPhysMod;
+
+    console.log(finalAttack);
+    console.log(finalDefend);
+
+    if (finalAttack >= finalDefend) {
+      if (this.getDifference(finalAttack, finalDefend) >= 17) {
+        //complete , point, significant, big
+        outcome.defenderExposed = outcome.defenderExposed + 12;
+        outcome.attackerLearned = outcome.attackerLearned + 7;
+        outcome.defenderDamage =
+          outcome.defenderDamage + 12 + Math.floor(attacker.body.power) / 10;
+
+        outcome.significant = true;
+        outcome.point = true;
+        outcome.msg = `${attacker.nickname} lands a devistating ${action.text} on ${defender.nickname}`;
+      } else if (this.getDifference(finalAttack, finalDefend) >= 14) {
+        //complete, point, significant
+        outcome.defenderExposed = outcome.defenderExposed + 7;
+        outcome.defenderDamage =
+          outcome.defenderDamage + 7 + Math.floor(attacker.body.power) / 10;
+
+        outcome.significant = true;
+        outcome.point = true;
+        outcome.msg = `${attacker.nickname} completes a significant ${action.text} on ${defender.nickname}`;
+      } else {
+        //complete, point
+        outcome.attackerLearned = outcome.attackerLearned + 5;
+        outcome.defenderDamage =
+          outcome.defenderDamage + 2 + Math.floor(attacker.body.power) / 10;
+
+        outcome.point = true;
+        outcome.msg = `${attacker.nickname} barely lands a ${action.text} on ${defender.nickname}`;
+      }
+    } else {
+      if (this.getDifference(finalAttack, finalDefend) >= 17) {
+        //not complete, disengage
+        outcome.disengage = true;
+        outcome.attackerExposed = outcome.attackerExposed + 12;
+        outcome.defenderLearned = outcome.defenderLearned + 12;
+        outcome.msg = `${attacker.nickname} completely fumbles a ${action.text} attempt on ${defender.nickname}`;
+      } else if (this.getDifference(finalAttack, finalDefend) >= 14) {
+        //not complete, attacker learns
+        outcome.attackerLearned = outcome.attackerLearned + 5;
+        outcome.msg = `${attacker.nickname} fails to complete a ${action.text} on ${defender.nickname}`;
+      } else {
+        //not complete, defender exposed
+        outcome.defenderExposed = outcome.defenderExposed + 5;
+        outcome.msg = `${attacker.nickname} almost gets the ${action.text} on ${defender.nickname}`;
+      }
+    }
+
+    // attach
+    action = {
+      ...action,
+      ...outcome,
+    };
+
+    return action;
+  },
+
+  variousCombo(action, attacker, defender) {
+    let outcome = new Outcome();
+    let finalAttack, finalDefend;
+    let physicalDC = this.rollTwenty();
+    let skillDC = this.rollTwenty();
+
+    // Physical checks
+    let attackPhysMod = this.normalMovePhysicalCheck(attacker);
+    let defendPhysMod = this.normalMovePhysicalCheck(defender);
+
+    if (this.getDifference(attackPhysMod, defendPhysMod) >= physicalDC) {
+      if (attackPhysMod > defendPhysMod) {
+        outcome.defenderExposed = outcome.defenderExposed + physicalDC;
+        outcome.attackerLearned = outcome.attackerLearned + physicalDC;
+      } else {
+        outcome.defenderLearned = outcome.defenderLearned + physicalDC;
+        outcome.attackerExposed = outcome.attackerExposed + physicalDC;
+      }
+    } else if (
+      this.getDifference(attackPhysMod, defendPhysMod) >=
+      physicalDC / 2
+    ) {
+      if (attackPhysMod > defendPhysMod) {
+        outcome.defenderExposed = outcome.defenderExposed + physicalDC / 2;
+        outcome.attackerLearned = outcome.attackerLearned + physicalDC / 2;
+      } else {
+        outcome.defenderLearned = outcome.defenderLearned + physicalDC / 2;
+        outcome.attackerExposed = outcome.attackerExposed + physicalDC / 2;
+      }
+    } else {
+      outcome.defenderLearned = outcome.defenderLearned + defendPhysMod;
+      outcome.attackerLearned = outcome.attackerLearned + attackPhysMod;
+    }
+
+    // Skill checks
+    let attackSkillMod = this.variousComboSkillCheckAttack(attacker);
+    let defendSkillMod = this.variousComboSkillCheckDefend(defender);
+
+    if (
+      this.getRollWithMod(attacker.skill.footwork) >=
+      this.getRollWithMod(defender.skill.anticipation)
+    ) {
+      attackSkillMod = attackSkillMod + skillDC;
+    } else if (
+      this.getRollWithMod(attacker.skill.sharpness) >=
+      this.getRollWithMod(defender.skill.versatility)
+    ) {
+      attackSkillMod = attackSkillMod + skillDC;
+    } else {
+      defendSkillMod = defendSkillMod + skillDC;
+    }
+
+    if (
+      this.getRollWithMod(attacker.mental.determination) >=
+      this.getRollWithMod(defender.mental.pressure)
+    ) {
+      attackSkillMod = attackSkillMod + skillDC;
+    } else {
+      defendSkillMod = defendSkillMod + skillDC;
+    }
+
+    // Final outcome
+    finalAttack = attackSkillMod + attackPhysMod;
+    finalDefend = defendSkillMod + defendPhysMod;
+
+    console.log(finalAttack);
+    console.log(finalDefend);
+
+    if (finalAttack >= finalDefend) {
+      if (this.getDifference(finalAttack, finalDefend) >= 17) {
+        //complete , point, significant, big
+        outcome.defenderExposed = outcome.defenderExposed + 12;
+        outcome.attackerLearned = outcome.attackerLearned + 7;
+
+        outcome.defenderDamage =
+          outcome.defenderDamage +
+          (this.roll(physicalDC) + this.roll(skillDC)) / 2 +
+          Math.floor(attacker.body.power) / 10;
+
+        outcome.significant = true;
+        outcome.point = true;
+        outcome.msg = `${attacker.nickname} lands a devistating ${action.text} on ${defender.nickname}`;
+      } else if (this.getDifference(finalAttack, finalDefend) >= 14) {
+        //complete, point, significant
+        outcome.defenderExposed = outcome.defenderExposed + 7;
+        outcome.defenderDamage =
+          outcome.defenderDamage +
+          (this.roll(physicalDC) + this.roll(skillDC)) / 4 +
+          Math.floor(attacker.body.power) / 10;
+
+        outcome.significant = true;
+        outcome.point = true;
+        outcome.msg = `${attacker.nickname} completes a significant ${action.text} on ${defender.nickname}`;
+      } else {
+        //complete, point
+        outcome.attackerLearned = outcome.attackerLearned + 5;
+        outcome.defenderDamage =
+          outcome.defenderDamage + Math.floor(attacker.body.power) / 10;
+
+        outcome.point = true;
+        outcome.msg = `${attacker.nickname} barely lands a ${action.text} on ${defender.nickname}`;
+      }
+    } else {
+      if (this.getDifference(finalAttack, finalDefend) >= 17) {
+        //not complete, disengage
+        outcome.disengage = true;
+        outcome.attackerExposed = outcome.attackerExposed + 12;
+        outcome.defenderLearned = outcome.defenderLearned + 12;
+        outcome.msg = `${attacker.nickname} completely fumbles a ${action.text} attempt on ${defender.nickname}`;
+      } else if (this.getDifference(finalAttack, finalDefend) >= 14) {
         //not complete, attacker learns
         outcome.attackerLearned = outcome.attackerLearned + 5;
         outcome.msg = `${attacker.nickname} fails to complete a ${action.text} on ${defender.nickname}`;

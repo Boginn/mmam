@@ -24,8 +24,15 @@ const tabs = {
 const headers = {
   squad: [
     { text: 'Name', value: 'personal.name' },
+    { text: '', value: 'fieldable' },
     { text: 'Age', value: 'personal.age' },
     { text: 'Nationality', value: 'personal.nationality' },
+    { text: 'Height', value: 'personal.height' },
+    { text: 'Type', value: 'type', sortable: false },
+    { text: 'Appearances', value: 'appearances.season.league' },
+    { text: 'Finishes', value: 'appearances.season.finishes' },
+    { text: 'Condition', value: 'condition' },
+    { text: 'Fitness', value: 'fitness' },
   ],
   tactics: [
     { text: 'Name', value: 'personal.name' },

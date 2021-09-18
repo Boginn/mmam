@@ -16,7 +16,7 @@ const routes = [
     component: () => import('../views/Match.vue'),
   },
   {
-    path: '/squad/:id',
+    path: '/roster/:id',
     name: 'FIGHTER',
     component: () => import('../components/Unit.vue'),
   },
@@ -24,8 +24,9 @@ const routes = [
   {
     path: '/league/:id',
     name: 'CLUB',
-    component: () => import('../components/Club.vue'),
+    component: () => import('../views/Squad.vue'),
   },
+
   {
     path: '/squad',
     name: 'Squad',
@@ -51,11 +52,7 @@ const routes = [
     name: 'Staff',
     component: () => import('../views/Staff.vue'),
   },
-  // {
-  //   path: '/tactics/:id',
-  //   name: 'Tactics',
-  //   component: () => import('../views/Tactics.vue')
-  // },
+
   {
     path: '/tactics',
     name: 'Tactics',

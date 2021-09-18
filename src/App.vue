@@ -237,6 +237,9 @@ export default {
         }
       });
 
+      //fighters recover
+      this.$store.dispatch('setRoster', engine.recoverFighters(this.roster));
+
       this.checkIfMatchday();
 
       if (didYouSimulateAnyMatches && !this.isMatchday) {
@@ -340,7 +343,7 @@ export default {
       let tactic = new classes.Tactic(clubId);
 
       tactic.instructions = {
-        all: {
+        general: {
           mentality: Math.floor(Math.floor(Math.random() * 3) + 1),
           risk: Math.floor(Math.floor(Math.random() * 3) + 1),
           gamesmanship: Math.floor(Math.floor(Math.random() * 3) + 1),
@@ -441,6 +444,9 @@ a {
 }
 .font-shadow {
   text-shadow: black 1px 1px;
+}
+.font-shadow-narrow {
+  text-shadow: black 0.3px 0.3px;
 }
 
 ::-webkit-scrollbar {

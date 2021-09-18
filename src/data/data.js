@@ -3,13 +3,14 @@ import clubs from './clubs';
 import commission from './judges';
 import staff from './coaches';
 import ui from './ui.js';
+import countryCodes from './countryCodes.js';
 
 export default {
   fighters,
   clubs,
   commission,
   staff,
-
+  countryCodes,
   tabs: ui.tabs,
   headers: ui.headers,
   routes: ui.routes,

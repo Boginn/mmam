@@ -1,5 +1,6 @@
 import classes from '../data/classes.js';
 import data from '../data/data.js';
+import matchEngine from './matchEngine.js';
 
 export default {
   returnPlayerClub: (league, selectedClubId) => {
@@ -23,12 +24,63 @@ export default {
     // return this.splitDate;
     return `${dateArray[0]} ${dateArray[2]} ${dateArray[1]} ${dateArray[3]}`;
   },
+  countryCode(country) {
+    return data.countryCodes.filter((element) => element.country == country);
+  },
+  typeOfFighter(fighter) {
+    const { type } = fighter;
+    console.log(type);
+    let result;
+    if (Math.abs(type.grappler - type.striker) > 30) {
+      if (type.grappler > type.striker) {
+        result = 'Grappler';
+      } else if (type.grappler < type.striker) {
+        result = 'Striker';
+      }
+    } else {
+      result = 'Grappler/Striker';
+    }
+    return result;
+  },
 
   //date
   dateByDay(day) {
     let res = new Date(data.date);
     res.setDate(res.getDate() + day - 1);
     return res;
+  },
+
+  //game
+  recoverFighters(roster) {
+    const newRoster = [];
+    for (let i = 0; i < roster.length; i++) {
+      const element = roster[i];
+
+      const bonus = matchEngine.getRollWithMod(element.fitness / 5) / 2;
+
+      if (element.condition == 0 && element.fitness == 0) {
+        element.condition = element.condition + 10 + bonus;
+        element.fitness = element.fitness + 10 + bonus;
+      } else if (element.condition < 100 && element.fitness > 0) {
+        element.condition = element.condition + 10 + bonus;
+        element.fitness = element.fitness - 5;
+      } else {
+        element.fitness = element.fitness + 10 + bonus;
+      }
+
+      if (element.condition > 100) {
+        element.condition = 100;
+      } else if (element.condition < 0) {
+        element.condition = 0;
+      }
+      if (element.fitness > 100) {
+        element.fitness = 100;
+      } else if (element.fitness < 0) {
+        element.fitness = 0;
+      }
+      newRoster.push(element);
+    }
+    return newRoster;
   },
 
   //seeds

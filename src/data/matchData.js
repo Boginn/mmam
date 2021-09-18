@@ -132,13 +132,12 @@ export default {
     combo: [
       { text: 'One Two', value: 'oneTwo' },
       { text: 'One Two Three', value: 'oneTwoThree' },
-      { text: 'Various Combo', value: 'various' },
+      { text: 'Various Combo', value: 'variousCombo' },
     ],
     single: [
-      { text: 'Haymaker', value: 'haymaker' },
-      { text: 'Precision', value: 'precision' },
-      { text: 'Timing', value: 'timing' },
-      { text: 'Snipe', value: 'snipe' },
+      { text: 'Haymaker', value: 'haymakerStrike' },
+      { text: 'Precision', value: 'precisionStrike' },
+      { text: 'Timed', value: 'timedStrike' },
     ],
 
     feel: [
