@@ -4,37 +4,40 @@
 // TODOS
   
   
-
+// BUGS
+    didnt get the judgse card after a decision (normally, not defaultmode)
 
 
 
 
 // SPECIFIC
+functionality:
+    pressing back things
+        delete the match from the schedule? already done maybe
+        if you go to a match that's been played you go to '/'
+        to look at that match, see it in the archives
 tweaks:
     physical.explosiveness added, adjust singleLeg!
 implement:
-    archive match (maybed about done, will find out later)
     screen to pick team to manage
     news item, youve been hired
-    just manually schedule something
-    make more teams
-    make more roster
-    make schedule show all your matches only
-    have another schedule available from league view 
-    that shows all matches in the league
     spruce up squad view, add condition
-    spruce up unit component
-    have a look at cm0102
+
+    implement an actual date or at least spoof it
 
 
-
+fixtures:
+    get a fixtures screen up 1 day before matchday
+    or npc matches
+    after a match, go to that screen and show results
 
 match:
-    being able to change tactics in a match
-    have seperate tactics for each ring
-    momentum triggers
+
+
+    momentum triggers -- finishing someone gives momentum hm only if in center ring
     judges need to get activity numbers
     write actions
+
 
 
 

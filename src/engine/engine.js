@@ -10,6 +10,25 @@ export default {
       }
     });
     return playerClub;
+  }, // not used i think
+
+  //formatting
+  firstName(fighter) {
+    return fighter.personal.name.split(' ')[0];
+  },
+  lastName(fighter) {
+    return fighter.personal.name.split(' ')[1];
+  },
+  arrangeDate(dateArray) {
+    // return this.splitDate;
+    return `${dateArray[0]} ${dateArray[2]} ${dateArray[1]} ${dateArray[3]}`;
+  },
+
+  //date
+  dateByDay(day) {
+    let res = new Date(data.date);
+    res.setDate(res.getDate() + day - 1);
+    return res;
   },
 
   //seeds
@@ -57,7 +76,7 @@ export default {
     schedule.push(new classes.Match([league[3].id, league[4].id], date));
     // week 2
     date += 6;
-    schedule.push(new classes.Match([league[0].id, league[6].id], date));
+    schedule.push(new classes.Match([league[6].id, league[0].id], date));
     schedule.push(new classes.Match([league[1].id, league[7].id], date));
     date += 1;
     schedule.push(new classes.Match([league[2].id, league[3].id], date));
@@ -73,7 +92,8 @@ export default {
     schedule.push(new classes.Match([league[5].id, league[9].id], date));
     // week 4
     date += 6;
-    schedule.push(new classes.Match([league[0].id, league[8].id], date));
+    schedule.push(new classes.Match([league[8].id, league[0].id], date));
+
     schedule.push(new classes.Match([league[1].id, league[9].id], date));
     date += 1;
     schedule.push(new classes.Match([league[2].id, league[5].id], date));
@@ -91,7 +111,8 @@ export default {
     schedule.push(new classes.Match([league[7].id, league[9].id], date));
     date += 1;
     schedule.push(new classes.Match([league[6].id, league[8].id], date));
-    schedule.push(new classes.Match([league[0].id, league[2].id], date));
+    schedule.push(new classes.Match([league[2].id, league[0].id], date));
+
     // week 7
     date += 6;
     schedule.push(new classes.Match([league[4].id, league[8].id], date));
@@ -109,7 +130,7 @@ export default {
     schedule.push(new classes.Match([league[6].id, league[7].id], date));
     // week 9
     date += 6;
-    schedule.push(new classes.Match([league[0].id, league[3].id], date));
+    schedule.push(new classes.Match([league[3].id, league[0].id], date));
     schedule.push(new classes.Match([league[1].id, league[5].id], date));
     schedule.push(new classes.Match([league[4].id, league[9].id], date));
     date += 1;
@@ -133,7 +154,7 @@ export default {
     schedule.push(new classes.Match([league[4].id, league[3].id], date));
     // week 12
     date += 6;
-    schedule.push(new classes.Match([league[6].id, league[0].id], date));
+    schedule.push(new classes.Match([league[0].id, league[6].id], date));
     schedule.push(new classes.Match([league[7].id, league[1].id], date));
     date += 1;
     schedule.push(new classes.Match([league[3].id, league[2].id], date));
@@ -149,7 +170,7 @@ export default {
     schedule.push(new classes.Match([league[9].id, league[5].id], date));
     // week 14
     date += 6;
-    schedule.push(new classes.Match([league[8].id, league[0].id], date));
+    schedule.push(new classes.Match([league[0].id, league[8].id], date));
     schedule.push(new classes.Match([league[9].id, league[1].id], date));
     date += 1;
     schedule.push(new classes.Match([league[5].id, league[2].id], date));
@@ -165,7 +186,7 @@ export default {
     // week 16
     date += 6;
     schedule.push(new classes.Match([league[6].id, league[1].id], date));
-    schedule.push(new classes.Match([league[2].id, league[0].id], date));
+    schedule.push(new classes.Match([league[0].id, league[2].id], date));
     date += 1;
     schedule.push(new classes.Match([league[8].id, league[2].id], date));
     // week 17
@@ -185,7 +206,7 @@ export default {
     schedule.push(new classes.Match([league[7].id, league[6].id], date));
     // week 19
     date += 6;
-    schedule.push(new classes.Match([league[3].id, league[0].id], date));
+    schedule.push(new classes.Match([league[0].id, league[3].id], date));
     schedule.push(new classes.Match([league[5].id, league[1].id], date));
     date += 1;
     schedule.push(new classes.Match([league[6].id, league[2].id], date));

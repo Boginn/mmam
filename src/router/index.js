@@ -1,55 +1,55 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import Home from '../views/Home.vue';
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: Home,
   },
   {
     path: '/match/:id',
     name: 'Match',
-    component: () => import('../views/Match.vue')
+    component: () => import('../views/Match.vue'),
   },
   {
     path: '/squad/:id',
     name: 'FIGHTER',
-    component: () => import('../components/Unit.vue')
+    component: () => import('../components/Unit.vue'),
   },
 
   {
     path: '/league/:id',
     name: 'CLUB',
-    component: () => import('../components/Club.vue')
+    component: () => import('../components/Club.vue'),
   },
   {
     path: '/squad',
     name: 'Squad',
-    component: () => import('../views/Squad.vue')
+    component: () => import('../views/Squad.vue'),
   },
   {
     path: '/training',
     name: 'Training',
-    component: () => import('../views/Training.vue')
+    component: () => import('../views/Training.vue'),
   },
   {
     path: '/schedule',
     name: 'Schedule',
-    component: () => import('../views/Schedule.vue')
+    component: () => import('../views/Schedule.vue'),
   },
   {
     path: '/news',
     name: 'News',
-    component: () => import('../views/News.vue')
+    component: () => import('../views/News.vue'),
   },
   {
     path: '/staff',
     name: 'Staff',
-    component: () => import('../views/Staff.vue')
+    component: () => import('../views/Staff.vue'),
   },
   // {
   //   path: '/tactics/:id',
@@ -59,19 +59,24 @@ const routes = [
   {
     path: '/tactics',
     name: 'Tactics',
-    component: () => import('../views/Tactics.vue')
+    component: () => import('../views/Tactics.vue'),
   },
   {
     path: '/league',
     name: 'League',
-    component: () => import('../views/League.vue')
+    component: () => import('../views/League.vue'),
   },
-]
+  {
+    path: '/fixtures',
+    name: 'Fixtures',
+    component: () => import('../views/Fixtures.vue'),
+  },
+];
 
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;

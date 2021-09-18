@@ -26,25 +26,41 @@
           </v-card-title>
           <v-row>
             <v-col>
-              <v-card-text
-                class="justify-space-between seventh ma-2"
-                style="width: 75%"
-              >
-                <div class="justify-space-between d-flex">
-                  Body:
-                  <b>{{ fighter.body.durability }}</b>
-                </div>
-                <div class="justify-space-between d-flex">
-                  Head: <b>{{ fighter.head.durability }}</b>
-                </div>
-                <div class="justify-space-between d-flex">
-                  Chin:
-                  <b>{{ fighter.head.chin }}</b>
-                </div>
-                <div class="justify-space-between d-flex">
-                  Power:<b>{{ fighter.body.power }}</b>
-                </div>
-              </v-card-text>
+              <v-col>
+                <v-card-text
+                  class="justify-space-between seventh ma-2"
+                  style="width: 75%"
+                >
+                  <div class="justify-space-between d-flex">
+                    Body:
+                    <b>{{ fighter.body.durability }}</b>
+                  </div>
+                  <div class="justify-space-between d-flex">
+                    Head: <b>{{ fighter.head.durability }}</b>
+                  </div>
+                  <div class="justify-space-between d-flex">
+                    Chin:
+                    <b>{{ fighter.head.chin }}</b>
+                  </div>
+                  <div class="justify-space-between d-flex">
+                    Power:<b>{{ fighter.body.power }}</b>
+                  </div>
+                </v-card-text>
+              </v-col>
+              <v-col>
+                <v-card-text
+                  class="justify-space-between primary ma-2"
+                  style="width: 75%"
+                >
+                  <div class="justify-space-between d-flex">
+                    Condition:
+                    <b>{{ fighter.condition }}</b>
+                  </div>
+                  <div class="justify-space-between d-flex">
+                    Fitness: <b>{{ fighter.fitness }}</b>
+                  </div>
+                </v-card-text>
+              </v-col>
             </v-col>
             <v-col style="flex: 3">
               <v-row style="width: 100%;">
@@ -103,6 +119,7 @@
 </template>
 
 <script>
+import engine from '@/engine/engine.js';
 export default {
   name: 'Unit',
 
@@ -114,10 +131,10 @@ export default {
     },
 
     firstName() {
-      return this.fighter.personal.name.split(' ')[0];
+      return engine.firstName(this.fighter);
     },
     lastName() {
-      return this.fighter.personal.name.split(' ')[1];
+      return engine.lastName(this.fighter);
     },
     mental() {
       let mental = [];
@@ -179,6 +196,10 @@ export default {
         {
           name: 'Stamina',
           value: this.fighter.physical.stamina,
+        },
+        {
+          name: 'Work Rate',
+          value: this.fighter.physical.workRate,
         },
         {
           name: 'Pace',

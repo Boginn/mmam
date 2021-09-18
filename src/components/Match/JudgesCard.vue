@@ -1,82 +1,67 @@
 <template>
-  <v-container  style="position: absolute; top: 5%; left: 25%; zIndex: 10;">
+  <v-container style="position: absolute; top: 5%; left: 25%; zIndex: 10;">
     <v-card width="75%" class="sixth">
       <v-card-title class="justify-space-between eight">
-        <v-icon class="eight--text" large @click="$emit('closed')">mdi-close</v-icon>
-        <span class="font-shadow">Judges' Cards</span> 
-        
+        <v-icon class="eight--text" large @click="$emit('closed')"
+          >mdi-close</v-icon
+        >
+        <span class="font-shadow">Judges' Cards</span>
+
         <v-icon class="close" large @click="$emit('closed')">mdi-close</v-icon>
       </v-card-title>
-<v-row>
-<v-col>
+      <v-row>
+        <v-col>
+          <v-card-text>
+            <div v-for="(decision, jdex) in decisions" :key="jdex">
+              <h4 class="text-center seventh">
+                <div>
+                  {{ rings[jdex] }}
+                </div>
+                <div>
+                  {{ messages[jdex] }}
+                </div>
+                <v-divider class="mb-1 mt-1"></v-divider>
+              </h4>
+              <div v-for="(judge, index) in judges[jdex]" :key="judge.id">
+                <v-row v-if="decision">
+                  <v-col> </v-col>
+                  <v-col class="text-no-wrap judges">
+                    {{ firstName(judge).substring(0, 1) }}.
+                    {{ lastName(judge) }}</v-col
+                  >
 
-      <v-card-text>
-
-        <div v-for="(decision, jdex) in decisions" :key="jdex">
-
-          <h4 class="text-center seventh">
-            <div>
-
-            {{ rings[jdex] }}
+                  <v-col class="pl-1 pr-1 justify-space-between text-end">
+                    <span
+                      v-for="n in $parent.rounds.length"
+                      :key="n"
+                      class="unispace"
+                    >
+                      {{ decision[index][n - 1].home }}-{{
+                        decision[index][n - 1].away
+                      }}
+                    </span>
+                    <span
+                      >: {{ finalPoints(decision[index], index).home }}-{{
+                        finalPoints(decision[index], index).away
+                      }}
+                    </span>
+                  </v-col>
+                  <v-col> </v-col>
+                </v-row>
+              </div>
+              <div class="text-end"></div>
             </div>
-            <div>
-
-             {{messages[jdex]}}
-            </div>
-          <v-divider class="mb-1 mt-1"></v-divider>
-            
-          </h4>
-          <div v-for="(judge, index) in judges[jdex]" :key="judge.id">
-            <v-row v-if="decision">
-              <v-col>
-
-              </v-col>
-              <v-col class="text-no-wrap judges">
-                {{ $parent.firstName(judge).substring(0, 1) }}.
-                {{ $parent.lastName(judge) }}</v-col
-              >
-
-              <v-col class="pl-1 pr-1 justify-space-between text-end">
-                <span
-                  v-for="n in $parent.rounds.length"
-                  :key="n"
-                  class="unispace"
-                >
-                  {{ decision[index][n - 1].home }}-{{
-                    decision[index][n - 1].away
-                  }}
-                </span>
-                <span
-                  >: {{ finalPoints(decision[index], index).home }}-{{
-                    finalPoints(decision[index], index).away
-                  }}
-                </span>
-              </v-col>
-                         <v-col>
-                
-              </v-col>
-            </v-row>
-          </div>
-          <div class="text-end">
-            
-
-          </div>
-        </div>
-
-
-
-      </v-card-text>
-</v-col>
-
-</v-row>
-
+          </v-card-text>
+        </v-col>
+      </v-row>
     </v-card>
   </v-container>
 </template>
 
 <script>
+import engine from '@/engine/engine.js';
 export default {
-  name: "JudgesCard",
+  name: 'JudgesCard',
   components: {},
 
   props: {
@@ -86,9 +71,7 @@ export default {
   },
 
   created() {
-    console.log("asdf");
     this.getJudgesCards();
-    console.log(this.judgesCards);
   },
 
   data: () => ({
@@ -97,14 +80,21 @@ export default {
 
   computed: {
     rings() {
-      return ["Left", "Center", "Right"];
+      return ['Left', 'Center', 'Right'];
     },
     messages() {
-      return [this.cards.leftMsg, this.cards.centerMsg, this.cards.rightMsg]
-    }
+      return [this.cards.leftMsg, this.cards.centerMsg, this.cards.rightMsg];
+    },
   },
 
   methods: {
+    firstName(fighter) {
+      return engine.firstName(fighter);
+    },
+    lastName(fighter) {
+      return engine.lastName(fighter);
+    },
+
     getJudgesCards() {
       for (let i = 0; i < this.decisions.length; i++) {
         const decision = this.decisions[i];
@@ -136,7 +126,6 @@ export default {
         rightMsg: '',
       };
 
-
       this.sortCards(cards.left);
       this.sortCards(cards.center);
       this.sortCards(cards.right);
@@ -144,8 +133,6 @@ export default {
       console.log(cards);
       //save to state
       this.$parent.cards = cards;
-
-      
     },
 
     sortCards(card) {
@@ -167,4 +154,3 @@ export default {
   gast() {},
 };
 </script>
-

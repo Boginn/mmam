@@ -54,7 +54,7 @@
       <v-row align="center">
         <v-col align="center">
           <div
-            class="positions centerPosition "
+            class="positions-match "
             v-bind:class="{
               red: $parent.ringFinishedLeft,
               primary: !$parent.ringFinishedLeft,
@@ -71,7 +71,7 @@
         </v-col>
         <v-col align="center">
           <div
-            class="positions centerPosition "
+            class="positions-match centerPosition"
             v-bind:class="{
               red: $parent.ringFinishedCenter,
               primary: !$parent.ringFinishedCenter,
@@ -88,7 +88,7 @@
         >
         <v-col align="center">
           <div
-            class="positions centerPosition "
+            class="positions-match "
             v-bind:class="{
               red: $parent.ringFinishedRight,
               primary: !$parent.ringFinishedRight,
@@ -160,28 +160,29 @@
 </template>
 
 <script>
+import engine from '@/engine/engine.js';
 export default {
-  name: "Overview",
+  name: 'Overview',
   components: {},
 
   props: {
-        homeTactic: Object,
+    homeTactic: Object,
     awayTactic: Object,
     messages: Array,
   },
 
   computed: {
-        isDeveloper() {
+    isDeveloper() {
       return this.$store.getters.isDeveloper;
     },
   },
 
   methods: {
     firstName(fighter) {
-      return fighter.personal.name.split(" ")[0];
+      return engine.firstName(fighter);
     },
     lastName(fighter) {
-      return fighter.personal.name.split(" ")[1];
+      return engine.lastName(fighter);
     },
     getFighter(id) {
       return this.$store.getters.getFighterById(id);

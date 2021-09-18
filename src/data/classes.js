@@ -104,6 +104,7 @@ export default {
     contract = false;
     fieldable = true;
     fitness = 100;
+    condition = 100;
 
     match = {
       momentum: undefined,
@@ -168,8 +169,7 @@ export default {
     competitions = {
       league: {
         matches: 0,
-        pointsNet: 0,
-        pointsFor: 0,
+        points: 0,
         pointsAgainst: 0,
         form: [],
         finishes: 0,
@@ -199,9 +199,10 @@ export default {
   Tactic: class {
     clubId;
     instructions = {
-      mentality: 0,
-      risk: 0,
-      gamesmanship: 0,
+      general: { mentality: 0, risk: 0, gamesmanship: 0 },
+      left: { mentality: 0, risk: 0, gamesmanship: 0 },
+      center: { mentality: 0, risk: 0, gamesmanship: 0 },
+      right: { mentality: 0, risk: 0, gamesmanship: 0 },
     };
     selection = {
       left: 0,

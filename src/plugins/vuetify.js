@@ -27,8 +27,9 @@ export default new Vuetify({
         accent: '#7391a3',
 
         vuegrey: '#babbc3',
-        error: 'e42315',
+        error: '#e42315',
         success: '#24aa0e',
+        balance: '#172f85',
       },
     },
   },

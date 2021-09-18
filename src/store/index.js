@@ -1,13 +1,17 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import engine from '../engine/engine.js';
+import data from '@/data/data.js';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
     isDeveloper: true,
+    isAdvancingDate: false,
+    isPostMatch: false,
     day: 1,
+    displayDate: new Date(data.date),
 
     league: [],
     roster: [],
@@ -21,16 +25,14 @@ export default new Vuex.Store({
     //match
     isMatchday: false,
     isLive: false,
+    timeoutInterval: data.timeoutInterval,
 
+    //matchData
     currentMatch: undefined,
     matchMessages: [],
     matchMessagesForRings: [[], [], []],
 
-    //matchData
-    timeoutInterval: 1000,
-    score: { home: 0, away: 0 },
-    names: { home: '', away: '' },
-    minute: null,
+    matchData: data.matchData,
 
     //id
     selectedClubId: null,
@@ -40,18 +42,27 @@ export default new Vuex.Store({
     staffId: null,
     clubId: null,
     matchId: null,
+
+    archivedMatchId: data.idCodes.archivedMatch,
   },
   getters: {
+    displayDate(state) {
+      return state.displayDate;
+    },
+
     isDeveloper(state) {
       return state.isDeveloper;
     },
+    isAdvancingDate(state) {
+      return state.isAdvancingDate;
+    },
+    isPostMatch(state) {
+      return state.isPostMatch;
+    },
     //matchData
 
-    score(state) {
-      return state.score;
-    },
-    names(state) {
-      return state.names;
+    matchData(state) {
+      return state.matchData;
     },
 
     matchMessages(state) {
@@ -83,7 +94,19 @@ export default new Vuex.Store({
       return state.day;
     },
     league(state) {
-      return state.league;
+      let sortedLeague = state.league.sort((a, b) =>
+        a.competitions.league.points < b.competitions.league.points
+          ? 1
+          : b.competitions.league.points < a.competitions.league.points
+          ? -1
+          : 0
+      );
+
+      //TODO
+      //if points even then go to aggregate
+      //otherswise use number of finishes
+
+      return sortedLeague;
     },
     roster(state) {
       return state.roster;
@@ -141,6 +164,11 @@ export default new Vuex.Store({
   },
 
   actions: {
+    // game
+    setIsAdvancingDate(context, payload) {
+      context.commit('SET_IS_ADVANCING_DATE', payload);
+    },
+
     //init
     selectClub(context, payload) {
       context.commit('SEL_CLUB', payload);
@@ -186,11 +214,15 @@ export default new Vuex.Store({
     setIsMatchday(context, payload) {
       context.commit('SET_IS_MATCHDAY', payload);
     },
+    setIsPostMatch(context, payload) {
+      context.commit('SET_IS_POST_MATCH', payload);
+    },
 
     continue(context, payload) {
       payload;
       context.commit('PASS_DAY');
     },
+
     setCurrentMatch(context, payload) {
       context.commit('SET_CURRENTMATCH', payload);
     },
@@ -216,6 +248,9 @@ export default new Vuex.Store({
     addClubData(context, payload) {
       context.commit('ADD_CLUB_DATA', payload);
     },
+    addFighterConditionData(context, payload) {
+      context.commit('ADD_FIGHTER_CONDITION_DATA', payload);
+    },
 
     //id
     setFighterId(context, payload) {
@@ -236,6 +271,10 @@ export default new Vuex.Store({
   },
 
   mutations: {
+    //game
+    SET_IS_ADVANCING_DATE(state, payload) {
+      state.isAdvancingDate = payload;
+    },
     //init
     SEL_CLUB(state, payload) {
       state.league.forEach((club) => {
@@ -304,8 +343,14 @@ export default new Vuex.Store({
       state.isMatchday = payload;
     },
 
+    SET_IS_POST_MATCH(state, payload) {
+      state.isPostMatch = payload;
+    },
+
     PASS_DAY(state, payload) {
       state.day++;
+      console.log('passing');
+      state.displayDate.setDate(state.displayDate.getDate() + 1);
       payload;
     },
 
@@ -320,29 +365,80 @@ export default new Vuex.Store({
       });
     },
     SET_TIMEOUT_INTERVAL(state, payload) {
+      console.log(payload);
       state.timeoutInterval = payload;
     },
 
     //matchData
     SET_SCORE(state, payload) {
-      state.score = payload;
+      state.matchData.score = payload;
     },
     SET_NAMES(state, payload) {
-      state.names = payload;
+      state.matchData.names = payload;
     },
 
     //archive
     ADD_MATCH(state, payload) {
       console.log('added match');
       console.log(payload);
+
+      state.archivedMatchId = state.archivedMatchId + 1;
+      const id = state.archivedMatchId;
+      payload = { ...payload, id: id };
       state.matches.push(payload);
     },
+    ADD_FIGHTER_CONDITION_DATA(state, payload) {
+      state.roster.forEach((element) => {
+        payload.forEach((fighter) => {
+          if (element.id == fighter.id) {
+            element.condition = fighter.condition;
+          }
+        });
+      });
+    },
     ADD_CLUB_DATA(state, payload) {
-      state, payload;
-      // check against payload.id
-      // spread unto the club object
-      // make sure to increment, not overwrite
-      // yepyep
+      const { id, competitions } = payload;
+      const { league } = competitions;
+      const getClub = state.league.filter((club) => club.id == id);
+      const club = getClub[0];
+
+      // Array.prototype.unfilter = function(cb) {
+      //   return this.filter(function(a, b, c) {
+      //     return !cb(a, b, c);
+      //   });
+      // };
+
+      //remove the club from the league before addign it again
+      state.league = state.league.filter((club) => club.id != id);
+
+      let matches = club.competitions.league.matches + 1;
+      const points = club.competitions.league.points + league.points;
+      const pointsAgainst =
+        club.competitions.league.pointsAgainst + league.pointsAgainst;
+      let form = club.competitions.league.form;
+      form.push(league.form);
+      const finishes = club.competitions.league.finishes + league.finishes;
+
+      console.log(points);
+      console.log(pointsAgainst);
+      console.log(form);
+      console.log(finishes);
+
+      const result = {
+        ...club,
+        competitions: {
+          league: {
+            matches,
+            points,
+            pointsAgainst,
+            form,
+            finishes,
+          },
+        },
+      };
+      console.log(result);
+
+      state.league.push(result);
     },
 
     //id

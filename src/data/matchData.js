@@ -98,55 +98,57 @@ export default {
     }
   },
 
-
   //engagements and actions
   engage: {
     closeDistance: [
-      { text: "Grapple", value: "grapple" },
-      { text: "Strike", value: "strike", range: "inside" },
+      { text: 'Grapple', value: 'grapple', range: 'inside' },
+      { text: 'Strike', value: 'strike', range: 'inside' },
     ],
-    stayOutside: [{ text: "Strike", value: "strike", range: "outside" }],
+    stayOutside: [
+      { text: 'Grapple', value: 'grapple', range: 'outside' },
+      { text: 'Strike', value: 'strike', range: 'outside' },
+    ],
   },
 
-  disengage: [{ text: "Disengage", value: "disengage" }],
+  disengage: [{ text: 'Disengage', value: 'disengage' }],
 
   grapple: {
     takedown: [
-      { text: "Single Leg", value: "singleLeg" },
-      { text: "Double Leg", value: "doubleLeg" },
-      { text: "Hip Toss", value: "hipToss" },
-      { text: "Trip", value: "trip" },
-      { text: "Throw", value: "throw" },
+      { text: 'Single Leg', value: 'singleLeg' },
+      { text: 'Double Leg', value: 'doubleLeg' },
+      { text: 'Hip Toss', value: 'hipToss' },
+      { text: 'Trip', value: 'trip' },
+      { text: 'Throw', value: 'throw' },
     ],
 
     clinch: [
-      { text: "Dirty boxing", value: "dirtyBoxing" },
-      { text: "Knee", value: "knee" },
-      { text: "Elbow", value: "elbow" },
+      { text: 'Dirty boxing', value: 'dirtyBoxing' },
+      { text: 'Knee', value: 'knee' },
+      { text: 'Elbow', value: 'elbow' },
     ],
   },
 
   strike: {
     combo: [
-      { text: "One Two", value: "oneTwo" },
-      { text: "One Two Three", value: "oneTwoThree" },
-      { text: "Various Combo", value: "various" },
+      { text: 'One Two', value: 'oneTwo' },
+      { text: 'One Two Three', value: 'oneTwoThree' },
+      { text: 'Various Combo', value: 'various' },
     ],
     single: [
-      { text: "Haymaker", value: "haymaker" },
-      { text: "Precision", value: "precision" },
-      { text: "Timing", value: "timing" },
-      { text: "Snipe", value: "snipe" },
+      { text: 'Haymaker', value: 'haymaker' },
+      { text: 'Precision', value: 'precision' },
+      { text: 'Timing', value: 'timing' },
+      { text: 'Snipe', value: 'snipe' },
     ],
 
     feel: [
-      { text: "Poke", value: "poke" },
-      { text: "Counter", value: "counter" },
+      { text: 'Poke', value: 'poke' },
+      { text: 'Counter', value: 'counter' },
     ],
     stall: [
-      { text: "Poke", value: "poke" },
-      { text: "Counter", value: "counter" },
+      { text: 'Poke', value: 'poke' },
+      { text: 'Counter', value: 'counter' },
     ],
-    bait: [{ text: "Counter", value: "counter" }],
+    bait: [{ text: 'Counter', value: 'counter' }],
   },
 };

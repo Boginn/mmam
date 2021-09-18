@@ -13,7 +13,7 @@
           <!-- eslint-disable-next-line -->
           <template v-slot:item.personal.name="{ item }">
             <router-link :to="`/squad/${item.id}`" class="white--text">
-              <div class="grey darken-1 pa-2">
+              <div class="grey darken-3 pa-2">
                 {{ item.personal.name }}
               </div>
             </router-link>
@@ -48,7 +48,7 @@
 
           <!-- eslint-disable-next-line -->
           <template v-slot:header.personal.name="{}">
-            <h1 class="white--text">
+            <h1 class="white--text" style="margin-left: -10px; ">
               {{ club.name }}
             </h1>
           </template>
@@ -63,89 +63,59 @@
           <!-- eslint-disable-next-line -->
           <template v-slot:footer>
             <v-container class="grey darken-1">
-              <v-col>
-                <v-row class="white--text pl-2 mb-1 mt-1 grey darken-2">
-                  Mentality:
-                  <v-spacer></v-spacer>
+              <div class="d-flex">
+                <span class="flex2">
                   <v-btn
                     x-small
-                    class="instructions"
-                    @click="setMentality(3)"
-                    v-bind:class="{ green: tactic.instructions.mentality == 3 }"
-                    >Attack</v-btn
-                  >
-                  <v-btn
-                    x-small
-                    class="instructions"
-                    @click="setMentality(2)"
-                    v-bind:class="{ green: tactic.instructions.mentality == 2 }"
-                    >Defend
-                  </v-btn>
-                  <v-btn
-                    x-small
-                    class="instructions"
-                    @click="setMentality(1)"
-                    v-bind:class="{ green: tactic.instructions.mentality == 1 }"
-                    >Contain
-                  </v-btn>
-                </v-row>
-                <v-row class="white--text pl-2 mb-1 mt-1 grey darken-2">
-                  Risk:
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    x-small
-                    class="instructions"
-                    @click="setRisk(3)"
-                    v-bind:class="{ green: tactic.instructions.risk == 3 }"
-                    >Reckless</v-btn
-                  >
-                  <v-btn
-                    x-small
-                    class="instructions"
-                    @click="setRisk(2)"
-                    v-bind:class="{ green: tactic.instructions.risk == 2 }"
-                    >Normal
-                  </v-btn>
-                  <v-btn
-                    x-small
-                    class="instructions"
-                    @click="setRisk(1)"
-                    v-bind:class="{ green: tactic.instructions.risk == 1 }"
-                    >Safe
-                  </v-btn>
-                </v-row>
-                <v-row class="white--text pl-2 mb-1 mt-1 grey darken-2">
-                  Gamesmanship:
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    x-small
-                    class="instructions"
-                    @click="setGamesmanship(3)"
+                    outlined
+                    @click="selectTab(0)"
                     v-bind:class="{
-                      green: tactic.instructions.gamesmanship == 3,
+                      black: tabs[0].value,
                     }"
-                    >Dirty</v-btn
+                    >{{ tabs[0].name }}</v-btn
                   >
+                </span>
+                <span v-for="(tab, index) in tabs" :key="index">
                   <v-btn
+                    v-if="!index == 0"
                     x-small
-                    class="instructions"
-                    @click="setGamesmanship(2)"
+                    outlined
+                    @click="selectTab(index)"
                     v-bind:class="{
-                      green: tactic.instructions.gamesmanship == 2,
+                      black: tabs[index].value,
                     }"
-                    >Neutral
-                  </v-btn>
-                  <v-btn
-                    x-small
-                    class="instructions"
-                    @click="setGamesmanship(1)"
-                    v-bind:class="{
-                      green: tactic.instructions.gamesmanship == 1,
-                    }"
-                    >Clean
-                  </v-btn>
-                </v-row>
-              </v-col>
+                    >{{ tab.name }}</v-btn
+                  >
+                </span>
+              </div>
+              <Instructions
+                v-if="isTabGeneral"
+                @setMentality="setMentality($event)"
+                @setRisk="setRisk($event)"
+                @setGamesmanship="setGamesmanship($event)"
+                :instructions="tactic.instructions.general"
+              />
+              <Instructions
+                v-if="isTabLeft"
+                @setMentality="setMentality($event)"
+                @setRisk="setRisk($event)"
+                @setGamesmanship="setGamesmanship($event)"
+                :instructions="tactic.instructions.left"
+              />
+              <Instructions
+                v-if="isTabCenter"
+                @setMentality="setMentality($event)"
+                @setRisk="setRisk($event)"
+                @setGamesmanship="setGamesmanship($event)"
+                :instructions="tactic.instructions.center"
+              />
+              <Instructions
+                v-if="isTabRight"
+                @setMentality="setMentality($event)"
+                @setRisk="setRisk($event)"
+                @setGamesmanship="setGamesmanship($event)"
+                :instructions="tactic.instructions.right"
+              />
             </v-container>
           </template>
         </v-data-table>
@@ -153,26 +123,47 @@
       <v-col>
         <v-col>
           <v-card elevation="10" class="grey darken-1">
-            <v-row align="center">
+            <v-row align="center" class="pt-16 pb-16">
               <v-col align="center">
                 <div class="positions ">
-                  <v-col align="center pt-10"> </v-col>
+                  <v-col align="center pt-10"> L</v-col>
                 </div>
               </v-col>
               <v-col align="center">
                 <div class="positions ">
-                  <v-col align="center"> </v-col></div
-              ></v-col>
+                  <v-col align="center"> </v-col>R
+                </div></v-col
+              >
               <v-col align="center">
-                <div class="positions centesition ">
-                  <v-col align="center"> </v-col></div
-              ></v-col>
+                <div class="positions centerPosition">
+                  <v-col align="center"> </v-col>C
+                </div></v-col
+              >
             </v-row>
             <v-row>
               <v-col align="center">
-                {{ mentality }}
-                {{ risk }}
-                {{ gamesmanship }}
+                <v-card class="grey darken-3">
+                  <v-card-text class="d-flex justify-space-between font-shadow">
+                    <div class="shown-instructions">
+                      <div>
+                        Mentality:
+                      </div>
+                      <b> {{ mentality }}</b>
+                    </div>
+                    <div class="shown-instructions">
+                      <div>
+                        Risk:
+                      </div>
+                      <b> {{ risk }}</b>
+                    </div>
+                    <div class="shown-instructions">
+                      <div>
+                        Gamesmanship:
+                      </div>
+                      <b> {{ gamesmanship }}</b>
+                    </div>
+                  </v-card-text>
+                </v-card>
               </v-col>
             </v-row>
             <v-row align="center" class="ma-0 pt-0">
@@ -204,7 +195,7 @@
                   <div>
                     <v-progress-linear
                       height="15"
-                      v-model="getFighter(fighter).match.condition"
+                      v-model="getFighter(fighter).condition"
                       :buffer-value="100"
                       color="green"
                       background-color="red"
@@ -254,7 +245,9 @@ export default {
     this.tactic = this.club.tactic ? this.club.tactic : new classes.Tactic();
   },
 
-  components: {},
+  components: {
+    Instructions: () => import('@/components/Instructions.vue'),
+  },
 
   computed: {
     headers() {
@@ -272,6 +265,21 @@ export default {
     playerClubId() {
       return this.$store.getters.selectedClubId;
     },
+
+    //ui
+    isTabGeneral() {
+      return this.tabs[0].value;
+    },
+    isTabLeft() {
+      return this.tabs[1].value;
+    },
+    isTabCenter() {
+      return this.tabs[2].value;
+    },
+    isTabRight() {
+      return this.tabs[3].value;
+    },
+
     selection() {
       let selection = [];
       selection.push(this.tactic.selection.left);
@@ -290,43 +298,56 @@ export default {
     },
 
     mentality() {
+      const { instructions } = this.tactic;
+      const { general, left, center, right } = instructions;
+
+      general, left, center, right;
       var string;
-      if (this.tactic.instructions.mentality == 1) {
+      if (instructions.general.mentality == 1) {
         string = 'Containing';
-      } else if (this.tactic.instructions.mentality == 2) {
+      } else if (instructions.general.mentality == 2) {
         string = 'Defending';
-      } else if (this.tactic.instructions.mentality == 3) {
+      } else if (instructions.general.mentality == 3) {
         string = 'Attacking';
       }
       return string;
     },
     risk() {
+      const { instructions } = this.tactic;
+      const { general, left, center, right } = instructions;
+      general, left, center, right;
       var string;
-      if (this.tactic.instructions.risk == 1) {
+      if (instructions.general.risk == 1) {
         string = 'Safe';
-      } else if (this.tactic.instructions.risk == 2) {
+      } else if (instructions.general.risk == 2) {
         string = 'Normal';
-      } else if (this.tactic.instructions.risk == 3) {
+      } else if (instructions.general.risk == 3) {
         string = 'Reckless';
       }
       return string;
     },
     gamesmanship() {
+      const { instructions } = this.tactic;
+      const { general, left, center, right } = instructions;
+      general, left, center, right;
       var string;
-      if (this.tactic.instructions.gamesmanship == 1) {
+      if (instructions.general.gamesmanship == 1) {
         string = 'Clean';
-      } else if (this.tactic.instructions.gamesmanship == 2) {
+      } else if (instructions.general.gamesmanship == 2) {
         string = 'Neutral';
-      } else if (this.tactic.instructions.gamesmanship == 3) {
+      } else if (instructions.general.gamesmanship == 3) {
         string = 'Dirty';
       }
       return string;
     },
     checkTactic() {
+      const { instructions } = this.tactic;
+      const { general, left, center, right } = instructions;
+      general, left, center, right;
       if (
-        this.tactic.instructions.mentality &&
-        this.tactic.instructions.risk &&
-        this.tactic.instructions.gamesmanship &&
+        instructions.general.mentality &&
+        instructions.general.risk &&
+        instructions.general.gamesmanship &&
         this.tactic.selection.left &&
         this.tactic.selection.center &&
         this.tactic.selection.right
@@ -341,9 +362,13 @@ export default {
     id: undefined,
     club: undefined,
     tactic: undefined,
+
+    //ui
+    tabs: data.tabs.tactics,
   }),
 
   methods: {
+    //services
     getClub(id) {
       return this.$store.getters.getClubById(id);
     },
@@ -353,6 +378,14 @@ export default {
 
     savedTactic() {
       return this.$store.getters.tactic;
+    },
+
+    //ui
+    selectTab(selection) {
+      for (let i = 0; i < this.tabs.length; i++) {
+        this.tabs[i].value = false;
+      }
+      this.tabs[selection].value = true;
     },
 
     setSelected() {
@@ -372,6 +405,7 @@ export default {
         right: this.club.squad[2],
       };
       this.$store.dispatch('setSelectedTactic', this.tactic);
+      this.goToMatch();
     },
     clearSelection() {
       this.tactic.selection = {
@@ -440,15 +474,41 @@ export default {
     },
 
     setMentality(selection) {
-      this.tactic.instructions.mentality = selection;
+      if (this.isTabGeneral) {
+        this.tactic.instructions.general.mentality = selection;
+      } else if (this.isTabLeft) {
+        this.tactic.instructions.left.mentality = selection;
+      } else if (this.isTabCenter) {
+        this.tactic.instructions.center.mentality = selection;
+      } else if (this.isTabRight) {
+        this.tactic.instructions.right.mentality = selection;
+      }
+
       this.setSelected(this.tactic);
     },
     setRisk(selection) {
-      this.tactic.instructions.risk = selection;
+      if (this.isTabGeneral) {
+        this.tactic.instructions.general.risk = selection;
+      } else if (this.isTabLeft) {
+        this.tactic.instructions.left.risk = selection;
+      } else if (this.isTabCenter) {
+        this.tactic.instructions.center.risk = selection;
+      } else if (this.isTabRight) {
+        this.tactic.instructions.right.risk = selection;
+      }
+
       this.setSelected(this.tactic);
     },
     setGamesmanship(selection) {
-      this.tactic.instructions.gamesmanship = selection;
+      if (this.isTabGeneral) {
+        this.tactic.instructions.general.gamesmanship = selection;
+      } else if (this.isTabLeft) {
+        this.tactic.instructions.left.gamesmanship = selection;
+      } else if (this.isTabCenter) {
+        this.tactic.instructions.center.gamesmanship = selection;
+      } else if (this.isTabRight) {
+        this.tactic.instructions.right.gamesmanship = selection;
+      }
       this.setSelected(this.tactic);
     },
 
@@ -470,10 +530,19 @@ export default {
   width: 75px;
   margin: 1px;
 }
+.toggles {
+  width: 60px;
+  margin: 1px;
+}
+.shown-instructions {
+  width: 33%;
+}
 .positions {
-  width: 90px;
-  height: 90px;
-  margin: 25px;
+  width: 135px;
+  height: 135px;
+  margin: -35px;
+  margin-left: 25px;
+  margin-right: 25px;
 
   background-color: rgb(80, 76, 21);
   border-radius: 100%;
