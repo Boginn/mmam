@@ -1,5 +1,7 @@
 <template>
   <v-container>
+    <!-- floating -->
+
     <v-container
       style="position: absolute; top: 10%; right: 5%"
       class="pa-0 ma-0 d-flex justify-end"
@@ -9,16 +11,8 @@
       >
     </v-container>
 
-    <!-- floating -->
-    <!-- <JudgesCard
-      v-if="isDecision && showJudgesCard"
-      :decisions="decisions"
-      :judges="judges"
-      :cards="cards"
-      @closed="showJudgesCard = false"
-    /> -->
-    <!-- floating -->
     <TruePoints :truePoints="truePoints" v-if="isDeveloper" />
+    <!-- /floating -->
 
     <!-- COMMENTARY -->
     <v-row class="mt-0">
@@ -199,6 +193,7 @@ export default {
     isDisabled: false,
     isPaused: false,
     isDecision: false,
+    isScored: false,
 
     //x, y minute rounds
     rounds: [1, 2, 3],
@@ -870,8 +865,11 @@ export default {
       }
     },
     countScore(result) {
-      this.score.home = this.score.home + result.home;
-      this.score.away = this.score.away + result.away;
+      if (!this.isScored) {
+        this.score.home = this.score.home + result.home;
+        this.score.away = this.score.away + result.away;
+        this.isScored = true;
+      }
     },
 
     //main loop

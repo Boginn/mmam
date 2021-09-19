@@ -62,7 +62,7 @@
                         'green--text': item.condition >= 75,
                       }"
                     >
-                      {{ item.fitness }}
+                      {{ item.condition }}
                     </b>
                   </div>
                 </div>

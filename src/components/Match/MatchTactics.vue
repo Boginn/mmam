@@ -187,47 +187,82 @@ export default {
       // this.setSelected(this.tactic);
     },
     setMentalityLeft(selection) {
-      this.tactic.instructions.left.mentality = selection;
+      if (this.tactic.instructions.left.mentality == selection) {
+        this.tactic.instructions.left.mentality = 0;
+      } else {
+        this.tactic.instructions.left.mentality = selection;
+      }
 
       // this.setSelected(this.tactic);
     },
     setRiskLeft(selection) {
-      this.tactic.instructions.left.risk = selection;
-
+      if (this.tactic.instructions.left.risk == selection) {
+        this.tactic.instructions.left.risk = 0;
+      } else {
+        this.tactic.instructions.left.risk = selection;
+      }
       // this.setSelected(this.tactic);
     },
     setGamesmanshipLeft(selection) {
-      this.tactic.instructions.left.gamesmanship = selection;
+      if (this.tactic.instructions.left.gamesmanship == selection) {
+        this.tactic.instructions.left.gamesmanship = 0;
+      } else {
+        this.tactic.instructions.left.gamesmanship = selection;
+      }
 
       // this.setSelected(this.tactic);
     },
     setMentalityCenter(selection) {
-      this.tactic.instructions.center.mentality = selection;
+      if (this.tactic.instructions.center.mentality == selection) {
+        this.tactic.instructions.center.mentality = 0;
+      } else {
+        this.tactic.instructions.center.mentality = selection;
+      }
 
       // this.setSelected(this.tactic);
     },
     setRiskCenter(selection) {
-      this.tactic.instructions.center.risk = selection;
+      if (this.tactic.instructions.center.risk == selection) {
+        this.tactic.instructions.center.risk = 0;
+      } else {
+        this.tactic.instructions.center.risk = selection;
+      }
 
       // this.setSelected(this.tactic);
     },
     setGamesmanshipCenter(selection) {
-      this.tactic.instructions.center.gamesmanship = selection;
+      if (this.tactic.instructions.center.gamesmanship == selection) {
+        this.tactic.instructions.center.gamesmanship = 0;
+      } else {
+        this.tactic.instructions.center.gamesmanship = selection;
+      }
 
       // this.setSelected(this.tactic);
     },
     setMentalityRight(selection) {
-      this.tactic.instructions.right.mentality = selection;
+      if (this.tactic.instructions.right.mentality == selection) {
+        this.tactic.instructions.right.mentality = 0;
+      } else {
+        this.tactic.instructions.right.mentality = selection;
+      }
 
       // this.setSelected(this.tactic);
     },
     setRiskRight(selection) {
-      this.tactic.instructions.right.risk = selection;
+      if (this.tactic.instructions.right.risk == selection) {
+        this.tactic.instructions.right.risk = 0;
+      } else {
+        this.tactic.instructions.right.risk = selection;
+      }
 
       // this.setSelected(this.tactic);
     },
     setGamesmanshipRight(selection) {
-      this.tactic.instructions.right.gamesmanship = selection;
+      if (this.tactic.instructions.right.gamesmanship == selection) {
+        this.tactic.instructions.right.gamesmanship = 0;
+      } else {
+        this.tactic.instructions.right.gamesmanship = selection;
+      }
 
       // this.setSelected(this.tactic);
     },

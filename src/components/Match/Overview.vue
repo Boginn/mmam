@@ -1,5 +1,17 @@
 <template>
   <v-row class="mt-0">
+    <div @click="closeUnitModal">
+      <Modal v-show="isUnitModalVisible">
+        <template v-slot:body>
+          <Unit
+            :fighterId="fighterId"
+            @close="closeUnitModal"
+            v-if="isUnitModalVisible"
+          >
+          </Unit>
+        </template>
+      </Modal>
+    </div>
     <v-card-text>
       <v-row align="center" class="ma-0 pt-0">
         <v-col
@@ -15,12 +27,12 @@
                 getFighter(fighter).personal.name != 'Select'
             "
           >
-            <div>
+            <a @click="showUnitModal(fighter)" class="white--text">
               {{ firstName(getFighter(fighter)) }} '<b>{{
                 getFighter(fighter).nickname
               }}</b
               >' {{ lastName(getFighter(fighter)) }}
-            </div>
+            </a>
 
             <div v-if="isDeveloper">
               e:
@@ -127,12 +139,12 @@
                 background-color="red"
               ></v-progress-linear>
             </div>
-            <div>
+            <a @click="showUnitModal(fighter)" class="white--text">
               {{ firstName(getFighter(fighter)) }} '<b>{{
                 getFighter(fighter).nickname
               }}</b
               >' {{ lastName(getFighter(fighter)) }}
-            </div>
+            </a>
 
             <div v-if="isDeveloper">
               e:
@@ -163,7 +175,10 @@
 import engine from '@/engine/engine.js';
 export default {
   name: 'Overview',
-  components: {},
+  components: {
+    Unit: () => import('@/components/Unit.vue'),
+    Modal: () => import('@/components/Modal.vue'),
+  },
 
   props: {
     homeTactic: Object,
@@ -176,6 +191,10 @@ export default {
       return this.$store.getters.isDeveloper;
     },
   },
+  data: () => ({
+    isUnitModalVisible: false,
+    fighterId: 9001,
+  }),
 
   methods: {
     firstName(fighter) {
@@ -186,6 +205,15 @@ export default {
     },
     getFighter(id) {
       return this.$store.getters.getFighterById(id);
+    },
+
+    //ui
+    showUnitModal(fighter) {
+      this.fighterId = fighter;
+      this.isUnitModalVisible = true;
+    },
+    closeUnitModal() {
+      this.isUnitModalVisible = false;
     },
   },
 };

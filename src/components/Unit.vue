@@ -10,9 +10,7 @@
               }})</span
             >
 
-            <v-icon class="close" large @click="$router.go(-1)"
-              >mdi-close</v-icon
-            >
+            <v-icon class="close" large @click="handleClose">mdi-close</v-icon>
           </v-card-title>
           <v-card-title class="justify-space-between ">
             <v-chip class="sixth darken-1 "
@@ -130,16 +128,29 @@
 
 <script>
 import engine from '@/engine/engine.js';
+import data from '@/data/data.js';
 export default {
   name: 'Unit',
 
-  props: {},
+  props: {
+    fighterId: Number,
+  },
+
+  // watch: {
+  //   fighterId: () => {
+  //     console.log('id change');
+  //   },
+  // },
+
+  created() {
+    const id = this.isFromRoute ? this.$route.params.id : this.fighterId;
+    this.fighter = this.$store.getters.getFighterById(id);
+  },
 
   computed: {
-    fighter() {
-      return this.$store.getters.getFighterById(this.$route.params.id);
+    isFromRoute() {
+      return this.$route.params.id < data.idCodes.fighter + 1000 ? true : false;
     },
-
     firstName() {
       return engine.firstName(this.fighter);
     },
@@ -271,11 +282,20 @@ export default {
     },
   },
 
-  data: () => ({}),
+  data: () => ({
+    fighter: undefined,
+  }),
 
   methods: {
     typeOfFighter(fighter) {
       return engine.typeOfFighter(fighter);
+    },
+    handleClose() {
+      if (this.isFromRoute) {
+        this.$router.go(-1);
+      } else {
+        this.$emit('close');
+      }
     },
   },
 };
