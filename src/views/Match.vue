@@ -1280,13 +1280,6 @@ export default {
   font-size: 8pt;
 }
 
-.ring-message {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  max-height: 120px;
-  font-size: 9pt;
-}
-
 .judges {
   text-overflow: ellipsis;
   overflow: hidden;
@@ -1312,14 +1305,5 @@ export default {
 }
 .activeRound {
   background-color: #ccc;
-}
-
-.positions-match {
-  width: 130px;
-  height: 130px;
-  margin: 25px;
-
-  background-color: rgb(80, 76, 21);
-  border-radius: 100%;
 }
 </style>

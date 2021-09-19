@@ -22,6 +22,24 @@
       <ButtonsSmall :routes="routes" :disabled="isMatchday" />
       <v-col class="text-end">
         <v-btn
+          v-if="!isMatchday"
+          outlined
+          small
+          class="mr-3 "
+          :disabled="isMatchday || isAdvancingDate"
+          @click="$router.go(-1)"
+          ><span> &larr;</span>
+        </v-btn>
+        <v-btn
+          v-if="!isMatchday"
+          outlined
+          small
+          class="mr-3 "
+          :disabled="isMatchday || isAdvancingDate"
+          @click="$router.go(1)"
+          ><span> &rarr;</span>
+        </v-btn>
+        <v-btn
           class="green darken-3"
           :disabled="isMatchday || isAdvancingDate"
           @click="this.continue"
@@ -71,6 +89,9 @@ export default {
       this.setLeague(this.selectedLeague);
       this.setCommission();
       this.setStaff();
+
+      //user input, select name, select club
+      this.$store.dispatch('setManagerName', this.selectedName);
       this.selectClub();
 
       engine.seedRosterToTeams(this.league, this.roster); // temp
@@ -84,6 +105,7 @@ export default {
 
   data: () => ({
     selectedClubId: 1001,
+    selectedName: 'Finnbogi Jökull Pétursson',
     selectedLeague: data.clubs.england,
     selectedRoster: data.fighters.roster,
     date: undefined,
@@ -97,6 +119,9 @@ export default {
   },
 
   computed: {
+    managerName() {
+      return this.$store.getters.managerName;
+    },
     isDeveloper() {
       return this.$store.getters.isDeveloper;
     },
@@ -205,6 +230,27 @@ export default {
       return this.$store.getters.getFighterById(id);
     },
     selectClub() {
+      const newsItem = data.news.manager.hired[0];
+      let { title, content } = newsItem;
+
+      title = engine.formatNewsItem(
+        title,
+        this.managerName,
+        this.getClub(this.selectedClubId).name,
+        this.displayDate
+      );
+      content = engine.formatNewsItem(
+        content,
+        this.managerName,
+        this.getClub(this.selectedClubId).name,
+        this.displayDate
+      );
+
+      this.$store.dispatch(
+        'addNews',
+        new classes.NewsItem(this.displayDate, title, content)
+      );
+
       this.$store.dispatch('selectClub', this.selectedClubId);
     },
     updateDisplayDate() {
@@ -416,6 +462,37 @@ export default {
       this.$store.dispatch(
         'setMatchId',
         this.idCodes.match + this.schedule.length
+      );
+
+      const newsItem = data.news.schedule.set[0];
+      let { title, content } = newsItem;
+
+      title = engine.formatNewsItem(
+        title,
+        this.managerName,
+        this.getClub(this.selectedClubId).name,
+        engine.arrangeDate(
+          engine
+            .dateByDay(5)
+            .toString()
+            .split(' ')
+        )
+      );
+      content = engine.formatNewsItem(
+        content,
+        this.managerName,
+        this.getClub(this.selectedClubId).name,
+        engine.arrangeDate(
+          engine
+            .dateByDay(5)
+            .toString()
+            .split(' ')
+        )
+      );
+
+      this.$store.dispatch(
+        'addNews',
+        new classes.NewsItem(this.displayDate, title, content)
       );
     },
 

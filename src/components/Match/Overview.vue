@@ -72,7 +72,7 @@
               primary: !$parent.ringFinishedLeft,
             }"
           >
-            <v-row>
+            <v-row class="ring-message-row">
               <v-col class="pa-7 pt-6 white--text ring-message">
                 <span v-if="!$parent.ringFinishedLeft">
                   {{ messages[0].slice().reverse()[0] }}</span
@@ -89,7 +89,7 @@
               primary: !$parent.ringFinishedCenter,
             }"
           >
-            <v-row>
+            <v-row class="ring-message-row">
               <v-col class="pa-7 pt-6 white--text ring-message">
                 <span v-if="!$parent.ringFinishedCenter">
                   {{ messages[1].slice().reverse()[0] }}</span
@@ -106,7 +106,7 @@
               primary: !$parent.ringFinishedRight,
             }"
           >
-            <v-row>
+            <v-row class="ring-message-row">
               <v-col class="pa-7 pt-6 white--text ring-message">
                 <span v-if="!$parent.ringFinishedRight">
                   {{ messages[2].slice().reverse()[0] }}</span
@@ -218,3 +218,30 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.positions-match {
+  width: 170px;
+  height: 170px;
+  /* margin: -35px;
+  margin-left: 25px;
+  margin-right: 25px;
+  padding-top: 10px; */
+  margin: 25px;
+
+  background-color: rgb(80, 76, 21);
+  border-radius: 100%;
+}
+
+.ring-message {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-height: 170px;
+  font-size: 13pt;
+}
+.ring-message-row {
+  display: flex;
+  align-items: center;
+  height: 170px;
+}
+</style>

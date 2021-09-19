@@ -18,6 +18,9 @@ export default new Vuex.Store({
     commission: [],
     staff: [],
 
+    news: [],
+    lastSelectedNewsItem: null,
+
     schedule: [],
 
     matches: [],
@@ -34,9 +37,11 @@ export default new Vuex.Store({
 
     matchData: data.matchData,
 
-    //id
+    //user
     selectedClubId: null,
-
+    managerName: null,
+    //id
+    newsId: data.idCodes.news,
     fighterId: null,
     commissionId: null,
     staffId: null,
@@ -46,6 +51,9 @@ export default new Vuex.Store({
     archivedMatchId: data.idCodes.archivedMatch,
   },
   getters: {
+    managerName(state) {
+      return state.managerName;
+    },
     displayDate(state) {
       return state.displayDate;
     },
@@ -127,6 +135,12 @@ export default new Vuex.Store({
     //archive
     matches(state) {
       return state.matches;
+    },
+    news(state) {
+      return state.news;
+    },
+    lastSelectedNewsItem(state) {
+      return state.lastSelectedNewsItem;
     },
 
     //id
@@ -245,14 +259,26 @@ export default new Vuex.Store({
     addMatch(context, payload) {
       context.commit('ADD_MATCH', payload);
     },
+    markAsRead(context, payload) {
+      context.commit('MARK_AS_READ', payload);
+    },
     addClubData(context, payload) {
       context.commit('ADD_CLUB_DATA', payload);
     },
     addFighterData(context, payload) {
       context.commit('ADD_FIGHTER_DATA', payload);
     },
+    addNews(context, payload) {
+      context.commit('ADD_NEWS', payload);
+    },
+    setLastSelectedNewsItem(context, payload) {
+      context.commit('SET_LAST_SELECTED_NEWS_ITEM', payload);
+    },
 
     //id
+    setManagerName(context, payload) {
+      context.commit('SET_MANAGER_NAME', payload);
+    },
     setFighterId(context, payload) {
       context.commit('SET_FIGHTER_ID', payload);
     },
@@ -378,6 +404,24 @@ export default new Vuex.Store({
     },
 
     //archive
+    ADD_NEWS(state, payload) {
+      state.newsId++;
+      payload = { ...payload, id: state.newsId };
+      if (!state.news.length) {
+        payload = { ...payload, read: true };
+      }
+      state.news.push(payload);
+    },
+    SET_LAST_SELECTED_NEWS_ITEM(state, payload) {
+      state.lastSelectedNewsItem = payload;
+    },
+    MARK_AS_READ(state, payload) {
+      state.news.forEach((element) => {
+        if (element.id == payload.id) {
+          element.read = true;
+        }
+      });
+    },
     ADD_MATCH(state, payload) {
       console.log('added match');
       console.log(payload);
@@ -450,6 +494,9 @@ export default new Vuex.Store({
     },
 
     //id
+    SET_MANAGER_NAME(state, payload) {
+      state.managerName = payload;
+    },
     SET_FIGHTER_ID(state, payload) {
       state.fighterId = payload;
     },

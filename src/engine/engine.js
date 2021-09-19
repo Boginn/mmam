@@ -21,8 +21,13 @@ export default {
     return fighter.personal.name.split(' ')[1];
   },
   arrangeDate(dateArray) {
-    // return this.splitDate;
     return `${dateArray[0]} ${dateArray[2]} ${dateArray[1]} ${dateArray[3]}`;
+  },
+  formatNewsItem(item, manager, club, date) {
+    item = item.split('$M').join(manager);
+    item = item.split('$C').join(club);
+    item = item.split('$D').join(date);
+    return item;
   },
   countryCode(country) {
     return data.countryCodes.filter((element) => element.country == country);
