@@ -17,4 +17,13 @@ export default {
       },
     ],
   },
+  training: {
+    complete: [
+      {
+        title: 'Training Report',
+        content: 'Training for the week is complete.',
+        other: ["The squad's fitness and morale is great."],
+      },
+    ],
+  },
 };

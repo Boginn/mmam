@@ -12,14 +12,18 @@
 
             <v-icon class="close" large @click="handleClose">mdi-close</v-icon>
           </v-card-title>
-          <v-card-title class="justify-space-between ">
-            <v-chip class="sixth darken-1 "
+          <v-card-title>
+            <v-chip class="sixth darken-1 ma-1"
               >Height:<b> {{ fighter.personal.height }}</b
               >cm</v-chip
             >
             <v-chip class="sixth darken-1 ">
-              Nationality:
-              <b> {{ fighter.personal.nationality }}</b>
+              <img
+                :src="imageSource(fighter)"
+                width="16"
+                height="12"
+                :alt="fighter.personal.nationality"
+              />
             </v-chip>
           </v-card-title>
           <v-row>
@@ -296,6 +300,9 @@ export default {
       } else {
         this.$emit('close');
       }
+    },
+    imageSource(item) {
+      return engine.countryCode(item.personal.nationality);
     },
   },
 };

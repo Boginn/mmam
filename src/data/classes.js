@@ -182,6 +182,9 @@ export default {
     reputation;
     squad = [];
     tactic;
+    training = {
+      schedule: [],
+    };
     competitions = {
       league: {
         matches: 0,

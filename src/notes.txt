@@ -5,9 +5,7 @@
   
   
 // BUGS
-    didnt get the judgse card after a decision (normally, not defaultmode)
 
-    seems to only happen when both left and right have been finished
 
 
 
@@ -18,24 +16,39 @@ functionality:
         delete the match from the schedule? already done maybe
         if you go to a match that's been played you go to '/'
         to look at that match, see it in the archives
+
+        you're in a match an press back....
 tweaks:
-    physical.explosiveness added, adjust singleLeg!
+   
 implement:
     screen to pick team to manage
     news item, youve been hired
-    spruce up squad view, add condition
+    
 
+
+fixture:
+    click on 
 
 match:
 
-    after landing a good successfull takedown 
-        give momentum to controling fighter
-        if other fighter gets initiative it is used to get up
-    
 
-    momentum triggers -- finishing someone gives momentum hm only if in center ring
-    judges need to get activity numbers
-    write actions
+
+    click on fighters, get a modal type component of Unit.vue
+
+    ahhhh crucial, give fighters 
+    rating from 3.0-10.0
+    having a good rating in the last five contests
+    indicates good form 
+    form can come into play for initiative perhaps
+
+        after landing a good successfull takedown 
+            give momentum to controling fighter
+            if other fighter gets initiative it is used to get up
+        
+
+        momentum triggers -- finishing someone gives momentum hm only if in center ring
+        judges need to get activity numbers
+        write actions
 
 
 

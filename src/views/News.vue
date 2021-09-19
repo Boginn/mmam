@@ -2,9 +2,9 @@
   <v-container>
     <v-card class="news-inbox-card">
       <v-row>
-        <v-col cols="2">
+        <v-col cols="2" class="divider-border">
           <div
-            class="news-inbox-date balance--text text-center"
+            class="news-inbox-date  balance--text text-center"
             v-for="item in news"
             :key="item.id"
           >
@@ -64,7 +64,19 @@ export default {
       this.selectedItem = this.news.slice().reverse()[0];
     }
   },
+
+  watch: {
+    toggleNextUnread: {
+      handler: function() {
+        this.nextUnread();
+      },
+    },
+  },
+
   computed: {
+    toggleNextUnread() {
+      return this.$store.getters.toggleNextUnread;
+    },
     news() {
       return this.$store.getters.news.slice().reverse();
     },
@@ -84,25 +96,33 @@ export default {
     },
     nextUnread() {
       let nextUnread;
+      let okay = false;
       this.news.forEach((element) => {
         if (!element.read) {
           nextUnread = element;
+          okay = true;
         }
       });
-      this.$store.dispatch('markAsRead', nextUnread);
-      this.selectedItem = nextUnread;
+      if (okay) {
+        this.$store.dispatch('markAsRead', nextUnread);
+        this.selectedItem = nextUnread;
+      }
     },
   },
 };
 </script>
 
 <style scoped>
+.divider-border {
+  border-right: 1px solid white;
+}
 .unread-btn {
   padding-top: 2px;
   padding-bottom: 2px;
   margin-bottom: 10px;
 }
 .news-inbox-card {
+  padding: 10px;
   height: 175px;
   margin-bottom: 10px;
   margin-top: 25px;
@@ -110,9 +130,8 @@ export default {
   overflow-x: hidden;
 }
 .news-inbox-date {
-  margin-left: 20px;
+  margin-left: 3px;
   padding: 1px;
-  padding-left: 5px;
 }
 .news-inbox {
   cursor: pointer;

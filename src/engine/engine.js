@@ -14,6 +14,7 @@ export default {
   }, // not used i think
 
   //formatting
+
   firstName(fighter) {
     return fighter.personal.name.split(' ')[0];
   },
@@ -30,11 +31,14 @@ export default {
     return item;
   },
   countryCode(country) {
-    return data.countryCodes.filter((element) => element.country == country);
+    const c = data.countryCodes.filter(
+      (element) => element.country == country
+    )[0];
+    return `https://flagcdn.com/16x12/${c.code}.png`;
   },
   typeOfFighter(fighter) {
     const { type } = fighter;
-    console.log(type);
+
     let result;
     if (Math.abs(type.grappler - type.striker) > 30) {
       if (type.grappler > type.striker) {
@@ -53,6 +57,11 @@ export default {
     let res = new Date(data.date);
     res.setDate(res.getDate() + day - 1);
     return res;
+  },
+
+  //ui
+  newMessages(array) {
+    return array.filter((item) => !item.read).length;
   },
 
   //game

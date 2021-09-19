@@ -94,11 +94,20 @@ export default {
       this.$store.dispatch('setManagerName', this.selectedName);
       this.selectClub();
 
+      //seeds players to clubs linearly
+      //later will add players to squads permanently
       engine.seedRosterToTeams(this.league, this.roster); // temp
+      //generate a tactic for all the clubs
       this.setTactics();
 
+      //schedule the league, it's currently handmade
       const schedule = engine.seedSchedule(this.league, this.idCodes.match);
+
       this.setSchedule(schedule);
+
+      //generate and training schedule
+      this.setTrainingSchedules();
+
       this.$store.dispatch('setLive', true);
     }
   },
@@ -110,6 +119,7 @@ export default {
     selectedRoster: data.fighters.roster,
     date: undefined,
     displayDate: null,
+    isTrainingDone: 2,
   }),
 
   watch: {
@@ -138,7 +148,6 @@ export default {
     isPostMatch() {
       return this.$store.getters.isPostMatch;
     },
-
     league() {
       return this.$store.getters.league;
     },
@@ -286,6 +295,10 @@ export default {
       //fighters recover
       this.$store.dispatch('setRoster', engine.recoverFighters(this.roster));
 
+      // there is a rest day before and after each matchday
+      // on any training day, check for injuries
+      this.goThroughTraining();
+
       this.checkIfMatchday();
 
       if (didYouSimulateAnyMatches && !this.isMatchday) {
@@ -314,6 +327,42 @@ export default {
       }, interval);
 
       //end day
+    },
+
+    //training
+    goThroughTraining() {
+      for (let i = 0; i < this.league.length; i++) {
+        const club = this.league[i];
+
+        for (let j = 0; j < club.training.schedule.length; j++) {
+          const element = club.training.schedule[j];
+
+          if (element.date == this.day) {
+            //train
+            console.log('training');
+
+            club.training.schedule.splice(
+              club.training.schedule.indexOf(element),
+              club.training.schedule.indexOf(element) + 1
+            );
+
+            if (!this.isTrainingDone) {
+              console.log(this.isTrainingDone);
+              const newsItem = data.news.training.complete[0];
+              let { title, content, other } = newsItem;
+
+              content = `${content} ${other}`;
+              this.isTrainingDone = 2;
+              this.$store.dispatch(
+                'addNews',
+                new classes.NewsItem(this.displayDate, title, content)
+              );
+            } else {
+              this.isTrainingDone--;
+            }
+          }
+        }
+      }
     },
 
     // database
@@ -379,6 +428,18 @@ export default {
     },
 
     //seeding
+    generateTrainingSchedule(schedule) {
+      let trainingSchedule = [];
+      const seasonLength = schedule.slice().reverse()[0].date;
+
+      for (let j = 2; j < seasonLength; j = j + 7) {
+        for (let k = 0; k < 3; k++) {
+          trainingSchedule.push({ value: true, date: j + k });
+        }
+      }
+      return trainingSchedule;
+    },
+
     generateTactic(clubId) {
       let squad = this.getClub(clubId).squad;
 
@@ -427,6 +488,13 @@ export default {
         }
       });
       console.log(this.league);
+    },
+
+    setTrainingSchedules() {
+      this.$store.dispatch(
+        'setTrainingSchedules',
+        this.generateTrainingSchedule(this.schedule)
+      );
     },
 
     setLeague(league) {

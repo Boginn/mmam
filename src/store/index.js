@@ -7,6 +7,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    toggleNextUnread: false,
     isDeveloper: true,
     isAdvancingDate: false,
     isPostMatch: false,
@@ -51,8 +52,9 @@ export default new Vuex.Store({
     archivedMatchId: data.idCodes.archivedMatch,
   },
   getters: {
-    managerName(state) {
-      return state.managerName;
+    //ui
+    toggleNextUnread(state) {
+      return state.toggleNextUnread;
     },
     displayDate(state) {
       return state.displayDate;
@@ -143,6 +145,14 @@ export default new Vuex.Store({
       return state.lastSelectedNewsItem;
     },
 
+    //user
+    managerName(state) {
+      return state.managerName;
+    },
+    selectedClubId(state) {
+      return state.selectedClubId;
+    },
+
     //id
     getFighterById: (state) => (id) => {
       return engine.findFighterById(state.roster, id);
@@ -160,9 +170,6 @@ export default new Vuex.Store({
       return engine.findMatchById(state.schedule, id);
     },
 
-    selectedClubId(state) {
-      return state.selectedClubId;
-    },
     nextFighterId(state) {
       state.fighterId++;
       return state.fighterId;
@@ -178,6 +185,9 @@ export default new Vuex.Store({
   },
 
   actions: {
+    toggleNextUnread(context, payload) {
+      context.commit('TOGGLE_NEXT_UNREAD', payload);
+    },
     // game
     setIsAdvancingDate(context, payload) {
       context.commit('SET_IS_ADVANCING_DATE', payload);
@@ -204,6 +214,9 @@ export default new Vuex.Store({
     },
     setTactics(context, payload) {
       context.commit('SET_TACTICS', payload);
+    },
+    setTrainingSchedules(context, payload) {
+      context.commit('SET_TRAINING_SCHEDULES', payload);
     },
     setLive(context, payload) {
       context.commit('SET_LIVE', payload);
@@ -297,6 +310,10 @@ export default new Vuex.Store({
   },
 
   mutations: {
+    //ui
+    TOGGLE_NEXT_UNREAD(state) {
+      state.toggleNextUnread = !state.toggleNextUnread;
+    },
     //game
     SET_IS_ADVANCING_DATE(state, payload) {
       state.isAdvancingDate = payload;
@@ -337,6 +354,11 @@ export default new Vuex.Store({
         if (club.id == payload.clubId) {
           club.tactic = payload;
         }
+      });
+    },
+    SET_TRAINING_SCHEDULES(state, payload) {
+      state.league.forEach((club) => {
+        club.training.schedule = payload;
       });
     },
     SET_LIVE(state, payload) {

@@ -13,6 +13,7 @@
           :items-per-page="10"
           item-key="name"
           class="elevation-6  ma-5 pa-4 mt-8 fill-width  font-shadow"
+          :hide-default-footer="true"
         >
           <!-- eslint-disable-next-line -->
           <template v-slot:item.personal.name="{ item }">
@@ -131,10 +132,7 @@ export default {
 
   methods: {
     imageSource(item) {
-      const country = engine.countryCode(item.personal.nationality)[0];
-
-      console.log(country);
-      return `https://flagcdn.com/16x12/${country.code}.png`;
+      return engine.countryCode(item.personal.nationality);
     },
     getClub(id) {
       return this.$store.getters.getClubById(id);

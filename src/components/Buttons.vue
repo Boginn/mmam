@@ -20,25 +20,48 @@
           >
             <v-card-title class="d-flex justify-center">
               {{ route.name }}
-              <v-icon x-large class="ml-2"> {{ route.icon }}</v-icon>
+              <span
+                v-if="route.path == 'news' && unreadMessages"
+                class="notification code primary"
+              >
+                {{ unreadMessages }}
+              </span>
+              <v-icon x-large class="ml-2" v-else> {{ route.icon }}</v-icon>
             </v-card-title>
           </router-link>
         </v-card>
       </v-col>
     </v-row>
-
   </v-container>
 </template>
 
 <script>
-
+import engine from '@/engine/engine.js';
 export default {
-  name: "Buttons",
+  name: 'Buttons',
   components: {},
 
-props: {
- routes: Array,
-},
+  props: {
+    routes: Array,
+  },
 
+  computed: {
+    news() {
+      return this.$store.getters.news;
+    },
+    unreadMessages() {
+      return engine.newMessages(this.news);
+    },
+  },
 };
 </script>
+
+<style scoped>
+.notification {
+  padding-left: 10px;
+  padding-right: 10px;
+  margin: 1px;
+  margin-left: 3px;
+  border-radius: 100%;
+}
+</style>
