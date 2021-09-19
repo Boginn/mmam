@@ -193,7 +193,7 @@ export default {
   },
   data: () => ({
     isUnitModalVisible: false,
-    fighterId: 9001,
+    fighterId: null,
   }),
 
   methods: {

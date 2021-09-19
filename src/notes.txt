@@ -30,16 +30,20 @@ fixture:
     click on 
 
 match:
+    go through each check vs check to see disrepancies,
+    MAKE SURE to balance all fighters to 10
 
 
-
-    click on fighters, get a modal type component of Unit.vue
-
+    
     ahhhh crucial, give fighters 
     rating from 3.0-10.0
     having a good rating in the last five contests
     indicates good form 
     form can come into play for initiative perhaps
+
+    how about the form is last 6 or so rounds
+    + number of finishes this season
+    Fighter L W W L L W (5)
 
         after landing a good successfull takedown 
             give momentum to controling fighter

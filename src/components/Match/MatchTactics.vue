@@ -1,5 +1,17 @@
 <template>
   <v-row>
+    <div @click="closeUnitModal">
+      <Modal v-show="isUnitModalVisible">
+        <template v-slot:body>
+          <Unit
+            :fighterId="fighterId"
+            @close="closeUnitModal"
+            v-if="isUnitModalVisible"
+          >
+          </Unit>
+        </template>
+      </Modal>
+    </div>
     <v-card-text>
       <v-container>
         <v-row class="d-flex  ma-0">
@@ -83,12 +95,12 @@
                   getFighter(fighter).personal.name != 'Select'
               "
             >
-              <div>
+              <a @click="showUnitModal(fighter)" class="white--text">
                 {{ firstName(getFighter(fighter)) }} '<b>{{
                   getFighter(fighter).nickname
                 }}</b
                 >' {{ lastName(getFighter(fighter)) }}
-              </div>
+              </a>
 
               <div>
                 <v-progress-linear
@@ -114,6 +126,8 @@ export default {
   name: 'MatchTactics',
   components: {
     Instructions: () => import('@/components/Instructions.vue'),
+    Unit: () => import('@/components/Unit.vue'),
+    Modal: () => import('@/components/Modal.vue'),
   },
 
   props: {
@@ -126,6 +140,8 @@ export default {
   data: () => {
     return {
       tabs: data.tabs.matchTactics,
+      isUnitModalVisible: false,
+      fighterId: null,
     };
   },
 
@@ -160,6 +176,13 @@ export default {
         this.tabs[i].value = false;
       }
       this.tabs[selection].value = true;
+    },
+    showUnitModal(fighter) {
+      this.fighterId = fighter;
+      this.isUnitModalVisible = true;
+    },
+    closeUnitModal() {
+      this.isUnitModalVisible = false;
     },
 
     //formatting

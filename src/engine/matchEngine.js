@@ -406,8 +406,7 @@ export default {
     array.push(this.getRollWithMod(fighter.skill.decisions));
     array.push(this.getRollWithMod(fighter.skill.footwork));
     array.push(this.getRollWithMod(fighter.skill.sharpness));
-    array.push(this.getRollWithMod(fighter.skill.workRate));
-
+    array.push(this.getRollWithMod(fighter.physical.workRate));
     return this.getAverage(array);
   },
   oneTwoThreeSkillCheckDefend(fighter) {
@@ -425,7 +424,7 @@ export default {
     array.push(this.getRollWithMod(fighter.skill.decisions));
     array.push(this.getRollWithMod(fighter.skill.footwork));
     array.push(this.getRollWithMod(fighter.skill.sharpness));
-    array.push(this.getRollWithMod(fighter.skill.workRate));
+    array.push(this.getRollWithMod(fighter.physical.workRate));
     array.push(this.getRollWithMod(fighter.skill.vision));
 
     return this.getAverage(array);
@@ -437,7 +436,7 @@ export default {
     array.push(this.getRollWithMod(fighter.skill.footwork));
     array.push(this.getRollWithMod(fighter.skill.anticipation));
     array.push(this.getRollWithMod(fighter.skill.fluidity));
-    array.push(this.getRollWithMod(fighter.skill.workRate));
+    array.push(this.getRollWithMod(fighter.physical.workRate));
 
     return this.getAverage(array);
   },
@@ -922,7 +921,7 @@ export default {
         outcome.defenderExposed = outcome.defenderExposed + 10;
         outcome.attackerLearned = outcome.attackerLearned + 5;
         outcome.defenderDamage =
-          outcome.defenderDamage + 10 + Math.floor(attacker.body.power) / 10;
+          outcome.defenderDamage + 10 + Math.floor(attacker.body.power / 10);
 
         outcome.significant = true;
         outcome.point = true;
@@ -931,7 +930,7 @@ export default {
         //complete, point, significant
         outcome.defenderExposed = outcome.defenderExposed + 5;
         outcome.defenderDamage =
-          outcome.defenderDamage + 5 + Math.floor(attacker.body.power) / 10;
+          outcome.defenderDamage + 5 + Math.floor(attacker.body.power / 10);
 
         outcome.significant = true;
         outcome.point = true;
@@ -940,7 +939,7 @@ export default {
         //complete, point
         outcome.attackerLearned = outcome.attackerLearned + 5;
         outcome.defenderDamage =
-          outcome.defenderDamage + Math.floor(attacker.body.power) / 10;
+          outcome.defenderDamage + Math.floor(attacker.body.power / 10);
 
         outcome.point = true;
         outcome.msg = `${attacker.nickname} barely lands a ${action.text} on ${defender.nickname}`;
@@ -1010,6 +1009,9 @@ export default {
     let attackSkillMod = this.oneTwoThreeSkillCheckAttack(attacker);
     let defendSkillMod = this.oneTwoThreeSkillCheckDefend(defender);
 
+    console.log(attackSkillMod);
+    console.log(defendSkillMod);
+
     if (
       this.getRollWithMod(attacker.skill.footwork) >=
       this.getRollWithMod(defender.skill.anticipation)
@@ -1046,7 +1048,7 @@ export default {
         outcome.defenderExposed = outcome.defenderExposed + 12;
         outcome.attackerLearned = outcome.attackerLearned + 7;
         outcome.defenderDamage =
-          outcome.defenderDamage + 12 + Math.floor(attacker.body.power) / 10;
+          outcome.defenderDamage + 12 + Math.floor(attacker.body.power / 10);
 
         outcome.significant = true;
         outcome.point = true;
@@ -1055,7 +1057,7 @@ export default {
         //complete, point, significant
         outcome.defenderExposed = outcome.defenderExposed + 7;
         outcome.defenderDamage =
-          outcome.defenderDamage + 7 + Math.floor(attacker.body.power) / 10;
+          outcome.defenderDamage + 7 + Math.floor(attacker.body.power / 10);
 
         outcome.significant = true;
         outcome.point = true;
@@ -1064,7 +1066,7 @@ export default {
         //complete, point
         outcome.attackerLearned = outcome.attackerLearned + 5;
         outcome.defenderDamage =
-          outcome.defenderDamage + 2 + Math.floor(attacker.body.power) / 10;
+          outcome.defenderDamage + 2 + Math.floor(attacker.body.power / 10);
 
         outcome.point = true;
         outcome.msg = `${attacker.nickname} barely lands a ${action.text} on ${defender.nickname}`;
@@ -1101,6 +1103,8 @@ export default {
     let finalAttack, finalDefend;
     let physicalDC = this.rollTwenty();
     let skillDC = this.rollTwenty();
+    console.log(physicalDC);
+    console.log(skillDC);
 
     // Physical checks
     let attackPhysMod = this.normalMovePhysicalCheck(attacker);
@@ -1133,6 +1137,9 @@ export default {
     // Skill checks
     let attackSkillMod = this.variousComboSkillCheckAttack(attacker);
     let defendSkillMod = this.variousComboSkillCheckDefend(defender);
+
+    console.log(attackSkillMod);
+    console.log(defendSkillMod);
 
     if (
       this.getRollWithMod(attacker.skill.footwork) >=
@@ -1172,8 +1179,8 @@ export default {
 
         outcome.defenderDamage =
           outcome.defenderDamage +
-          (this.roll(physicalDC) + this.roll(skillDC)) / 2 +
-          Math.floor(attacker.body.power) / 10;
+          Math.floor((this.roll(physicalDC) + this.roll(skillDC)) / 2) +
+          Math.floor(attacker.body.power / 10);
 
         outcome.significant = true;
         outcome.point = true;
@@ -1183,8 +1190,8 @@ export default {
         outcome.defenderExposed = outcome.defenderExposed + 7;
         outcome.defenderDamage =
           outcome.defenderDamage +
-          (this.roll(physicalDC) + this.roll(skillDC)) / 4 +
-          Math.floor(attacker.body.power) / 10;
+          Math.floor((this.roll(physicalDC) + this.roll(skillDC)) / 4) +
+          Math.floor(attacker.body.power / 10);
 
         outcome.significant = true;
         outcome.point = true;
@@ -1193,7 +1200,7 @@ export default {
         //complete, point
         outcome.attackerLearned = outcome.attackerLearned + 5;
         outcome.defenderDamage =
-          outcome.defenderDamage + Math.floor(attacker.body.power) / 10;
+          outcome.defenderDamage + Math.floor(attacker.body.power / 10);
 
         outcome.point = true;
         outcome.msg = `${attacker.nickname} barely lands a ${action.text} on ${defender.nickname}`;

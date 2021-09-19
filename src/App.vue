@@ -242,17 +242,15 @@ export default {
       const newsItem = data.news.manager.hired[0];
       let { title, content } = newsItem;
 
-      title = engine.formatNewsItem(
+      title = engine.formatNewsManager(title, this.managerName);
+      title = engine.formatNewsClub(
         title,
-        this.managerName,
-        this.getClub(this.selectedClubId).name,
-        this.displayDate
+        this.getClub(this.selectedClubId).name
       );
-      content = engine.formatNewsItem(
+      content = engine.formatNewsManager(content, this.managerName);
+      content = engine.formatNewsClub(
         content,
-        this.managerName,
-        this.getClub(this.selectedClubId).name,
-        this.displayDate
+        this.getClub(this.selectedClubId).name
       );
 
       this.$store.dispatch(
@@ -535,10 +533,8 @@ export default {
       const newsItem = data.news.schedule.set[0];
       let { title, content } = newsItem;
 
-      title = engine.formatNewsItem(
+      title = engine.formatNewsDate(
         title,
-        this.managerName,
-        this.getClub(this.selectedClubId).name,
         engine.arrangeDate(
           engine
             .dateByDay(5)
@@ -546,10 +542,8 @@ export default {
             .split(' ')
         )
       );
-      content = engine.formatNewsItem(
+      content = engine.formatNewsDate(
         content,
-        this.managerName,
-        this.getClub(this.selectedClubId).name,
         engine.arrangeDate(
           engine
             .dateByDay(5)

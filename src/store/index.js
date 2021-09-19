@@ -7,23 +7,23 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    toggleNextUnread: false,
-    isDeveloper: true,
-    isAdvancingDate: false,
-    isPostMatch: false,
+    isDeveloper: false,
+
+    //ui
     day: 1,
     displayDate: new Date(data.date),
+    toggleNextUnread: false,
+    lastSelectedNewsItem: null,
+    isAdvancingDate: false,
+    isPostMatch: false,
 
+    //resources
     league: [],
     roster: [],
     commission: [],
     staff: [],
-
     news: [],
-    lastSelectedNewsItem: null,
-
     schedule: [],
-
     matches: [],
 
     //match

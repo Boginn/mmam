@@ -157,7 +157,9 @@
 
 <script>
 import data from '@/data/data.js';
+import classes from '@/data/classes.js';
 import matchEngine from '@/engine/matchEngine.js';
+import engine from '@/engine/engine.js';
 
 export default {
   name: 'Match',
@@ -653,6 +655,41 @@ export default {
       this.$store.dispatch('addClubData', homeClubData);
       this.$store.dispatch('addClubData', awayClubData);
       this.$store.dispatch('addFighterData', fighterData);
+
+      const newsItem = data.news.match.complete[0];
+      let { title, content } = newsItem;
+
+      if (this.homeClub.npc) {
+        content = engine.formatNewsClub(content, this.homeClub.name);
+        content = engine.formatNewsPoints(
+          content,
+          homeClubData.competitions.league.points
+        );
+        content = engine.formatNewsFinishes(
+          content,
+          homeClubData.competitions.league.finishes
+        );
+      } else {
+        content = engine.formatNewsClub(content, this.awayClub.name);
+        content = engine.formatNewsPoints(
+          content,
+          awayClubData.competitions.league.points
+        );
+        content = engine.formatNewsFinishes(
+          content,
+          awayClubData.competitions.league.finishes
+        );
+      }
+
+      content = engine.formatNewsScore(
+        content,
+        `${this.score.home} - ${this.score.away}`
+      );
+
+      this.$store.dispatch(
+        'addNews',
+        new classes.NewsItem(this.displayDate, title, content)
+      );
     },
 
     //basics
@@ -719,6 +756,8 @@ export default {
     endMatch() {
       // this.resetFighterMatchStats();
 
+      this.tabs.splice(3, 4);
+      this.selectTab(0);
       this.archiveMatch();
       this.$store.dispatch('setIsLive', false);
       this.$store.dispatch('setIsMatchday', false);

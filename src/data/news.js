@@ -26,4 +26,14 @@ export default {
       },
     ],
   },
+  match: {
+    complete: [
+      {
+        title: 'Match Report',
+        content:
+          'Our match against $C went $S netting us $P points and $F finish(es).',
+        other: ['So and so did really well.'],
+      },
+    ],
+  },
 };

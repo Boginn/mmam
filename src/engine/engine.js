@@ -24,12 +24,7 @@ export default {
   arrangeDate(dateArray) {
     return `${dateArray[0]} ${dateArray[2]} ${dateArray[1]} ${dateArray[3]}`;
   },
-  formatNewsItem(item, manager, club, date) {
-    item = item.split('$M').join(manager);
-    item = item.split('$C').join(club);
-    item = item.split('$D').join(date);
-    return item;
-  },
+
   countryCode(country) {
     const c = data.countryCodes.filter(
       (element) => element.country == country
@@ -50,6 +45,32 @@ export default {
       result = 'Grappler/Striker';
     }
     return result;
+  },
+
+  //news
+  formatNewsManager(item, manager) {
+    item = item.split('$M').join(manager);
+    return item;
+  },
+  formatNewsClub(item, club) {
+    item = item.split('$C').join(club);
+    return item;
+  },
+  formatNewsDate(item, date) {
+    item = item.split('$D').join(date);
+    return item;
+  },
+  formatNewsFinishes(item, finishes) {
+    item = item.split('$F').join(finishes);
+    return item;
+  },
+  formatNewsPoints(item, points) {
+    item = item.split('$P').join(points);
+    return item;
+  },
+  formatNewsScore(item, score) {
+    item = item.split('$S').join(score);
+    return item;
   },
 
   //date

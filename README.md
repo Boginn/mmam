@@ -17,19 +17,18 @@ Each contest is scored by three judges. If the match ends in a decision, the lef
 </p>
 
 <p>
-Score is given for the outcome of each ring´s contest. In the center ring, three for victory, one for a draw. In the left and right, one for a victory, zero for a draw.
+Score is given for the outcome of each ring´s contest. In the center ring, three for a finish, two for a decision, one for a draw. In the left and right, one for a victory, zero for a draw.
 </p>
 
 <p>
 Only the center ring has time-outs in any case of referee intervention. The other rings share the center´s clock.
 </p>
 
-
 <p>
 </p>
 
-
 ### Outcome examples
+
 ```
 Club A finishes left ring giving them a substitution and a point.
     The contest in the center runs out to a decision, ending the match.
@@ -54,7 +53,10 @@ The contests in the center ends in an early finish for club A, awarding
 ```
 
 <p>
-Live scoring and data is available to the managers allowing them to take informed decisions. The best managers make it seem there's 4 fighters on their team.
+Live scoring and data is available to the managers allowing them to take informed decisions. 
 </p>
 
-
+```
+`The best managers make it seem there's 4 fighters on their team.`
+      - Chuk Maulis
+```

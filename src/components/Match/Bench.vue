@@ -1,5 +1,17 @@
 <template>
   <v-row>
+    <div @click="closeUnitModal">
+      <Modal v-show="isUnitModalVisible">
+        <template v-slot:body>
+          <Unit
+            :fighterId="fighterId"
+            @close="closeUnitModal"
+            v-if="isUnitModalVisible"
+          >
+          </Unit>
+        </template>
+      </Modal>
+    </div>
     <v-card-text>
       <p class="text-center ">
         Finished
@@ -16,9 +28,10 @@
                   class="secondary font-shadow ma-1"
                   v-if="getFighter(fighter).match.finished"
                 >
-                  <span class="red--text">
+                  <a @click="showUnitModal(fighter)" class="red--text">
                     {{ getFighter(fighter).personal.name }}
-                  </span>
+                  </a>
+
                   <div>
                     - c:
                     <b class="font-shadow amber--text">
@@ -42,9 +55,9 @@
                   class="secondary font-shadow ma-1"
                   v-if="getFighter(fighter).match.finished"
                 >
-                  <span class="red--text">
+                  <a @click="showUnitModal(fighter)" class="red--text">
                     {{ getFighter(fighter).personal.name }}
-                  </span>
+                  </a>
 
                   <div>
                     - c:
@@ -72,7 +85,10 @@
               :key="index"
             >
               <div class="secondary font-shadow ma-1">
-                {{ getFighter(fighter).personal.name }}
+                <a @click="showUnitModal(fighter)" class="white--text">
+                  {{ getFighter(fighter).personal.name }}
+                </a>
+
                 <div>
                   - c:
                   <b class="font-shadow amber--text">
@@ -91,7 +107,10 @@
               :key="index"
             >
               <div class="secondary font-shadow ma-1">
-                {{ getFighter(fighter).personal.name }}
+                <a @click="showUnitModal(fighter)" class="white--text">
+                  {{ getFighter(fighter).personal.name }}
+                </a>
+
                 <div>
                   - c:
                   <b class="font-shadow amber--text">
@@ -110,7 +129,10 @@
 <script>
 export default {
   name: 'Bench',
-  components: {},
+  components: {
+    Unit: () => import('@/components/Unit.vue'),
+    Modal: () => import('@/components/Modal.vue'),
+  },
 
   props: {
     homeTactic: Object,
@@ -120,9 +142,22 @@ export default {
     substitutionAvailable: Boolean,
   },
 
+  data: () => ({
+    isUnitModalVisible: false,
+    fighterId: null,
+  }),
+
   methods: {
     getFighter(id) {
       return this.$store.getters.getFighterById(id);
+    },
+    //ui
+    showUnitModal(fighter) {
+      this.fighterId = fighter;
+      this.isUnitModalVisible = true;
+    },
+    closeUnitModal() {
+      this.isUnitModalVisible = false;
     },
   },
 };
