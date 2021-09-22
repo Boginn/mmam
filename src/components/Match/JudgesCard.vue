@@ -56,6 +56,7 @@
 
 <script>
 import engine from '@/engine/engine.js';
+import decisionEngine from '@/engine/decisionEngine.js';
 export default {
   name: 'JudgesCard',
   components: {},
@@ -69,12 +70,16 @@ export default {
   },
 
   created() {
-    this.cards = this.getJudgesCards();
-    this.countScore(this.ringFinishedLeft, this.ringFinishedRight);
+    // this.cards = this.getJudgesCards();
+    this.cards = decisionEngine.getJudgesCards(
+      this.decisions,
+      this.judges,
+      this.rounds
+    );
+    this.commitScore(this.ringFinishedLeft, this.ringFinishedRight);
   },
 
   data: () => ({
-    judgesCards: [],
     cards: null,
   }),
 
@@ -94,161 +99,21 @@ export default {
     lastName(fighter) {
       return engine.lastName(fighter);
     },
-
-    sortCards(card) {
-      for (let i = 0; i < this.rounds.length; i++) {
-        card.push(this.judgesCards[i]);
-      }
-      this.judgesCards.splice(0, this.rounds.length);
-    },
-
     finalPoints(rounds) {
-      var result = { home: 0, away: 0 };
-      rounds.forEach((round) => {
-        result.home = result.home + round.home;
-        result.away += round.away;
-      });
-      return result;
+      return decisionEngine.finalPoints(rounds);
     },
+    commitScore(ringFinishedLeft, ringFinishedRight) {
+      // returns an array with the cards and the score result
+      let result = decisionEngine.countScore(
+        this.cards,
+        ringFinishedLeft,
+        ringFinishedRight
+      );
 
-    getJudgesCards() {
-      console.log(this.decisions);
-      for (let i = 0; i < this.decisions.length; i++) {
-        const decision = this.decisions[i];
-
-        for (let j = 0; j < this.judges[i].length; j++) {
-          const judge = this.judges[i][j];
-          judge;
-
-          if (
-            this.finalPoints(decision[j]).home ==
-            this.finalPoints(decision[j]).away
-          ) {
-            this.judgesCards.push({ home: true, away: true });
-          } else {
-            this.finalPoints(decision[j]).home >
-            this.finalPoints(decision[j]).away
-              ? this.judgesCards.push({ home: true, away: false })
-              : this.judgesCards.push({ home: false, away: true });
-          }
-        }
-      }
-
-      let cards = {
-        left: [],
-        center: [],
-        right: [],
-        leftMsg: '',
-        centerMsg: '',
-        rightMsg: '',
-      };
-
-      this.sortCards(cards.left);
-      this.sortCards(cards.center);
-      this.sortCards(cards.right);
-
-      console.log(cards);
-      return cards;
-    },
-
-    countScore(ringFinishedLeft, ringFinishedRight) {
-      var result = { home: 0, away: 0 };
-      let messager = function(winner, loser) {
-        if (loser == 0 && winner == 3) {
-          return 'Unanimous Decision';
-        } else if (loser == 0 || winner == 1) {
-          return 'Majority Decision';
-        } else {
-          return 'Split Decision';
-        }
-      };
-
-      let homeCount = 0;
-      let awayCount = 0;
-
-      if (!ringFinishedLeft) {
-        this.cards.left.forEach((score) => {
-          if (score.home == true && score.away == false) {
-            homeCount += 1;
-          } else if (score.home == false && score.away == true) {
-            awayCount += 1;
-          }
-        });
-
-        if (homeCount != awayCount) {
-          if (homeCount > awayCount) {
-            result.home += 1;
-            this.cards.leftMsg = messager(homeCount, awayCount);
-          } else {
-            result.away += 1;
-            this.cards.leftMsg = messager(awayCount, homeCount);
-          }
-        } else {
-          this.cards.leftMsg = 'Draw';
-        }
-        console.log(homeCount);
-        console.log(awayCount);
-
-        homeCount = 0;
-        awayCount = 0;
-      }
-
-      if (!ringFinishedRight) {
-        this.cards.right.forEach((score) => {
-          if (score.home == true && score.away == false) {
-            homeCount += 1;
-          } else if (score.home == false && score.away == true) {
-            awayCount += 1;
-          }
-        });
-
-        if (homeCount != awayCount) {
-          if (homeCount > awayCount) {
-            result.home += 1;
-            this.cards.rightMsg = messager(homeCount, awayCount);
-          } else {
-            result.away += 1;
-            this.cards.rightMsg = messager(awayCount, homeCount);
-          }
-        } else {
-          this.cards.rightMsg = 'Draw';
-        }
-
-        console.log(homeCount);
-        console.log(awayCount);
-
-        homeCount = 0;
-        awayCount = 0;
-      }
-
-      this.cards.center.forEach((score) => {
-        if (score.home == true && score.away == false) {
-          homeCount += 1;
-        } else if (score.home == false && score.away == true) {
-          awayCount += 1;
-        }
-      });
-
-      console.log(homeCount);
-      console.log(awayCount);
-
-      if (homeCount == awayCount) {
-        result.home += 1;
-        result.away += 1;
-        this.cards.centerMsg = 'Draw';
-      } else {
-        if (homeCount > awayCount) {
-          result.home += 2;
-          this.cards.centerMsg = messager(homeCount, awayCount);
-        } else {
-          result.away += 2;
-          this.cards.centerMsg = messager(awayCount, homeCount);
-        }
-      }
       //save
-      this.$parent.cards = this.cards;
-      console.log(this.cards);
-      this.$emit('countScore', result);
+      this.$parent.cards = result[0];
+      console.log(result[0]);
+      this.$emit('countScore', result[1]);
     },
   },
 };

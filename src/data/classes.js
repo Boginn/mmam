@@ -181,6 +181,7 @@ export default {
     nationality;
     reputation;
     squad = [];
+    staff = [];
     tactic;
     training = {
       schedule: [],

@@ -142,7 +142,7 @@ const routes = {
       name: 'Schedule',
       path: 'schedule',
       icon: 'mdi-folder-table',
-      color: 'secondary',
+      color: 'seventh',
       public: true,
     },
   ],
@@ -166,16 +166,16 @@ const routes = {
       name: 'Schedule',
       path: 'schedule',
       icon: 'mdi-folder-table',
-      color: 'secondary',
-      public: true,
-    },
-    {
-      name: 'League',
-      path: 'league',
-      icon: 'mdi-folder',
       color: 'seventh',
       public: true,
     },
+    // {
+    //   name: 'League',
+    //   path: 'league',
+    //   icon: 'mdi-folder',
+    //   color: 'seventh',
+    //   public: true,
+    // },
   ],
 };
 

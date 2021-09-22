@@ -9,6 +9,10 @@
             </v-expansion-panel-header>
             <v-expansion-panel-content>
               <v-chip outlined>
+                {{ getCoach(coaches[0]).personal.name }} -asdasd
+                <!-- {{ getCoach(coaches[0].personal.name) }} -asdasd -->
+              </v-chip>
+              <v-chip outlined>
                 Actions: {{ ring.home }} -
                 {{ ring.away }}
               </v-chip>
@@ -31,6 +35,13 @@ export default {
 
   props: {
     activity: Array,
+    coaches: Array,
+  },
+
+  methods: {
+    getCoach(id) {
+      return this.$store.getters.getCoachById(id);
+    },
   },
 };
 </script>

@@ -151,7 +151,7 @@
     </v-col>
 
     <!-- DETAILS -->
-    <Details :activity="ringActivity" />
+    <Details :activity="ringActivity" :coaches="coaches" />
   </v-container>
 </template>
 
@@ -160,6 +160,7 @@ import data from '@/data/data.js';
 import classes from '@/data/classes.js';
 import matchEngine from '@/engine/matchEngine.js';
 import engine from '@/engine/engine.js';
+import decisionEngine from '@/engine/decisionEngine.js';
 
 export default {
   name: 'Match',
@@ -272,6 +273,10 @@ export default {
   computed: {
     selectedClubId() {
       return this.$store.getters.selectedClubId;
+    },
+    coaches() {
+      //player's coaches
+      return this.getClub(this.selectedClubId).staff;
     },
     isDeveloper() {
       return this.$store.getters.isDeveloper;
@@ -856,15 +861,15 @@ export default {
         this.score.away += 2;
       } else {
         // we go to a decision
-        this.ringDecisions.ringDecisionLeft = matchEngine.scoreRounds(
+        this.ringDecisions.ringDecisionLeft = decisionEngine.scoreRounds(
           ringJudgesLeft,
           ringTruePointsLeft
         );
-        this.ringDecisions.ringDecisionCenter = matchEngine.scoreRounds(
+        this.ringDecisions.ringDecisionCenter = decisionEngine.scoreRounds(
           ringJudgesCenter,
           ringTruePointsCenter
         );
-        this.ringDecisions.ringDecisionRight = matchEngine.scoreRounds(
+        this.ringDecisions.ringDecisionRight = decisionEngine.scoreRounds(
           ringJudgesRight,
           ringTruePointsRight
         );

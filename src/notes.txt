@@ -30,13 +30,12 @@ fixture:
     click on 
 
 match:
-    go through each check vs check to see disrepancies,
+    go through each check vs check to see disrepancies, (game balance)
     MAKE SURE to balance all fighters to 10
 
 
     
-    ahhhh crucial, give fighters 
-    rating from 3.0-10.0
+    ahhhh crucial, 
     having a good rating in the last five contests
     indicates good form 
     form can come into play for initiative perhaps
@@ -55,6 +54,10 @@ match:
         write actions
 
 
+last time:
+    was working on passing the points of the fighers to count their form
+    displaying staff on the Details comopnent, make coach judge rounds
+    and display their scoring in details 
 
 
 
@@ -62,7 +65,14 @@ match:
 
 
    
-  
+  features:
+        remember the ring isnt a cage (scrap this?)
+            any way to implement leaving the cage?
+            non of these really work with the engine
+        
+                dq if >20secs outside
+                if both outside after time, reset in middle
+            
     
 
 

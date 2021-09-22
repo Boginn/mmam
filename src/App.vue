@@ -8,14 +8,19 @@
     />
 
     <v-app-bar app class="abcolor " dark v-else>
-      <router-link :to="`/`">
+      <img alt="logo" src="./assets/logo.png" />
+      <router-link :to="`/`" class="ml-5">
         <v-btn :disabled="isMatchday" class="primary">
           {{ selectedClub.name }}
         </v-btn>
       </router-link>
-      <span class="text-center ml-5 title font-shadow" v-if="!isMatchday">
+      <router-link
+        :to="`/league`"
+        class="text-center ml-5 title font-shadow"
+        v-if="!isMatchday"
+      >
         {{ placeInLeague }} in The English League
-      </span>
+      </router-link>
       <span class="text-center ml-5 title font-shadow" v-if="isMatchday">
         {{ matchTitle }}
       </span>
@@ -80,7 +85,11 @@ export default {
   },
   created() {
     if (!this.live) {
-      engine.initialize(this.idCodes.fighter, this.idCodes.club);
+      engine.initialize(
+        this.idCodes.fighter,
+        this.idCodes.club,
+        this.idCodes.staff
+      );
 
       this.date = this.getDate;
       this.displayDate = engine.arrangeDate(this.splitDate);
@@ -96,7 +105,10 @@ export default {
 
       //seeds players to clubs linearly
       //later will add players to squads permanently
-      engine.seedRosterToTeams(this.league, this.roster); // temp
+      engine.seedRosterToClubs(this.league, this.roster); // temp
+      //and the coaches
+      engine.seedStaffToClubs(this.league, this.staff);
+      console.log(this.staff);
       //generate a tactic for all the clubs
       this.setTactics();
 
@@ -105,7 +117,7 @@ export default {
 
       this.setSchedule(schedule);
 
-      //generate and training schedule
+      //generate and set training schedule
       this.setTrainingSchedules();
 
       this.$store.dispatch('setLive', true);
@@ -520,7 +532,10 @@ export default {
 
     setStaff() {
       this.$store.dispatch('setStaff', data.staff.coaches);
-      this.$store.dispatch('setStaffId', this.idStaffClub + this.staff.length);
+      this.$store.dispatch(
+        'setStaffId',
+        this.idCodes.staff + this.staff.length
+      );
     },
 
     setSchedule(schedule) {

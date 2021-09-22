@@ -7,7 +7,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    isDeveloper: false,
+    isDeveloper: true,
 
     //ui
     day: 1,
@@ -337,6 +337,7 @@ export default new Vuex.Store({
       state.commission = payload;
     },
     SET_STAFF(state, payload) {
+      console.log(payload);
       state.staff = payload;
     },
     SET_SCHEDULE(state, payload) {
@@ -367,6 +368,9 @@ export default new Vuex.Store({
 
     //match
     SET_IS_LIVE(state, payload) {
+      state.matchData.score = data.matchData.score;
+      state.matchMessages = [];
+      state.matchMessagesForRings = [[], [], []];
       state.isLive = payload;
     },
     ADD_MATCH_MESSAGE(state, payload) {

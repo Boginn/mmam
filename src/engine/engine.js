@@ -119,7 +119,7 @@ export default {
   },
 
   //seeds
-  initialize: (idCodeFighter, idCodeClub) => {
+  initialize: (idCodeFighter, idCodeClub, idCodeStaff) => {
     var FIGHTER_ID = idCodeFighter;
     data.fighters.roster.forEach((element) => {
       FIGHTER_ID++;
@@ -131,11 +131,17 @@ export default {
       CLUB_ID++;
       element.id = CLUB_ID;
     });
+
+    var STAFF_ID = idCodeStaff;
+    data.staff.coaches.forEach((element) => {
+      STAFF_ID++;
+      element.id = STAFF_ID;
+    });
   },
 
-  seedRosterToTeams: (teams, roster) => {
-    teams.forEach((team) => {
-      let counter = Math.floor(roster.length / teams.length);
+  seedRosterToClubs: (clubs, roster) => {
+    clubs.forEach((team) => {
+      let counter = Math.floor(roster.length / clubs.length);
       console.log(counter);
 
       for (let i = 0; i < counter; i++) {
@@ -147,8 +153,26 @@ export default {
         }
       }
     });
-    console.log('engine.seedRosterToTeams');
+    console.log('engine.seedRosterToClubs');
     console.log(roster);
+  },
+
+  seedStaffToClubs: (clubs, staff) => {
+    clubs.forEach((team) => {
+      let counter = Math.floor(staff.length / clubs.length);
+      console.log(counter);
+
+      for (let i = 0; i < counter; i++) {
+        if (staff[i].contract) {
+          counter = counter + 1;
+        } else {
+          team.staff.push(staff[i].id);
+          staff[i].contract = true;
+        }
+      }
+    });
+    console.log('engine.seedStaffToClubs');
+    console.log(staff);
   },
 
   seedSchedule: (league, idCodeMatch) => {
