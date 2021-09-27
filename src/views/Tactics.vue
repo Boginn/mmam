@@ -1,6 +1,23 @@
 <template>
   <v-container>
-    <v-row class="mt-10">
+    <v-row class="mt-5 justify-center">
+      <v-btn
+        class="confirm primary"
+        :disabled="!this.checkTactic"
+        v-if="this.isMatchday"
+        @click="goToMatch()"
+        >confirm and proceed</v-btn
+      >
+      <v-btn
+        x-large
+        @click="defaultSelection()"
+        v-if="isDeveloper"
+        class="secondary"
+        style="position: absolute; top: 10%; right: 10%"
+        >Default</v-btn
+      >
+    </v-row>
+    <v-row class="mt-5">
       <v-col>
         <v-data-table
           :hide-default-footer="true"
@@ -303,22 +320,6 @@
           </v-card>
         </v-col>
       </v-col>
-    </v-row>
-    <v-row class="justify-center">
-      <v-btn
-        :disabled="!this.checkTactic"
-        v-if="this.isMatchday"
-        @click="goToMatch()"
-        >Confirm and Kick Off!</v-btn
-      >
-      <v-btn
-        x-large
-        @click="defaultSelection()"
-        v-if="isDeveloper"
-        class="secondary"
-        style="position: absolute; top: 10%; right: 10%"
-        >Default</v-btn
-      >
     </v-row>
   </v-container>
 </template>
@@ -673,6 +674,9 @@ export default {
 </script>
 
 <style>
+.confirm {
+  width: 100%;
+}
 .tactics {
   margin: 25px;
   background-color: rgb(80, 76, 21);

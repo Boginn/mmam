@@ -96,8 +96,8 @@ export default {
 
   created() {
     if (!this.$route.params.id) {
-      this.id = this.playerClubId;
-      this.club = this.getClub(this.playerClubId);
+      this.id = this.selectedClubId;
+      this.club = this.getClub(this.selectedClubId);
     } else {
       this.id = this.$route.params.id;
       this.club = this.getClub(this.id);
@@ -115,11 +115,11 @@ export default {
       });
       return squad;
     },
-    playerClubId() {
+    selectedClubId() {
       return this.$store.getters.selectedClubId;
     },
     // club() {
-    //   return this.getClub(this.playerClubId);
+    //   return this.getClub(this.selectedClubId);
     // },
     routes() {
       return data.routes.squad;

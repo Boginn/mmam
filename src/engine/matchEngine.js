@@ -71,7 +71,7 @@ export default {
     return Math.abs(a - b);
   },
 
-  getForm(score) {
+  getClubForm(score) {
     let homeForm, awayForm;
 
     if (score.home == score.away) {
@@ -428,7 +428,8 @@ export default {
     if (method.value == 'grapple') {
       action = this.grapple(attacker, defender);
     } else if (method.value == 'strike') {
-      action = this.strike(attacker, defender);
+      action = this.grapple(attacker, defender);
+      // action = this.strike(attacker, defender);
     } else if (method.value == 'disengage') {
       // action = this.grapple(attacker, defender);
       action = this.disengage(attacker, defender);
@@ -638,7 +639,7 @@ export default {
         //complete , point, significant, big
         outcome.defenderExposed = outcome.defenderExposed + 15;
         outcome.attackerLearned = outcome.attackerLearned + 10;
-        outcome.defenderDamage = outcome.defenderDamage + 10;
+        outcome.defenderDamage = outcome.defenderDamage + 10 - 7;
 
         outcome.significant = true;
         outcome.point = true;
@@ -646,7 +647,7 @@ export default {
       } else if (this.getDifference(finalAttack, finalDefend) >= 10) {
         //complete, point, significant
         outcome.attackerLearned = outcome.attackerLearned + 5;
-        outcome.defenderDamage = outcome.defenderDamage + 4;
+        outcome.defenderDamage = outcome.defenderDamage + 4 - 2;
 
         outcome.significant = true;
         outcome.point = true;
@@ -654,7 +655,7 @@ export default {
       } else {
         //complete, point
         outcome.attackerLearned = outcome.attackerLearned + 5;
-        outcome.defenderDamage = outcome.defenderDamage + 2;
+        outcome.defenderDamage = outcome.defenderDamage + 2 - 2;
 
         outcome.point = true;
         outcome.msg = `${attacker.nickname} barely lands a ${action.text} on ${defender.nickname}`;

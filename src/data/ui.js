@@ -70,6 +70,18 @@ const headers = {
 
     { text: 'Date', value: 'date' },
   ],
+  staff: [
+    { text: 'Name', value: 'personal.name' },
+    { text: 'Striking', value: 'coaching.striking' },
+    { text: 'Grappling', value: 'coaching.grappling' },
+    { text: 'Throwing', value: 'coaching.throwing' },
+    { text: 'Judging Ability', value: 'coaching.judgingAbility' },
+    { text: 'Judging Potential', value: 'coaching.judgingPotential' },
+    { text: 'Motivating', value: 'coaching.motivating' },
+    { text: 'Managing', value: 'coaching.managing' },
+    { text: 'Youngsters', value: 'coaching.youngsters' },
+    { text: 'Discipline', value: 'coaching.discipline' },
+  ],
 };
 
 const routes = {
@@ -176,6 +188,24 @@ const routes = {
     //   color: 'seventh',
     //   public: true,
     // },
+  ],
+
+  staff: [
+    {
+      name: 'Squad',
+      path: 'squad',
+      icon: 'mdi-account-cowboy-hat',
+      color: 'primary',
+      public: true,
+    },
+
+    {
+      name: 'Training',
+      path: 'training',
+      icon: 'mdi-file-document-edit',
+      color: 'primary',
+      public: true,
+    },
   ],
 };
 

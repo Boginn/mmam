@@ -5,13 +5,9 @@
         <v-expansion-panels>
           <v-expansion-panel>
             <v-expansion-panel-header class="text-center body-2 font-shadow">
-              Details
+              {{ getCoach(coaches[index]).personal.name }}
             </v-expansion-panel-header>
             <v-expansion-panel-content>
-              <v-chip outlined>
-                {{ getCoach(coaches[0]).personal.name }} -asdasd
-                <!-- {{ getCoach(coaches[0].personal.name) }} -asdasd -->
-              </v-chip>
               <v-chip outlined>
                 Actions: {{ ring.home }} -
                 {{ ring.away }}
@@ -29,13 +25,29 @@
 </template>
 
 <script>
+import decisionEngine from '@/engine/decisionEngine.js';
 export default {
   name: 'Details',
   components: {},
 
+  created() {
+    console.log(decisionEngine.scoreRounds(this.coachesSorted, this.rounds));
+  },
+
   props: {
     activity: Array,
     coaches: Array,
+    rounds: Array,
+  },
+
+  computed: {
+    coachesSorted() {
+      const coachesSorted = [];
+      this.coaches.forEach((coach) => {
+        coachesSorted.push(this.getCoach(coach));
+      });
+      return coachesSorted;
+    },
   },
 
   methods: {

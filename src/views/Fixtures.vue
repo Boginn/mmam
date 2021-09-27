@@ -94,13 +94,16 @@ export default {
     fixtures() {
       let fixtures = [];
       console.log(this.isPostMatch);
+
       if (this.isPostMatch) {
+        // const fixtures = fixtureEngine.getPostMatch(this.matches);
         this.matches.forEach((match) => {
           if (match.date > this.day - 3 && match.date < this.day - 3 + 6) {
             fixtures.push(match);
           }
         });
       } else {
+        // const fixtures = fixtureEngine.getFixtures(this.schedule);
         this.schedule.forEach((match) => {
           if (match.date > this.day && match.date < this.day + 7) {
             fixtures.push(match);
@@ -109,6 +112,8 @@ export default {
       }
 
       fixtures = fixtures.reduce(function(f, prop) {
+        console.log(f);
+        console.log(prop);
         if (!f[prop['date']]) {
           f[prop['date']] = [];
         }

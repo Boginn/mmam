@@ -151,7 +151,13 @@
     </v-col>
 
     <!-- DETAILS -->
-    <Details :activity="ringActivity" :coaches="coaches" />
+    <Details
+      :activity="ringActivity"
+      :coaches="coaches"
+      :rounds="rounds"
+      :decisions="decisions"
+      :judges="judges"
+    />
   </v-container>
 </template>
 
@@ -277,6 +283,13 @@ export default {
     coaches() {
       //player's coaches
       return this.getClub(this.selectedClubId).staff;
+    },
+    coachesSorted() {
+      const coachesSorted = [];
+      this.coaches.forEach((coach) => {
+        coachesSorted.push(this.getCoach(coach));
+      });
+      return coachesSorted;
     },
     isDeveloper() {
       return this.$store.getters.isDeveloper;
@@ -531,6 +544,9 @@ export default {
     getClub(id) {
       return this.$store.getters.getClubById(id);
     },
+    getCoach(id) {
+      return this.$store.getters.getCoachById(id);
+    },
     getFighter(id) {
       return this.$store.getters.getFighterById(id);
     },
@@ -566,7 +582,7 @@ export default {
       console.log(match);
       console.log(this.finishes);
 
-      let form = matchEngine.getForm(this.score);
+      let clubForm = matchEngine.getClubForm(this.score);
 
       const homeClubData = {
         id: match.clubs[0],
@@ -574,7 +590,7 @@ export default {
           league: {
             points: this.score.home,
             pointsAgainst: this.score.away,
-            form: form.home,
+            form: clubForm.home,
             finishes: this.finishes.home,
           },
         },
@@ -585,18 +601,41 @@ export default {
           league: {
             points: this.score.away,
             pointsAgainst: this.score.home,
-            form: form.away,
+            form: clubForm.away,
             finishes: this.finishes.away,
           },
         },
       };
 
+      // well at the moment this doesnt give me win loss of rounds
+      // lets make something in decisionEngine to getDetailedJudgesCards
+      const judgesCard = decisionEngine.getJudgesCards(
+        this.decisions,
+        this.judges,
+        this.rounds
+      );
+
+      // const fightersForm = {
+      //   home: {
+      //     left: [],
+      //     center: [],
+      //     right: [],
+      //   },
+      //   away: {
+      //     left: [],
+      //     center: [],
+      //     right: [],
+      //   },
+      // };
+
+      console.log(judgesCard);
+
       const fighterData = [
-        //TODO add finishes
         {
           league: 1,
           cup: 0,
           international: 0,
+          form: [],
           finishes: this.getFighter(this.homeTactic.selection.left).match
             .finishes,
           id: this.homeTactic.selection.left,
@@ -661,6 +700,7 @@ export default {
       this.$store.dispatch('addClubData', awayClubData);
       this.$store.dispatch('addFighterData', fighterData);
 
+      //news item commit
       const newsItem = data.news.match.complete[0];
       let { title, content } = newsItem;
 
@@ -882,7 +922,7 @@ export default {
           this.cards.rightMsg = 'Finish';
         }
 
-        this.isDecision = true; // opens Judges' Cards
+        this.isDecision = true; // opens Judges' Cards !
         this.tabs.push({ name: 'judges card', value: false });
         this.selectTab(3);
 

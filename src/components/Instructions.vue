@@ -93,17 +93,8 @@
 <script>
 export default {
   name: 'Instructions',
-
   props: {
     instructions: Object,
-  },
-
-  computed: {
-    data: () => ({}),
-  },
-
-  methods: {
-    //emit
   },
 };
 </script>

@@ -173,7 +173,7 @@ export default {
 
       console.log(result);
 
-      let form = matchEngine.getForm(score);
+      let clubForm = matchEngine.getClubForm(score);
 
       const homeClubData = {
         id: result.clubs[0],
@@ -181,7 +181,7 @@ export default {
           league: {
             points: score.home,
             pointsAgainst: score.away,
-            form: form.home,
+            form: clubForm.home,
             finishes: finishes.home,
           },
         },
@@ -192,7 +192,7 @@ export default {
           league: {
             points: score.away,
             pointsAgainst: score.home,
-            form: form.away,
+            form: clubForm.away,
             finishes: finishes.away,
           },
         },

@@ -1,4 +1,4 @@
-import engine from '@/engine/engine.js';
+import matchEngine from '@/engine/matchEngine.js';
 let judgesCards = [];
 
 const sortCards = (card, rounds) => {
@@ -167,9 +167,11 @@ export default {
     judges.forEach((judge) => {
       // importance of match judge.mental.pressure
 
-      var concentration = engine.getRollWithMod(judge.judging.concentration);
-      var judgement = engine.getRollWithMod(judge.judging.judgement);
-      var retention = engine.getRollWithMod(judge.judging.retention);
+      var concentration = matchEngine.getRollWithMod(
+        judge.judging.concentration
+      );
+      var judgement = matchEngine.getRollWithMod(judge.judging.judgement);
+      var retention = matchEngine.getRollWithMod(judge.judging.retention);
       concentration;
       judgement;
       retention;
@@ -182,13 +184,13 @@ export default {
           awaySignificant: 0,
         };
         for (let j = 0; j < rounds[i].home; j++) {
-          if (engine.getRollWithMod(judge.judging.concentration) >= 6) {
+          if (matchEngine.getRollWithMod(judge.judging.concentration) >= 6) {
             result.home += 1;
           }
         }
         for (let j = 0; j < rounds[i].homeSignificant; j++) {
-          if (engine.getRollWithMod(judge.judging.concentration) >= 6) {
-            if (engine.getRollWithMod(judge.judging.judgement) >= 10) {
+          if (matchEngine.getRollWithMod(judge.judging.concentration) >= 6) {
+            if (matchEngine.getRollWithMod(judge.judging.judgement) >= 10) {
               result.homeSignificant += 1;
             } else {
               result.home += 1;
@@ -196,13 +198,13 @@ export default {
           }
         }
         for (let j = 0; j < rounds[i].away; j++) {
-          if (engine.getRollWithMod(judge.judging.concentration) >= 6) {
+          if (matchEngine.getRollWithMod(judge.judging.concentration) >= 6) {
             result.away += 1;
           }
         }
         for (let j = 0; j < rounds[i].awaySignificant; j++) {
-          if (engine.getRollWithMod(judge.judging.concentration) >= 6) {
-            if (engine.getRollWithMod(judge.judging.judgement) >= 10) {
+          if (matchEngine.getRollWithMod(judge.judging.concentration) >= 6) {
+            if (matchEngine.getRollWithMod(judge.judging.judgement) >= 10) {
               result.awaySignificant += 1;
             } else {
               result.away += 1;
@@ -289,7 +291,7 @@ export default {
       round.away = 10;
     }
 
-    if (engine.getDifference(round.home, round.away) > 50) {
+    if (matchEngine.getDifference(round.home, round.away) > 50) {
       // console.log(round.home);
       // console.log(round.away);
       // console.log('true');
@@ -300,7 +302,7 @@ export default {
         round.home = 7;
         round.away = 10;
       }
-    } else if (engine.getDifference(round.home, round.away) > 25) {
+    } else if (matchEngine.getDifference(round.home, round.away) > 25) {
       if (isHomeWin) {
         round.home = 10;
         round.away = 8;

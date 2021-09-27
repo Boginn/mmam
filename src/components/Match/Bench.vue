@@ -1,6 +1,7 @@
 <template>
   <v-row>
     <div @click="closeUnitModal">
+      <!-- TODO: Make this modal a component -->
       <Modal v-show="isUnitModalVisible">
         <template v-slot:body>
           <Unit

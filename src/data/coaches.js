@@ -34,7 +34,6 @@ var coaches = [
     },
   },
 
-  /*-----------------------------------------------------------------------------------------*/
   {
     ...new classes.Coach(
       'Yoshi Matar' //name
@@ -52,7 +51,6 @@ var coaches = [
     },
   },
 
-  /*-----------------------------------------------------------------------------------------*/
   {
     ...new classes.Coach(
       'Yekan Stew' //name
@@ -70,7 +68,6 @@ var coaches = [
     },
   },
 
-  /*-----------------------------------------------------------------------------------------*/
   {
     ...new classes.Coach(
       'Bartholomew Hepst' //name
@@ -88,7 +85,6 @@ var coaches = [
     },
   },
 
-  /*-----------------------------------------------------------------------------------------*/
   {
     ...new classes.Coach(
       'Ilary Pyryson' //name
@@ -106,7 +102,6 @@ var coaches = [
     },
   },
 
-  /*-----------------------------------------------------------------------------------------*/
   {
     ...new classes.Coach(
       'Jack Stirling' //name
@@ -124,7 +119,6 @@ var coaches = [
     },
   },
 
-  /*-----------------------------------------------------------------------------------------*/
   {
     ...new classes.Coach(
       'Tony Gutalache' //name
@@ -142,7 +136,6 @@ var coaches = [
     },
   },
 
-  /*-----------------------------------------------------------------------------------------*/
   {
     ...new classes.Coach(
       'Dawid Lewandowski' //name
@@ -160,7 +153,6 @@ var coaches = [
     },
   },
 
-  /*-----------------------------------------------------------------------------------------*/
   {
     ...new classes.Coach(
       'Geir Freyr' //name
@@ -178,7 +170,6 @@ var coaches = [
     },
   },
 
-  /*-----------------------------------------------------------------------------------------*/
   {
     ...new classes.Coach(
       'Stephan Mällberg' //name
@@ -196,7 +187,6 @@ var coaches = [
     },
   },
 
-  /*-----------------------------------------------------------------------------------------*/
   {
     ...new classes.Coach(
       'Boris Shevchenko' //name
@@ -214,7 +204,6 @@ var coaches = [
     },
   },
 
-  /*-----------------------------------------------------------------------------------------*/
   {
     ...new classes.Coach(
       'Laura Buckley' //name
@@ -232,7 +221,6 @@ var coaches = [
     },
   },
 
-  /*-----------------------------------------------------------------------------------------*/
   {
     ...new classes.Coach(
       'Lars Kimsen' //name
@@ -250,7 +238,6 @@ var coaches = [
     },
   },
 
-  /*-----------------------------------------------------------------------------------------*/
   {
     ...new classes.Coach(
       'Uwe Gooberman' //name
@@ -285,7 +272,6 @@ var coaches = [
     },
   },
 
-  /*-----------------------------------------------------------------------------------------*/
   {
     ...new classes.Coach(
       'Schatt Strife' //name
@@ -303,7 +289,6 @@ var coaches = [
     },
   },
 
-  /*-----------------------------------------------------------------------------------------*/
   {
     ...new classes.Coach(
       'Hikaru Carlsen' //name
@@ -321,7 +306,6 @@ var coaches = [
     },
   },
 
-  /*-----------------------------------------------------------------------------------------*/
   {
     ...new classes.Coach(
       'Aurél Staam' //name
@@ -339,7 +323,6 @@ var coaches = [
     },
   },
 
-  /*-----------------------------------------------------------------------------------------*/
   {
     ...new classes.Coach(
       'First Last' //name
@@ -356,11 +339,177 @@ var coaches = [
       discipline: 10,
     },
   },
+
+  {
+    ...new classes.Coach(
+      'Henrek Carson' //name
+    ),
+    coaching: {
+      striking: 10,
+      grappling: 10,
+      throwing: 10,
+      judgingAbility: 10,
+      judgingPotential: 10,
+      motivating: 10,
+      managing: 10,
+      youngsters: 10,
+      discipline: 10,
+    },
+  },
+
+  {
+    ...new classes.Coach(
+      'Danko Budchevski' //name
+    ),
+    coaching: {
+      striking: 10,
+      grappling: 10,
+      throwing: 10,
+      judgingAbility: 10,
+      judgingPotential: 10,
+      motivating: 10,
+      managing: 10,
+      youngsters: 10,
+      discipline: 10,
+    },
+  },
+
+  {
+    ...new classes.Coach(
+      'Ondeleflink Smith' //name
+    ),
+    coaching: {
+      striking: 10,
+      grappling: 10,
+      throwing: 10,
+      judgingAbility: 10,
+      judgingPotential: 10,
+      motivating: 10,
+      managing: 10,
+      youngsters: 10,
+      discipline: 10,
+    },
+  },
+
+  {
+    ...new classes.Coach(
+      'Larry Latifi' //name
+    ),
+    coaching: {
+      striking: 10,
+      grappling: 10,
+      throwing: 10,
+      judgingAbility: 10,
+      judgingPotential: 10,
+      motivating: 10,
+      managing: 10,
+      youngsters: 10,
+      discipline: 10,
+    },
+  },
+
+  {
+    ...new classes.Coach(
+      'Abramko Smorchtz' //name
+    ),
+    coaching: {
+      striking: 10,
+      grappling: 10,
+      throwing: 10,
+      judgingAbility: 10,
+      judgingPotential: 10,
+      motivating: 10,
+      managing: 10,
+      youngsters: 10,
+      discipline: 10,
+    },
+  },
+
+  {
+    ...new classes.Coach(
+      'Caleb Hankletish' //name
+    ),
+    coaching: {
+      striking: 10,
+      grappling: 10,
+      throwing: 10,
+      judgingAbility: 10,
+      judgingPotential: 10,
+      motivating: 10,
+      managing: 10,
+      youngsters: 10,
+      discipline: 10,
+    },
+  },
+
+  {
+    ...new classes.Coach(
+      'Lambadar Kyrgibash' //name
+    ),
+    coaching: {
+      striking: 10,
+      grappling: 10,
+      throwing: 10,
+      judgingAbility: 10,
+      judgingPotential: 10,
+      motivating: 10,
+      managing: 10,
+      youngsters: 10,
+      discipline: 10,
+    },
+  },
+
+  {
+    ...new classes.Coach(
+      'Frekston Puylgher' //name
+    ),
+    coaching: {
+      striking: 10,
+      grappling: 10,
+      throwing: 10,
+      judgingAbility: 10,
+      judgingPotential: 10,
+      motivating: 10,
+      managing: 10,
+      youngsters: 10,
+      discipline: 10,
+    },
+  },
+
+  {
+    ...new classes.Coach(
+      'Kevin Nouty' //name
+    ),
+    coaching: {
+      striking: 10,
+      grappling: 10,
+      throwing: 10,
+      judgingAbility: 10,
+      judgingPotential: 10,
+      motivating: 10,
+      managing: 10,
+      youngsters: 10,
+      discipline: 10,
+    },
+  },
+
+  {
+    ...new classes.Coach(
+      'Jæsper Lovecraft' //name
+    ),
+    coaching: {
+      striking: 10,
+      grappling: 10,
+      throwing: 10,
+      judgingAbility: 10,
+      judgingPotential: 10,
+      motivating: 10,
+      managing: 10,
+      youngsters: 10,
+      discipline: 10,
+    },
+  },
 ];
-
-//
-
-/*-----------------------------------------------------------------------------------------*/
 
 export default {
   coaches,

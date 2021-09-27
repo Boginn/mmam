@@ -2,7 +2,15 @@
 
 
 // TODOS
-  
+  I should go through and leave notes ASAP
+  hold off on refactoring alon the way
+  refrain from spending too much time on match engine for the time being
+  focus on getting all the data flow smooth first
+
+  make a fixtureEngine, getPostMatch and getFixtures functions
+
+  make the modal for speccing fighters in a match a components
+  its in Overview, Bench and MatchTactics
   
 // BUGS
 
@@ -22,42 +30,42 @@ tweaks:
    
 implement:
     screen to pick team to manage
-    news item, youve been hired
-    
+  
+    fixture:
+        click on 
+
+    match:
+        go through each check vs check to see disrepancies, (game balance)
+        MAKE SURE to balance all fighters to 10
 
 
-fixture:
-    click on 
-
-match:
-    go through each check vs check to see disrepancies, (game balance)
-    MAKE SURE to balance all fighters to 10
-
-
-    
-    ahhhh crucial, 
-    having a good rating in the last five contests
-    indicates good form 
-    form can come into play for initiative perhaps
-
-    how about the form is last 6 or so rounds
-    + number of finishes this season
-    Fighter L W W L L W (5)
-
-        after landing a good successfull takedown 
-            give momentum to controling fighter
-            if other fighter gets initiative it is used to get up
         
+        ahhhh crucial, 
+        having a good rating in the last five contests
+        indicates good form 
+        form can come into play for initiative perhaps
 
-        momentum triggers -- finishing someone gives momentum hm only if in center ring
-        judges need to get activity numbers
-        write actions
+        how about the form is last 6 or so rounds
+        + number of finishes this season
+        Fighter L W W L L W (5)
+
+            after landing a good successfull takedown 
+                give momentum to controling fighter
+                if other fighter gets initiative it is used to get up
+            
+
+            momentum triggers -- finishing someone gives momentum hm only if in center ring
+            judges need to get activity numbers
+            write actions
 
 
 last time:
     was working on passing the points of the fighers to count their form
     displaying staff on the Details comopnent, make coach judge rounds
     and display their scoring in details 
+    // in archiveMatch
+    // well at the moment this doesnt give me win loss of rounds
+    // lets make something in decisionEngine to getDetailedJudgesCards
 
 
 
@@ -83,12 +91,6 @@ stat/attribute/instruction/trainingfocuses
 
 manager can try to instruct the fighter to use
 certain moves, limbs and style.
-
-(judges look at truePoints and depending on 
-retention and other judging.attributes gives
-a card.(done) )
-assistant manager also does this and gives his
-points to the manager
 
 approach unsigned players for a contract, have
 transfers bewteen clubs etc
