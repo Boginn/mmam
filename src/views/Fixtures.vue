@@ -112,8 +112,7 @@ export default {
       }
 
       fixtures = fixtures.reduce(function(f, prop) {
-        console.log(f);
-        console.log(prop);
+        // um, is this indexOf? :o
         if (!f[prop['date']]) {
           f[prop['date']] = [];
         }

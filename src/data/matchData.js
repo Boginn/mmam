@@ -1,102 +1,102 @@
 export default {
-  ArchivedMatch: class {
-    id = null;
-    date = null;
-    clubs = [];
-    homeScore = 0;
-    awayScore = 0;
-    left = {
-      finish: undefined,
-      judges: [
-        {
-          homeRound1: undefined,
-          homeRound2: undefined,
-          homeRound3: undefined,
-          awayRound1: undefined,
-          awayRound2: undefined,
-          awayRound3: undefined,
-        },
-        {
-          homeRound1: undefined,
-          homeRound2: undefined,
-          homeRound3: undefined,
-          awayRound1: undefined,
-          awayRound2: undefined,
-          awayRound3: undefined,
-        },
-        {
-          homeRound1: undefined,
-          homeRound2: undefined,
-          homeRound3: undefined,
-          awayRound1: undefined,
-          awayRound2: undefined,
-          awayRound3: undefined,
-        },
-      ],
-    };
-    center = {
-      finish: undefined,
-      judges: [
-        {
-          homeRound1: undefined,
-          homeRound2: undefined,
-          homeRound3: undefined,
-          awayRound1: undefined,
-          awayRound2: undefined,
-          awayRound3: undefined,
-        },
-        {
-          homeRound1: undefined,
-          homeRound2: undefined,
-          homeRound3: undefined,
-          awayRound1: undefined,
-          awayRound2: undefined,
-          awayRound3: undefined,
-        },
-        {
-          homeRound1: undefined,
-          homeRound2: undefined,
-          homeRound3: undefined,
-          awayRound1: undefined,
-          awayRound2: undefined,
-          awayRound3: undefined,
-        },
-      ],
-    };
-    right = {
-      finish: undefined,
-      judges: [
-        {
-          homeRound1: undefined,
-          homeRound2: undefined,
-          homeRound3: undefined,
-          awayRound1: undefined,
-          awayRound2: undefined,
-          awayRound3: undefined,
-        },
-        {
-          homeRound1: undefined,
-          homeRound2: undefined,
-          homeRound3: undefined,
-          awayRound1: undefined,
-          awayRound2: undefined,
-          awayRound3: undefined,
-        },
-        {
-          homeRound1: undefined,
-          homeRound2: undefined,
-          homeRound3: undefined,
-          awayRound1: undefined,
-          awayRound2: undefined,
-          awayRound3: undefined,
-        },
-      ],
-    };
+  // ArchivedMatch: class {
+  //   id = null;
+  //   date = null;
+  //   clubs = [];
+  //   homeScore = 0;
+  //   awayScore = 0;
+  //   left = {
+  //     finish: undefined,
+  //     judges: [
+  //       {
+  //         homeRound1: undefined,
+  //         homeRound2: undefined,
+  //         homeRound3: undefined,
+  //         awayRound1: undefined,
+  //         awayRound2: undefined,
+  //         awayRound3: undefined,
+  //       },
+  //       {
+  //         homeRound1: undefined,
+  //         homeRound2: undefined,
+  //         homeRound3: undefined,
+  //         awayRound1: undefined,
+  //         awayRound2: undefined,
+  //         awayRound3: undefined,
+  //       },
+  //       {
+  //         homeRound1: undefined,
+  //         homeRound2: undefined,
+  //         homeRound3: undefined,
+  //         awayRound1: undefined,
+  //         awayRound2: undefined,
+  //         awayRound3: undefined,
+  //       },
+  //     ],
+  //   };
+  //   center = {
+  //     finish: undefined,
+  //     judges: [
+  //       {
+  //         homeRound1: undefined,
+  //         homeRound2: undefined,
+  //         homeRound3: undefined,
+  //         awayRound1: undefined,
+  //         awayRound2: undefined,
+  //         awayRound3: undefined,
+  //       },
+  //       {
+  //         homeRound1: undefined,
+  //         homeRound2: undefined,
+  //         homeRound3: undefined,
+  //         awayRound1: undefined,
+  //         awayRound2: undefined,
+  //         awayRound3: undefined,
+  //       },
+  //       {
+  //         homeRound1: undefined,
+  //         homeRound2: undefined,
+  //         homeRound3: undefined,
+  //         awayRound1: undefined,
+  //         awayRound2: undefined,
+  //         awayRound3: undefined,
+  //       },
+  //     ],
+  //   };
+  //   right = {
+  //     finish: undefined,
+  //     judges: [
+  //       {
+  //         homeRound1: undefined,
+  //         homeRound2: undefined,
+  //         homeRound3: undefined,
+  //         awayRound1: undefined,
+  //         awayRound2: undefined,
+  //         awayRound3: undefined,
+  //       },
+  //       {
+  //         homeRound1: undefined,
+  //         homeRound2: undefined,
+  //         homeRound3: undefined,
+  //         awayRound1: undefined,
+  //         awayRound2: undefined,
+  //         awayRound3: undefined,
+  //       },
+  //       {
+  //         homeRound1: undefined,
+  //         homeRound2: undefined,
+  //         homeRound3: undefined,
+  //         awayRound1: undefined,
+  //         awayRound2: undefined,
+  //         awayRound3: undefined,
+  //       },
+  //     ],
+  //   };
 
-    constructor(id) {
-      this.id = id;
-    }
-  },
+  //   constructor(id) {
+  //     this.id = id;
+  //   }
+  // },
 
   //engagements and actions
   engage: {

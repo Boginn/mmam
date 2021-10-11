@@ -14,6 +14,14 @@
   
 // BUGS
 
+simulateMatch gets undefined decisions, probably the same as in match
+make a function  for that
+simulateMatch will of course need an overhaul
+    check and see if possible yet,
+    maybe only matchEngine will get further code,
+    Match might be about done and simulate should follow
+
+
 
 
 
@@ -68,18 +76,23 @@ last time:
     // lets make something in decisionEngine to getDetailedJudgesCards
 
 
+    fixing decisions array errors, persist in simulateMatch
+
+
 
 
 
 
    
   features:
-        remember the ring isnt a cage (scrap this?)
-            any way to implement leaving the cage?
-            non of these really work with the engine
-        
-                dq if >20secs outside
-                if both outside after time, reset in middle
+    striking does more damage but opens you up to grappling more
+    grappling stalls the fight more but can lead to submissions too
+
+    a combination of instructions and fighters choice of striking or grappling
+    determines the moment to moment strengths of the fighter
+
+    after a successfull takedown the defender has to pass a bunch of saving throws
+    the attacker can of course be landing but it;s harder to keep initiative
             
     
 

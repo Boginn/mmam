@@ -188,10 +188,6 @@ export default {
     this.setTactics();
     this.$store.dispatch('setNames', this.names);
     this.$store.dispatch('setIsLive', true);
-
-    this.archivedMatch = new matchEngine.getArchivedMatchBlueprint(
-      this.$route.params.id
-    );
   },
 
   data: () => ({
@@ -609,6 +605,7 @@ export default {
 
       // well at the moment this doesnt give me win loss of rounds
       // lets make something in decisionEngine to getDetailedJudgesCards
+      console.log(this.decisions);
       const judgesCard = decisionEngine.getJudgesCards(
         this.decisions,
         this.judges,
@@ -894,47 +891,48 @@ export default {
         ringJudgesRight,
       } = this.ringJudges;
 
+      this.ringDecisions.ringDecisionLeft = decisionEngine.scoreRounds(
+        ringJudgesLeft,
+        ringTruePointsLeft
+      );
+      this.ringDecisions.ringDecisionCenter = decisionEngine.scoreRounds(
+        ringJudgesCenter,
+        ringTruePointsCenter
+      );
+      this.ringDecisions.ringDecisionRight = decisionEngine.scoreRounds(
+        ringJudgesRight,
+        ringTruePointsRight
+      );
+
       // for center ring, the club with more fighters standing takes it
       if (this.homeStillStanding > this.awayStillStanding) {
         this.score.home += 2;
+        console.log(this.score);
+        if (this.score.home >= 3) {
+          this.score = 3;
+        }
       } else if (this.homeStillStanding < this.awayStillStanding) {
         this.score.away += 2;
+        console.log(this.score);
+        if (this.score.away >= 3) {
+          this.score = 3;
+        }
       } else {
         // we go to a decision
-        this.ringDecisions.ringDecisionLeft = decisionEngine.scoreRounds(
-          ringJudgesLeft,
-          ringTruePointsLeft
-        );
-        this.ringDecisions.ringDecisionCenter = decisionEngine.scoreRounds(
-          ringJudgesCenter,
-          ringTruePointsCenter
-        );
-        this.ringDecisions.ringDecisionRight = decisionEngine.scoreRounds(
-          ringJudgesRight,
-          ringTruePointsRight
-        );
-
         if (this.ringFinishedLeft) {
           this.cards.leftMsg = 'Finish';
-        } else if (this.ringFinishedCenter) {
-          this.cards.centerMsg = 'Finish';
-        } else if (this.ringFinishedRight) {
+        }
+        if (this.ringFinishedRight) {
           this.cards.rightMsg = 'Finish';
         }
 
         this.isDecision = true; // opens Judges' Cards !
         this.tabs.push({ name: 'judges card', value: false });
         this.selectTab(3);
-
-        // this.countScore();
-
-        setTimeout(() => {
-          // timeout because component JudgesCard saves the list needed to the state
-          // and it hasnt loaded yet ::thinking::
-        }, 500);
       }
       this.$store.dispatch('setScore', this.score);
     },
+
     countActivity(ring, outcome) {
       if (this.isHomeAttack) {
         this.ringActivity[ring - 1].home += 1;
@@ -1186,6 +1184,34 @@ export default {
               this.score.home += 3;
               this.isFullTime = true;
 
+              // this here to pass scoring of rounds regardless of how it ends
+              const {
+                ringTruePointsLeft,
+                ringTruePointsCenter,
+                ringTruePointsRight,
+              } = this.ringTruePoints;
+              const {
+                ringJudgesLeft,
+                ringJudgesCenter,
+                ringJudgesRight,
+              } = this.ringJudges;
+
+              this.ringDecisions.ringDecisionLeft = decisionEngine.scoreRounds(
+                ringJudgesLeft,
+                ringTruePointsLeft
+              );
+              this.ringDecisions.ringDecisionCenter = decisionEngine.scoreRounds(
+                ringJudgesCenter,
+                ringTruePointsCenter
+              );
+              this.ringDecisions.ringDecisionRight = decisionEngine.scoreRounds(
+                ringJudgesRight,
+                ringTruePointsRight
+              );
+
+              console.log(this.decisions);
+              //
+
               setTimeout(() => {
                 this.$store.dispatch('addMatchMessage', msg);
                 this.isDisabled = false;
@@ -1201,6 +1227,32 @@ export default {
             if (this.homeSubs.length == 0) {
               this.score.away += 3;
               this.isFullTime = true;
+
+              // this here to pass scoring of rounds regardless of how it ends
+              const {
+                ringTruePointsLeft,
+                ringTruePointsCenter,
+                ringTruePointsRight,
+              } = this.ringTruePoints;
+              const {
+                ringJudgesLeft,
+                ringJudgesCenter,
+                ringJudgesRight,
+              } = this.ringJudges;
+              this.ringDecisions.ringDecisionLeft = decisionEngine.scoreRounds(
+                ringJudgesLeft,
+                ringTruePointsLeft
+              );
+              this.ringDecisions.ringDecisionCenter = decisionEngine.scoreRounds(
+                ringJudgesCenter,
+                ringTruePointsCenter
+              );
+              this.ringDecisions.ringDecisionRight = decisionEngine.scoreRounds(
+                ringJudgesRight,
+                ringTruePointsRight
+              );
+              console.log(this.decisions);
+              //
 
               setTimeout(() => {
                 this.$store.dispatch('addMatchMessage', msg);
@@ -1362,23 +1414,6 @@ export default {
 .unispace {
   font-family: 'Courier New', Courier, monospace;
   font-size: 8pt;
-}
-
-.judges {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  max-width: 40%;
-}
-
-.home-bench {
-  position: absolute;
-  left: 0;
-  width: 10%;
-}
-.away-bench {
-  position: absolute;
-  right: 0;
-  width: 10%;
 }
 
 .rounds {

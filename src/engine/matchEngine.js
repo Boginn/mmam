@@ -392,9 +392,9 @@ export default {
           }
         });
       }
+      // not striking => grapple
     } else {
       if (fighter.tactic.closeDistance) {
-        // not striking => grapple
         matchData.engage.closeDistance.forEach((element) => {
           if (element.value == 'grapple') {
             // console.log(element);
@@ -428,10 +428,8 @@ export default {
     if (method.value == 'grapple') {
       action = this.grapple(attacker, defender);
     } else if (method.value == 'strike') {
-      action = this.grapple(attacker, defender);
-      // action = this.strike(attacker, defender);
+      action = this.strike(attacker, defender);
     } else if (method.value == 'disengage') {
-      // action = this.grapple(attacker, defender);
       action = this.disengage(attacker, defender);
     }
 
@@ -456,9 +454,9 @@ export default {
     return action;
   },
   strike(attacker, defender) {
-    var action;
+    let action;
     //maybe check fighter pref, gameplan
-    var chance = this.roll(2);
+    let chance = this.roll(2);
 
     if (chance == 1) {
       action = this.combo(matchData.strike.combo, attacker, defender);
@@ -474,7 +472,7 @@ export default {
   },
   disengage(fighter) {
     //award less exposed for disengaging
-    var exposedDiscount = 0;
+    let exposedDiscount = 0;
     if (this.getRollWithMod(fighter.mental.adaptability) >= 10) {
       exposedDiscount += this.roll(10);
     }
@@ -488,13 +486,16 @@ export default {
       exposedDiscount += this.roll(10);
     }
     exposedDiscount += Math.floor(fighter.match.condition / 10);
+    console.log(
+      'A disengage() happened (instead of strike or grapple), fighter gained some condition. return Integer'
+    );
     return exposedDiscount;
   },
 
   /*AFTER .engage.grapple*/
   takedown(takedowns, attacker, defender) {
-    var action;
-    var takedown = takedowns[this.roll(takedowns.length) - 1];
+    let action;
+    let takedown = takedowns[this.roll(takedowns.length) - 1];
 
     if (takedown.value == 'singleLeg') {
       action = this.singleLeg(takedown, attacker, defender);
@@ -545,8 +546,8 @@ export default {
   /*AFTER .engage.strike*/
 
   combo(combos, attacker, defender) {
-    var action;
-    var combo = combos[this.roll(combos.length) - 1];
+    let action;
+    let combo = combos[this.roll(combos.length) - 1];
 
     if (combo.value == 'oneTwo') {
       action = this.oneTwo(combo, attacker, defender);
@@ -816,7 +817,7 @@ export default {
     let outcome = new Outcome();
     let finalAttack, finalDefend;
     let physicalDC = 12;
-    let skillDC = 18;
+    let skillDC = 16;
 
     // Physical checks
     let attackPhysMod = this.normalMovePhysicalCheck(attacker);
