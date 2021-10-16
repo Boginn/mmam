@@ -106,6 +106,7 @@ export default {
     fieldable = true;
     fitness = 100;
     condition = 100;
+    form = [];
     appearances = {
       overall: {
         international: 0,
@@ -122,6 +123,9 @@ export default {
     };
 
     match = {
+      // control: false,
+      save: false,
+      dc: null,
       momentum: undefined,
       condition: undefined,
       exposed: undefined,

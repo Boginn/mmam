@@ -9,17 +9,12 @@
 
   make a fixtureEngine, getPostMatch and getFixtures functions
 
-  make the modal for speccing fighters in a match a components
-  its in Overview, Bench and MatchTactics
+
   
 // BUGS
 
-simulateMatch gets undefined decisions, probably the same as in match
-make a function  for that
-simulateMatch will of course need an overhaul
-    check and see if possible yet,
-    maybe only matchEngine will get further code,
-    Match might be about done and simulate should follow
+
+
 
 
 
@@ -36,26 +31,26 @@ functionality:
         you're in a match an press back....
 tweaks:
    
+   
 implement:
     screen to pick team to manage
   
     fixture:
         click on 
 
+        
+
     match:
+        simulateMatch will of course need an overhaul
+        check and see if possible yet,
+        maybe only matchEngine will get further code,
+        Match might be about done and simulate should follow
+
+
         go through each check vs check to see disrepancies, (game balance)
         MAKE SURE to balance all fighters to 10
 
-
-        
-        ahhhh crucial, 
-        having a good rating in the last five contests
-        indicates good form 
-        form can come into play for initiative perhaps
-
-        how about the form is last 6 or so rounds
-        + number of finishes this season
-        Fighter L W W L L W (5)
+   
 
             after landing a good successfull takedown 
                 give momentum to controling fighter
@@ -68,16 +63,19 @@ implement:
 
 
 last time:
-    was working on passing the points of the fighers to count their form
-    displaying staff on the Details comopnent, make coach judge rounds
-    and display their scoring in details 
-    // in archiveMatch
-    // well at the moment this doesnt give me win loss of rounds
-    // lets make something in decisionEngine to getDetailedJudgesCards
+    
 
+        I need to document how I want to do each action in matchEngine, make a data flow thingy
 
-    fixing decisions array errors, persist in simulateMatch
+        I need to change disengage. it should refer to resetting position from being controlled
+        (i.e. fighter.match.save==true). The fighter has to use his initiative to 
+        disengage/reset if (save==true)
+        A new action called, maybe 'compose' or 'rest', it will be an action fighters can
+        take when they have initiative, letting them compose and regain condition. 
+        they take that action based on manager instructions. 
 
+        manager might be able to ask fighters to specifically strike or grapple but it's
+        ultimately up to the fighters. fighters follow other instructions well however.
 
 
 

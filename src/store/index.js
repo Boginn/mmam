@@ -278,6 +278,9 @@ export default new Vuex.Store({
     addClubData(context, payload) {
       context.commit('ADD_CLUB_DATA', payload);
     },
+    addFighterForm(context, payload) {
+      context.commit('ADD_FIGHTER_FORM', payload);
+    },
     addFighterData(context, payload) {
       context.commit('ADD_FIGHTER_DATA', payload);
     },
@@ -456,6 +459,13 @@ export default new Vuex.Store({
       const id = state.archivedMatchId;
       payload = { ...payload, id: id };
       state.matches.push(payload);
+    },
+    ADD_FIGHTER_FORM(state, payload) {
+      state.roster.forEach((element) => {
+        if (element.id == payload.id) {
+          element.form.push(payload.item);
+        }
+      });
     },
     ADD_FIGHTER_DATA(state, payload) {
       state.roster.forEach((element) => {

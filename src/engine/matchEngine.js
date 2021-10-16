@@ -2,15 +2,23 @@ import matchData from '@/data/matchData.js';
 
 class Outcome {
   msg = undefined;
+
   attackerExposed = 0;
-  defenderExposed = 0;
   attackerDamage = 0;
-  defenderDamage = 0;
   attackerLearned = 0;
-  defenderLearned = 0;
   attackerMomentum = false;
+  attackerSave = false;
+  attackerDc = false;
+
+  defenderExposed = 0;
+  defenderDamage = 0;
+  defenderLearned = 0;
   defenderMomentum = false;
-  disengage = false;
+  defenderSave = false;
+  defenderDc = false;
+
+  disengage = false; // get rid of this
+
   point = false;
   significant = false;
 }
@@ -637,18 +645,24 @@ export default {
 
     if (finalAttack >= finalDefend) {
       if (this.getDifference(finalAttack, finalDefend) >= 15) {
-        //complete , point, significant, big
+        //complete , point, significant, big dc, save true for defender
         outcome.defenderExposed = outcome.defenderExposed + 15;
         outcome.attackerLearned = outcome.attackerLearned + 10;
         outcome.defenderDamage = outcome.defenderDamage + 10 - 7;
+
+        outcome.defenderSave = true;
+        outcome.defenderDc = 11 + this.getModifier(attacker.skill.versatility);
 
         outcome.significant = true;
         outcome.point = true;
         outcome.msg = `${attacker.nickname} lands a devistating ${action.text} on ${defender.nickname}`;
       } else if (this.getDifference(finalAttack, finalDefend) >= 10) {
-        //complete, point, significant
+        //complete, point, significant, save true for defender
         outcome.attackerLearned = outcome.attackerLearned + 5;
         outcome.defenderDamage = outcome.defenderDamage + 4 - 2;
+
+        outcome.defenderSave = true;
+        outcome.defenderDc = 8 + this.getModifier(attacker.skill.versatility);
 
         outcome.significant = true;
         outcome.point = true;
@@ -657,6 +671,9 @@ export default {
         //complete, point
         outcome.attackerLearned = outcome.attackerLearned + 5;
         outcome.defenderDamage = outcome.defenderDamage + 2 - 2;
+
+        outcome.defenderSave = true;
+        outcome.defenderDc = 3 + this.getModifier(attacker.skill.versatility);
 
         outcome.point = true;
         outcome.msg = `${attacker.nickname} barely lands a ${action.text} on ${defender.nickname}`;

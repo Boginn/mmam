@@ -52,6 +52,23 @@
                   </div>
                 </v-card-text>
               </v-col>
+              <v-col class="pb-0 pt-0 d-flex text-center">
+                <v-card-text class="sixth ma-2" style="width: 75%">
+                  <span v-for="(entry, index) in form.slice(-4)" :key="index">
+                    <v-chip
+                      class="code"
+                      v-bind:class="{
+                        'success success--text': entry == 'W',
+                        'success warning--text': entry == 'F',
+                        'red red--text': entry == 'L',
+                      }"
+                      outlined
+                    >
+                      {{ entry }}
+                    </v-chip>
+                  </span>
+                </v-card-text>
+              </v-col>
               <v-col>
                 <v-card-text
                   class="justify-space-between seventh ma-2"
@@ -118,10 +135,10 @@
                     </b>
                   </div>
                 </v-col>
+                <v-col class="fifth  ma-1 mb-5">
+                  Interaction
+                </v-col>
               </v-row>
-            </v-col>
-            <v-col class="text-center">
-              Interaction
             </v-col>
           </v-row>
         </v-card>
@@ -162,6 +179,17 @@ export default {
       return engine.lastName(this.fighter);
     },
 
+    form() {
+      // if (this.fighter.form.length > 5) {
+      //   const arr = [];
+      //   for (let i = 0; i < 5; i++) {
+      //     arr.push(this.fighter.form[i]);
+      //   }
+      //   return arr;
+      // } else {
+      return this.fighter.form;
+      // }
+    },
     mental() {
       let mental = [];
       mental.push(

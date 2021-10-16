@@ -632,7 +632,6 @@ export default {
           league: 1,
           cup: 0,
           international: 0,
-          form: [],
           finishes: this.getFighter(this.homeTactic.selection.left).match
             .finishes,
           id: this.homeTactic.selection.left,
@@ -891,6 +890,7 @@ export default {
         ringJudgesRight,
       } = this.ringJudges;
 
+      // sets this.decisions
       this.ringDecisions.ringDecisionLeft = decisionEngine.scoreRounds(
         ringJudgesLeft,
         ringTruePointsLeft
@@ -909,13 +909,13 @@ export default {
         this.score.home += 2;
         console.log(this.score);
         if (this.score.home >= 3) {
-          this.score = 3;
+          this.score.home = 3;
         }
       } else if (this.homeStillStanding < this.awayStillStanding) {
         this.score.away += 2;
         console.log(this.score);
         if (this.score.away >= 3) {
-          this.score = 3;
+          this.score.away = 3;
         }
       } else {
         // we go to a decision
@@ -930,6 +930,8 @@ export default {
         this.tabs.push({ name: 'judges card', value: false });
         this.selectTab(3);
       }
+
+      console.log(this.score);
       this.$store.dispatch('setScore', this.score);
     },
 
@@ -948,9 +950,73 @@ export default {
     },
     countScore(result) {
       if (!this.isScored) {
-        this.score.home = this.score.home + result.home;
-        this.score.away = this.score.away + result.away;
+        this.score.home = this.score.home + result[1].home;
+        this.score.away = this.score.away + result[1].away;
+
+        this.commitFighterForm(
+          result[0].center,
+          this.homeTactic.selection.center,
+          this.awayTactic.selection.center
+        );
+
+        if (!this.ringFinishedLeft) {
+          this.commitFighterForm(
+            result[0].left,
+            this.homeTactic.selection.left,
+            this.awayTactic.selection.left
+          );
+        }
+        if (!this.ringFinishedRight) {
+          this.commitFighterForm(
+            result[0].right,
+            this.homeTactic.selection.right,
+            this.awayTactic.selection.right
+          );
+        }
         this.isScored = true;
+      }
+    },
+    commitFighterForm(result, home, away) {
+      let homeCount = 0;
+      let awayCount = 0;
+
+      result.forEach((judge) => {
+        if (judge.home == true && judge.away == false) {
+          homeCount += 1;
+        } else if (judge.home == false && judge.away == true) {
+          awayCount += 1;
+        }
+      });
+
+      if (homeCount == awayCount) {
+        this.$store.dispatch('addFighterForm', {
+          id: home,
+          item: 'D',
+        });
+        this.$store.dispatch('addFighterForm', {
+          id: away,
+          item: 'D',
+        });
+      } else {
+        if (homeCount > awayCount) {
+          this.$store.dispatch('addFighterForm', {
+            id: home,
+            item: 'W',
+          });
+          this.$store.dispatch('addFighterForm', {
+            id: away,
+            item: 'L',
+          });
+        } else {
+          this.$store.dispatch('addFighterForm', {
+            id: away,
+            item: 'W',
+          });
+          this.$store.dispatch('addFighterForm', {
+            id: home,
+            item: 'L',
+          });
+        }
       }
     },
 
@@ -1163,6 +1229,8 @@ export default {
 
         if (ring == 1) {
           this.finishInLeft();
+          this.$store.dispatch('addFighterForm', { id: winner.id, item: 'F' });
+          this.$store.dispatch('addFighterForm', { id: fighter.id, item: 'L' });
 
           //do depending on which side
           if (isHomeAttacking) {
@@ -1176,6 +1244,8 @@ export default {
           }
         } else if (ring == 2) {
           this.finishInCenter();
+          this.$store.dispatch('addFighterForm', { id: winner.id, item: 'F' });
+          this.$store.dispatch('addFighterForm', { id: fighter.id, item: 'L' });
 
           //do depending on which side
           if (isHomeAttacking) {
@@ -1265,6 +1335,8 @@ export default {
           }
         } else if (ring == 3) {
           this.finishInRight();
+          this.$store.dispatch('addFighterForm', { id: winner.id, item: 'F' });
+          this.$store.dispatch('addFighterForm', { id: fighter.id, item: 'L' });
 
           //do depending on which side
           if (isHomeAttacking) {

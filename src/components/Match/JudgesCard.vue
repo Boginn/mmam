@@ -93,11 +93,11 @@ export default {
   },
 
   methods: {
-    firstName(fighter) {
-      return engine.firstName(fighter);
+    firstName(person) {
+      return engine.firstName(person);
     },
-    lastName(fighter) {
-      return engine.lastName(fighter);
+    lastName(person) {
+      return engine.lastName(person);
     },
     finalPoints(rounds) {
       return decisionEngine.finalPoints(rounds);
@@ -113,7 +113,7 @@ export default {
       //save
       this.$parent.cards = result[0];
       console.log(result[0]);
-      this.$emit('countScore', result[1]);
+      this.$emit('countScore', result);
     },
   },
 };
