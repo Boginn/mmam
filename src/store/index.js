@@ -387,7 +387,6 @@ export default new Vuex.Store({
       //   state.matchMessages.splice(0, 1);
       // }
       state.matchMessagesForRings[payload.ring - 1].push(payload.msg);
-      console.log(state.matchMessagesForRings);
     },
 
     ADD_SQUAD(state, payload) {
@@ -426,7 +425,15 @@ export default new Vuex.Store({
 
     //matchData
     SET_SCORE(state, payload) {
-      state.matchData.score = payload;
+      let { home, away } = payload;
+      if (home > 3) {
+        home = 3;
+      }
+      if (away > 3) {
+        away = 3;
+      }
+
+      state.matchData.score = { home: home, away: away };
     },
     SET_NAMES(state, payload) {
       state.matchData.names = payload;

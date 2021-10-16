@@ -1,22 +1,5 @@
 <template>
   <v-container>
-    <v-row class="mt-5 justify-center">
-      <v-btn
-        class="confirm primary"
-        :disabled="!this.checkTactic"
-        v-if="this.isMatchday"
-        @click="goToMatch()"
-        >confirm and proceed</v-btn
-      >
-      <v-btn
-        x-large
-        @click="defaultSelection()"
-        v-if="isDeveloper"
-        class="secondary"
-        style="position: absolute; top: 10%; right: 10%"
-        >Default</v-btn
-      >
-    </v-row>
     <v-row class="mt-5">
       <v-col>
         <v-data-table
@@ -319,7 +302,26 @@
             </v-row>
           </v-card>
         </v-col>
+        <v-col>
+          <v-btn
+            class="confirm primary"
+            :disabled="!this.checkTactic"
+            v-if="this.isMatchday"
+            @click="goToMatch()"
+            >confirm and proceed</v-btn
+          >
+        </v-col>
       </v-col>
+    </v-row>
+    <v-row class="mt-5 justify-center">
+      <v-btn
+        x-large
+        @click="defaultSelection()"
+        v-if="!isDeveloper"
+        class="secondary"
+        style="width: 100%;"
+        >Default</v-btn
+      >
     </v-row>
   </v-container>
 </template>
@@ -510,7 +512,7 @@ export default {
         right: this.club.squad[2],
       };
       this.$store.dispatch('setSelectedTactic', this.tactic);
-      this.goToMatch();
+      // this.goToMatch();
     },
     clearSelection() {
       this.tactic.selection = {

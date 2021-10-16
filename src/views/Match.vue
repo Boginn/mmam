@@ -454,6 +454,8 @@ export default {
     //init
     resetFighterMatchStats() {
       function reset(item) {
+        item.match.save = false;
+        item.match.dc = null;
         item.match.exposed = 0;
         item.match.condition =
           item.fitness > item.condition ? item.fitness : item.condition;
@@ -907,16 +909,8 @@ export default {
       // for center ring, the club with more fighters standing takes it
       if (this.homeStillStanding > this.awayStillStanding) {
         this.score.home += 2;
-        console.log(this.score);
-        if (this.score.home >= 3) {
-          this.score.home = 3;
-        }
       } else if (this.homeStillStanding < this.awayStillStanding) {
         this.score.away += 2;
-        console.log(this.score);
-        if (this.score.away >= 3) {
-          this.score.away = 3;
-        }
       } else {
         // we go to a decision
         if (this.ringFinishedLeft) {
@@ -931,7 +925,6 @@ export default {
         this.selectTab(3);
       }
 
-      console.log(this.score);
       this.$store.dispatch('setScore', this.score);
     },
 
@@ -1130,6 +1123,7 @@ export default {
         }, this.timeoutInterval * timeoutIntervalMultiplier); // INTERVAL
         timeoutIntervalMultiplier += 1;
 
+        /*
         //check for disengage // could be part of updateFighterMatchStats?
         // all it's doing is giving exposed back.. could be called sth else
         if (outcome.disengage) {
@@ -1141,6 +1135,8 @@ export default {
           // msg = `${defender.nickname} disengages and resets`;
           // this.$store.dispatch("addMatchMessage", msg);
         }
+        */
+
         //updates momentum, condition, exposed and learned
         this.updateFighterMatchStats(attacker, defender, outcome);
 
@@ -1242,6 +1238,7 @@ export default {
             this.awaySubs.push(winner.id);
             this.finishes.away++;
           }
+          this.$store.dispatch('setScore', this.score);
         } else if (ring == 2) {
           this.finishInCenter();
           this.$store.dispatch('addFighterForm', { id: winner.id, item: 'F' });
@@ -1253,7 +1250,7 @@ export default {
             if (this.awaySubs.length == 0) {
               this.score.home += 3;
               this.isFullTime = true;
-
+              /*
               // this here to pass scoring of rounds regardless of how it ends
               const {
                 ringTruePointsLeft,
@@ -1281,7 +1278,7 @@ export default {
 
               console.log(this.decisions);
               //
-
+*/
               setTimeout(() => {
                 this.$store.dispatch('addMatchMessage', msg);
                 this.isDisabled = false;
@@ -1297,7 +1294,7 @@ export default {
             if (this.homeSubs.length == 0) {
               this.score.away += 3;
               this.isFullTime = true;
-
+              /*
               // this here to pass scoring of rounds regardless of how it ends
               const {
                 ringTruePointsLeft,
@@ -1323,7 +1320,7 @@ export default {
               );
               console.log(this.decisions);
               //
-
+*/
               setTimeout(() => {
                 this.$store.dispatch('addMatchMessage', msg);
                 this.isDisabled = false;
@@ -1333,6 +1330,7 @@ export default {
             //   this.score.away += 3;
             // }
           }
+          this.$store.dispatch('setScore', this.score);
         } else if (ring == 3) {
           this.finishInRight();
           this.$store.dispatch('addFighterForm', { id: winner.id, item: 'F' });
@@ -1341,13 +1339,16 @@ export default {
           //do depending on which side
           if (isHomeAttacking) {
             this.score.home += 1;
+
             this.homeSubs.push(winner.id);
             this.finishes.home++;
           } else {
             this.score.away += 1;
+
             this.awaySubs.push(winner.id);
             this.finishes.away++;
           }
+          this.$store.dispatch('setScore', this.score);
         }
       }
     },
@@ -1405,10 +1406,11 @@ export default {
       return result;
     },
     updateFighterMatchStats(attacker, defender, outcome) {
-      attacker.match.condition -= outcome.attackerDamage;
-      attacker.match.exposed + outcome.attackerExposed;
-      attacker.match.learned += outcome.attackerLearned;
-      attacker.match.momentum = outcome.attackerMomentum;
+      const { att, def } = outcome;
+      attacker.match.condition -= att.damage;
+      attacker.match.exposed += att.exposed;
+      attacker.match.learned += att.learned;
+      attacker.match.momentum = att.momentum;
 
       attacker.match.exposed = matchEngine.getFlooredToHundred(
         attacker.match.exposed
@@ -1417,10 +1419,10 @@ export default {
         attacker.match.learned
       );
 
-      defender.match.condition -= outcome.defenderDamage;
-      defender.match.exposed += outcome.defenderExposed;
-      defender.match.learned += outcome.defenderLearned;
-      attacker.match.momentum = outcome.defenderMomentum;
+      defender.match.condition -= def.damage;
+      defender.match.exposed += def.exposed;
+      defender.match.learned += def.learned;
+      attacker.match.momentum = def.momentum;
 
       defender.match.exposed = matchEngine.getFlooredToHundred(
         defender.match.exposed
@@ -1462,8 +1464,6 @@ export default {
           }
         }
       } else if (ring == 3) {
-        console.log('hm');
-
         // RIGHT
         if (this.isHomeAttack) {
           ringTruePointsRight[this.round - 1].home += 1;

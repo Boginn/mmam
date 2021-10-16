@@ -3,21 +3,23 @@ import matchData from '@/data/matchData.js';
 class Outcome {
   msg = undefined;
 
-  attackerExposed = 0;
-  attackerDamage = 0;
-  attackerLearned = 0;
-  attackerMomentum = false;
-  attackerSave = false;
-  attackerDc = false;
+  att = {
+    exposed: 0,
+    damage: 0,
+    learned: 0,
+    momentum: false,
+    save: false,
+    dc: null,
+  };
 
-  defenderExposed = 0;
-  defenderDamage = 0;
-  defenderLearned = 0;
-  defenderMomentum = false;
-  defenderSave = false;
-  defenderDc = false;
-
-  disengage = false; // get rid of this
+  def = {
+    exposed: 0,
+    damage: 0,
+    learned: 0,
+    momentum: false,
+    save: false,
+    dc: false,
+  };
 
   point = false;
   significant = false;
@@ -366,10 +368,11 @@ export default {
 
     const isExposed = this.determineExposedByFactor(exposedFactor);
     if (isExposed) {
+      console.log('disengaging');
       // then DISENGAGE
       matchData.disengage.forEach((element) => {
         if (element.value == 'disengage') {
-          method = element;
+          return element;
         }
       });
     }
@@ -426,7 +429,7 @@ export default {
   },
 
   engage(method, attacker, defender) {
-    let action;
+    let outcome;
 
     // const functionName = `this.${method.value}`;
     // action = eval(functionName)(attacker, defender);
@@ -434,23 +437,23 @@ export default {
     // this.variables
 
     if (method.value == 'grapple') {
-      action = this.grapple(attacker, defender);
+      outcome = this.grapple(attacker, defender);
     } else if (method.value == 'strike') {
-      action = this.strike(attacker, defender);
+      outcome = this.strike(attacker, defender);
     } else if (method.value == 'disengage') {
-      action = this.disengage(attacker, defender);
+      outcome = this.disengage(attacker, defender);
     }
 
-    return action;
+    return outcome;
   },
 
   /*AFTER .engage*/
   grapple(attacker, defender) {
-    var action;
+    let action;
     console.log('he');
 
     //maybe check fighter pref, gameplan
-    var chance = this.roll(2);
+    const chance = this.roll(2);
 
     if (chance == 1) {
       action = this.takedown(matchData.grapple.takedown, attacker, defender);
@@ -478,26 +481,35 @@ export default {
 
     return action;
   },
-  disengage(fighter) {
-    //award less exposed for disengaging
-    let exposedDiscount = 0;
-    if (this.getRollWithMod(fighter.mental.adaptability) >= 10) {
-      exposedDiscount += this.roll(10);
+  disengage(attacker, defender) {
+    let outcome = new Outcome();
+    let { att, def } = outcome;
+    //award less exposed and less learned from opponent for disengaging
+    if (this.getRollWithMod(attacker.mental.adaptability) >= 10) {
+      att.exposed -= this.roll(10);
+      if (this.getRollWithMod(defender.mental.adaptability) <= 10) {
+        def.learned -= this.roll(10);
+      }
     }
-    if (this.getRollWithMod(fighter.physical.stamina) >= 10) {
-      exposedDiscount += this.roll(5);
+    if (this.getRollWithMod(attacker.physical.stamina) >= 10) {
+      att.exposed -= this.roll(10);
+      if (this.getRollWithMod(defender.physical.stamina) <= 10) {
+        def.learned -= this.roll(10);
+      }
     }
-    if (this.getRollWithMod(fighter.physical.workRate) >= 10) {
-      exposedDiscount += this.roll(5);
+    if (this.getRollWithMod(attacker.physical.workRate) >= 10) {
+      att.exposed -= this.roll(10);
+      if (this.getRollWithMod(defender.physical.workRate) <= 10) {
+        def.learned -= this.roll(10);
+      }
     }
-    if (this.getRollWithMod(fighter.skill.versatility) >= 10) {
-      exposedDiscount += this.roll(10);
-    }
-    exposedDiscount += Math.floor(fighter.match.condition / 10);
+
+    // exposedDiscount += Math.floor(attacker.match.condition / 10);
     console.log(
       'A disengage() happened (instead of strike or grapple), fighter gained some condition. return Integer'
     );
-    return exposedDiscount;
+
+    return outcome;
   },
 
   /*AFTER .engage.grapple*/
@@ -577,36 +589,34 @@ export default {
   /*AFTER .engage.grapple.takedown*/
   singleLeg(action, attacker, defender) {
     let outcome = new Outcome();
+    let { att, def } = outcome;
     let finalAttack, finalDefend;
-    let physicalDC = 10;
+    let physDC = 10;
     let skillDC = 10;
 
     // Physical checks
     let attackPhysMod = this.bigActionPhysicalCheck(attacker);
     let defendPhysMod = this.bigActionPhysicalCheck(defender);
 
-    if (this.getDifference(attackPhysMod, defendPhysMod) >= physicalDC) {
+    if (this.getDifference(attackPhysMod, defendPhysMod) >= physDC) {
       if (attackPhysMod > defendPhysMod) {
-        outcome.defenderExposed = outcome.defenderExposed + physicalDC;
-        outcome.attackerLearned = outcome.attackerLearned + physicalDC;
+        def.exposed = def.exposed + physDC;
+        att.learned = att.learned + physDC;
       } else {
-        outcome.defenderLearned = outcome.defenderLearned + physicalDC;
-        outcome.attackerExposed = outcome.attackerExposed + physicalDC;
+        def.learned = def.learned + physDC;
+        att.exposed = att.exposed + physDC;
       }
-    } else if (
-      this.getDifference(attackPhysMod, defendPhysMod) >=
-      physicalDC / 2
-    ) {
+    } else if (this.getDifference(attackPhysMod, defendPhysMod) >= physDC / 2) {
       if (attackPhysMod > defendPhysMod) {
-        outcome.defenderExposed = outcome.defenderExposed + physicalDC / 2;
-        outcome.attackerLearned = outcome.attackerLearned + physicalDC / 2;
+        def.exposed = def.exposed + physDC / 2;
+        att.learned = att.learned + physDC / 2;
       } else {
-        outcome.defenderLearned = outcome.defenderLearned + physicalDC / 2;
-        outcome.attackerExposed = outcome.attackerExposed + physicalDC / 2;
+        def.learned = def.learned + physDC / 2;
+        att.exposed = att.exposed + physDC / 2;
       }
     } else {
-      outcome.defenderLearned = outcome.defenderLearned + defendPhysMod;
-      outcome.attackerLearned = outcome.attackerLearned + attackPhysMod;
+      def.learned = def.learned + defendPhysMod;
+      att.learned = att.learned + attackPhysMod;
     }
 
     // Skill checks
@@ -646,34 +656,34 @@ export default {
     if (finalAttack >= finalDefend) {
       if (this.getDifference(finalAttack, finalDefend) >= 15) {
         //complete , point, significant, big dc, save true for defender
-        outcome.defenderExposed = outcome.defenderExposed + 15;
-        outcome.attackerLearned = outcome.attackerLearned + 10;
-        outcome.defenderDamage = outcome.defenderDamage + 10 - 7;
+        def.exposed = def.exposed + 15;
+        att.learned = att.learned + 10;
+        def.damage = def.damage + 10 - 7;
 
-        outcome.defenderSave = true;
-        outcome.defenderDc = 11 + this.getModifier(attacker.skill.versatility);
+        def.save = true;
+        def.dc = 11 + this.getModifier(attacker.skill.versatility);
 
         outcome.significant = true;
         outcome.point = true;
         outcome.msg = `${attacker.nickname} lands a devistating ${action.text} on ${defender.nickname}`;
       } else if (this.getDifference(finalAttack, finalDefend) >= 10) {
         //complete, point, significant, save true for defender
-        outcome.attackerLearned = outcome.attackerLearned + 5;
-        outcome.defenderDamage = outcome.defenderDamage + 4 - 2;
+        att.learned = att.learned + 5;
+        def.damage = def.damage + 4 - 2;
 
-        outcome.defenderSave = true;
-        outcome.defenderDc = 8 + this.getModifier(attacker.skill.versatility);
+        def.save = true;
+        def.dc = 8 + this.getModifier(attacker.skill.versatility);
 
         outcome.significant = true;
         outcome.point = true;
         outcome.msg = `${attacker.nickname} completes a significant ${action.text} on ${defender.nickname}`;
       } else {
         //complete, point
-        outcome.attackerLearned = outcome.attackerLearned + 5;
-        outcome.defenderDamage = outcome.defenderDamage + 2 - 2;
+        att.learned = att.learned + 5;
+        def.damage = def.damage + 2 - 2;
 
-        outcome.defenderSave = true;
-        outcome.defenderDc = 3 + this.getModifier(attacker.skill.versatility);
+        def.save = true;
+        def.dc = 3 + this.getModifier(attacker.skill.versatility);
 
         outcome.point = true;
         outcome.msg = `${attacker.nickname} barely lands a ${action.text} on ${defender.nickname}`;
@@ -681,17 +691,16 @@ export default {
     } else {
       if (this.getDifference(finalAttack, finalDefend) >= 15) {
         //not complete, disengage
-        outcome.disengage = true;
-        outcome.attackerExposed = outcome.attackerExposed + 5;
-        outcome.defenderLearned = outcome.defenderLearned + 5;
+        att.exposed = att.exposed + 5;
+        def.learned = def.learned + 5;
         outcome.msg = `${attacker.nickname} completely fumbles a ${action.text} attempt on ${defender.nickname}`;
       } else if (this.getDifference(finalAttack, finalDefend) >= 10) {
         //not complete, attacker learns
-        outcome.attackerLearned = outcome.attackerLearned + 5;
+        att.learned = att.learned + 5;
         outcome.msg = `${attacker.nickname} fails to complete a ${action.text} on ${defender.nickname}`;
       } else {
         //not complete, defender exposed
-        outcome.defenderExposed = outcome.defenderExposed + 5;
+        def.exposed = def.exposed + 5;
         outcome.msg = `${attacker.nickname} almost gets the ${action.text} on ${defender.nickname}`;
       }
     }
@@ -708,36 +717,34 @@ export default {
   /*AFTER .engage.strike.combo*/
   oneTwo(action, attacker, defender) {
     let outcome = new Outcome();
+    let { att, def } = outcome;
     let finalAttack, finalDefend;
-    let physicalDC = 5;
+    let physDC = 5;
     let skillDC = 12;
 
     // Physical checks
     let attackPhysMod = this.normalMovePhysicalCheck(attacker);
     let defendPhysMod = this.normalMovePhysicalCheck(defender);
 
-    if (this.getDifference(attackPhysMod, defendPhysMod) >= physicalDC) {
+    if (this.getDifference(attackPhysMod, defendPhysMod) >= physDC) {
       if (attackPhysMod > defendPhysMod) {
-        outcome.defenderExposed = outcome.defenderExposed + physicalDC;
-        outcome.attackerLearned = outcome.attackerLearned + physicalDC;
+        def.exposed = def.exposed + physDC;
+        att.learned = att.learned + physDC;
       } else {
-        outcome.defenderLearned = outcome.defenderLearned + physicalDC;
-        outcome.attackerExposed = outcome.attackerExposed + physicalDC;
+        def.learned = def.learned + physDC;
+        att.exposed = att.exposed + physDC;
       }
-    } else if (
-      this.getDifference(attackPhysMod, defendPhysMod) >=
-      physicalDC / 2
-    ) {
+    } else if (this.getDifference(attackPhysMod, defendPhysMod) >= physDC / 2) {
       if (attackPhysMod > defendPhysMod) {
-        outcome.defenderExposed = outcome.defenderExposed + physicalDC / 2;
-        outcome.attackerLearned = outcome.attackerLearned + physicalDC / 2;
+        def.exposed = def.exposed + physDC / 2;
+        att.learned = att.learned + physDC / 2;
       } else {
-        outcome.defenderLearned = outcome.defenderLearned + physicalDC / 2;
-        outcome.attackerExposed = outcome.attackerExposed + physicalDC / 2;
+        def.learned = def.learned + physDC / 2;
+        att.exposed = att.exposed + physDC / 2;
       }
     } else {
-      outcome.defenderLearned = outcome.defenderLearned + defendPhysMod;
-      outcome.attackerLearned = outcome.attackerLearned + attackPhysMod;
+      def.learned = def.learned + defendPhysMod;
+      att.learned = att.learned + attackPhysMod;
     }
 
     // Skill checks
@@ -777,28 +784,25 @@ export default {
     if (finalAttack >= finalDefend) {
       if (this.getDifference(finalAttack, finalDefend) >= 15) {
         //complete , point, significant, big
-        outcome.defenderExposed = outcome.defenderExposed + 10;
-        outcome.attackerLearned = outcome.attackerLearned + 5;
-        outcome.defenderDamage =
-          outcome.defenderDamage + 10 + Math.floor(attacker.body.power / 10);
+        def.exposed = def.exposed + 10;
+        att.learned = att.learned + 5;
+        def.damage = def.damage + 10 + Math.floor(attacker.body.power / 10);
 
         outcome.significant = true;
         outcome.point = true;
         outcome.msg = `${attacker.nickname} lands a devistating ${action.text} on ${defender.nickname}`;
       } else if (this.getDifference(finalAttack, finalDefend) >= 10) {
         //complete, point, significant
-        outcome.defenderExposed = outcome.defenderExposed + 5;
-        outcome.defenderDamage =
-          outcome.defenderDamage + 5 + Math.floor(attacker.body.power / 10);
+        def.exposed = def.exposed + 5;
+        def.damage = def.damage + 5 + Math.floor(attacker.body.power / 10);
 
         outcome.significant = true;
         outcome.point = true;
         outcome.msg = `${attacker.nickname} completes a significant ${action.text} on ${defender.nickname}`;
       } else {
         //complete, point
-        outcome.attackerLearned = outcome.attackerLearned + 5;
-        outcome.defenderDamage =
-          outcome.defenderDamage + Math.floor(attacker.body.power / 10);
+        att.learned = att.learned + 5;
+        def.damage = def.damage + Math.floor(attacker.body.power / 10);
 
         outcome.point = true;
         outcome.msg = `${attacker.nickname} barely lands a ${action.text} on ${defender.nickname}`;
@@ -806,17 +810,16 @@ export default {
     } else {
       if (this.getDifference(finalAttack, finalDefend) >= 15) {
         //not complete, disengage
-        outcome.disengage = true;
-        outcome.attackerExposed = outcome.attackerExposed + 10;
-        outcome.defenderLearned = outcome.defenderLearned + 10;
+        att.exposed = att.exposed + 10;
+        def.learned = def.learned + 10;
         outcome.msg = `${attacker.nickname} completely fumbles a ${action.text} attempt on ${defender.nickname}`;
       } else if (this.getDifference(finalAttack, finalDefend) >= 10) {
         //not complete, attacker learns
-        outcome.attackerLearned = outcome.attackerLearned + 5;
+        att.learned = att.learned + 5;
         outcome.msg = `${attacker.nickname} fails to complete a ${action.text} on ${defender.nickname}`;
       } else {
         //not complete, defender exposed
-        outcome.defenderExposed = outcome.defenderExposed + 5;
+        def.exposed = def.exposed + 5;
         outcome.msg = `${attacker.nickname} almost gets the ${action.text} on ${defender.nickname}`;
       }
     }
@@ -832,36 +835,34 @@ export default {
 
   oneTwoThree(action, attacker, defender) {
     let outcome = new Outcome();
+    let { att, def } = outcome;
     let finalAttack, finalDefend;
-    let physicalDC = 12;
+    let physDC = 12;
     let skillDC = 16;
 
     // Physical checks
     let attackPhysMod = this.normalMovePhysicalCheck(attacker);
     let defendPhysMod = this.normalMovePhysicalCheck(defender);
 
-    if (this.getDifference(attackPhysMod, defendPhysMod) >= physicalDC) {
+    if (this.getDifference(attackPhysMod, defendPhysMod) >= physDC) {
       if (attackPhysMod > defendPhysMod) {
-        outcome.defenderExposed = outcome.defenderExposed + physicalDC;
-        outcome.attackerLearned = outcome.attackerLearned + physicalDC;
+        def.exposed = def.exposed + physDC;
+        att.learned = att.learned + physDC;
       } else {
-        outcome.defenderLearned = outcome.defenderLearned + physicalDC;
-        outcome.attackerExposed = outcome.attackerExposed + physicalDC;
+        def.learned = def.learned + physDC;
+        att.exposed = att.exposed + physDC;
       }
-    } else if (
-      this.getDifference(attackPhysMod, defendPhysMod) >=
-      physicalDC / 2
-    ) {
+    } else if (this.getDifference(attackPhysMod, defendPhysMod) >= physDC / 2) {
       if (attackPhysMod > defendPhysMod) {
-        outcome.defenderExposed = outcome.defenderExposed + physicalDC / 2;
-        outcome.attackerLearned = outcome.attackerLearned + physicalDC / 2;
+        def.exposed = def.exposed + physDC / 2;
+        att.learned = att.learned + physDC / 2;
       } else {
-        outcome.defenderLearned = outcome.defenderLearned + physicalDC / 2;
-        outcome.attackerExposed = outcome.attackerExposed + physicalDC / 2;
+        def.learned = def.learned + physDC / 2;
+        att.exposed = att.exposed + physDC / 2;
       }
     } else {
-      outcome.defenderLearned = outcome.defenderLearned + defendPhysMod;
-      outcome.attackerLearned = outcome.attackerLearned + attackPhysMod;
+      def.learned = def.learned + defendPhysMod;
+      att.learned = att.learned + attackPhysMod;
     }
 
     // Skill checks
@@ -904,28 +905,25 @@ export default {
     if (finalAttack >= finalDefend) {
       if (this.getDifference(finalAttack, finalDefend) >= 17) {
         //complete , point, significant, big
-        outcome.defenderExposed = outcome.defenderExposed + 12;
-        outcome.attackerLearned = outcome.attackerLearned + 7;
-        outcome.defenderDamage =
-          outcome.defenderDamage + 12 + Math.floor(attacker.body.power / 10);
+        def.exposed = def.exposed + 12;
+        att.learned = att.learned + 7;
+        def.damage = def.damage + 12 + Math.floor(attacker.body.power / 10);
 
         outcome.significant = true;
         outcome.point = true;
         outcome.msg = `${attacker.nickname} lands a devistating ${action.text} on ${defender.nickname}`;
       } else if (this.getDifference(finalAttack, finalDefend) >= 14) {
         //complete, point, significant
-        outcome.defenderExposed = outcome.defenderExposed + 7;
-        outcome.defenderDamage =
-          outcome.defenderDamage + 7 + Math.floor(attacker.body.power / 10);
+        def.exposed = def.exposed + 7;
+        def.damage = def.damage + 7 + Math.floor(attacker.body.power / 10);
 
         outcome.significant = true;
         outcome.point = true;
         outcome.msg = `${attacker.nickname} completes a significant ${action.text} on ${defender.nickname}`;
       } else {
         //complete, point
-        outcome.attackerLearned = outcome.attackerLearned + 5;
-        outcome.defenderDamage =
-          outcome.defenderDamage + 2 + Math.floor(attacker.body.power / 10);
+        att.learned = att.learned + 5;
+        def.damage = def.damage + 2 + Math.floor(attacker.body.power / 10);
 
         outcome.point = true;
         outcome.msg = `${attacker.nickname} barely lands a ${action.text} on ${defender.nickname}`;
@@ -933,17 +931,16 @@ export default {
     } else {
       if (this.getDifference(finalAttack, finalDefend) >= 17) {
         //not complete, disengage
-        outcome.disengage = true;
-        outcome.attackerExposed = outcome.attackerExposed + 12;
-        outcome.defenderLearned = outcome.defenderLearned + 12;
+        att.exposed = att.exposed + 12;
+        def.learned = def.learned + 12;
         outcome.msg = `${attacker.nickname} completely fumbles a ${action.text} attempt on ${defender.nickname}`;
       } else if (this.getDifference(finalAttack, finalDefend) >= 14) {
         //not complete, attacker learns
-        outcome.attackerLearned = outcome.attackerLearned + 5;
+        att.learned = att.learned + 5;
         outcome.msg = `${attacker.nickname} fails to complete a ${action.text} on ${defender.nickname}`;
       } else {
         //not complete, defender exposed
-        outcome.defenderExposed = outcome.defenderExposed + 5;
+        def.exposed = def.exposed + 5;
         outcome.msg = `${attacker.nickname} almost gets the ${action.text} on ${defender.nickname}`;
       }
     }
@@ -959,38 +956,36 @@ export default {
 
   variousCombo(action, attacker, defender) {
     let outcome = new Outcome();
+    let { att, def } = outcome;
     let finalAttack, finalDefend;
-    let physicalDC = this.rollTwenty();
+    let physDC = this.rollTwenty();
     let skillDC = this.rollTwenty();
-    console.log(physicalDC);
+    console.log(physDC);
     console.log(skillDC);
 
     // Physical checks
     let attackPhysMod = this.normalMovePhysicalCheck(attacker);
     let defendPhysMod = this.normalMovePhysicalCheck(defender);
 
-    if (this.getDifference(attackPhysMod, defendPhysMod) >= physicalDC) {
+    if (this.getDifference(attackPhysMod, defendPhysMod) >= physDC) {
       if (attackPhysMod > defendPhysMod) {
-        outcome.defenderExposed = outcome.defenderExposed + physicalDC;
-        outcome.attackerLearned = outcome.attackerLearned + physicalDC;
+        def.exposed = def.exposed + physDC;
+        att.learned = att.learned + physDC;
       } else {
-        outcome.defenderLearned = outcome.defenderLearned + physicalDC;
-        outcome.attackerExposed = outcome.attackerExposed + physicalDC;
+        def.learned = def.learned + physDC;
+        att.exposed = att.exposed + physDC;
       }
-    } else if (
-      this.getDifference(attackPhysMod, defendPhysMod) >=
-      physicalDC / 2
-    ) {
+    } else if (this.getDifference(attackPhysMod, defendPhysMod) >= physDC / 2) {
       if (attackPhysMod > defendPhysMod) {
-        outcome.defenderExposed = outcome.defenderExposed + physicalDC / 2;
-        outcome.attackerLearned = outcome.attackerLearned + physicalDC / 2;
+        def.exposed = def.exposed + physDC / 2;
+        att.learned = att.learned + physDC / 2;
       } else {
-        outcome.defenderLearned = outcome.defenderLearned + physicalDC / 2;
-        outcome.attackerExposed = outcome.attackerExposed + physicalDC / 2;
+        def.learned = def.learned + physDC / 2;
+        att.exposed = att.exposed + physDC / 2;
       }
     } else {
-      outcome.defenderLearned = outcome.defenderLearned + defendPhysMod;
-      outcome.attackerLearned = outcome.attackerLearned + attackPhysMod;
+      def.learned = def.learned + defendPhysMod;
+      att.learned = att.learned + attackPhysMod;
     }
 
     // Skill checks
@@ -1033,12 +1028,12 @@ export default {
     if (finalAttack >= finalDefend) {
       if (this.getDifference(finalAttack, finalDefend) >= 17) {
         //complete , point, significant, big
-        outcome.defenderExposed = outcome.defenderExposed + 12;
-        outcome.attackerLearned = outcome.attackerLearned + 7;
+        def.exposed = def.exposed + 12;
+        att.learned = att.learned + 7;
 
-        outcome.defenderDamage =
-          outcome.defenderDamage +
-          Math.floor((this.roll(physicalDC) + this.roll(skillDC)) / 2) +
+        def.damage =
+          def.damage +
+          Math.floor((this.roll(physDC) + this.roll(skillDC)) / 2) +
           Math.floor(attacker.body.power / 10);
 
         outcome.significant = true;
@@ -1046,10 +1041,10 @@ export default {
         outcome.msg = `${attacker.nickname} lands a devistating ${action.text} on ${defender.nickname}`;
       } else if (this.getDifference(finalAttack, finalDefend) >= 14) {
         //complete, point, significant
-        outcome.defenderExposed = outcome.defenderExposed + 7;
-        outcome.defenderDamage =
-          outcome.defenderDamage +
-          Math.floor((this.roll(physicalDC) + this.roll(skillDC)) / 4) +
+        def.exposed = def.exposed + 7;
+        def.damage =
+          def.damage +
+          Math.floor((this.roll(physDC) + this.roll(skillDC)) / 4) +
           Math.floor(attacker.body.power / 10);
 
         outcome.significant = true;
@@ -1057,9 +1052,8 @@ export default {
         outcome.msg = `${attacker.nickname} completes a significant ${action.text} on ${defender.nickname}`;
       } else {
         //complete, point
-        outcome.attackerLearned = outcome.attackerLearned + 5;
-        outcome.defenderDamage =
-          outcome.defenderDamage + Math.floor(attacker.body.power / 10);
+        att.learned = att.learned + 5;
+        def.damage = def.damage + Math.floor(attacker.body.power / 10);
 
         outcome.point = true;
         outcome.msg = `${attacker.nickname} barely lands a ${action.text} on ${defender.nickname}`;
@@ -1067,17 +1061,16 @@ export default {
     } else {
       if (this.getDifference(finalAttack, finalDefend) >= 17) {
         //not complete, disengage
-        outcome.disengage = true;
-        outcome.attackerExposed = outcome.attackerExposed + 12;
-        outcome.defenderLearned = outcome.defenderLearned + 12;
+        att.exposed = att.exposed + 12;
+        def.learned = def.learned + 12;
         outcome.msg = `${attacker.nickname} completely fumbles a ${action.text} attempt on ${defender.nickname}`;
       } else if (this.getDifference(finalAttack, finalDefend) >= 14) {
         //not complete, attacker learns
-        outcome.attackerLearned = outcome.attackerLearned + 5;
+        att.learned = att.learned + 5;
         outcome.msg = `${attacker.nickname} fails to complete a ${action.text} on ${defender.nickname}`;
       } else {
         //not complete, defender exposed
-        outcome.defenderExposed = outcome.defenderExposed + 5;
+        def.exposed = def.exposed + 5;
         outcome.msg = `${attacker.nickname} almost gets the ${action.text} on ${defender.nickname}`;
       }
     }
