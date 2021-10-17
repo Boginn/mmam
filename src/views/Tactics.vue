@@ -317,7 +317,6 @@
       <v-btn
         x-large
         @click="defaultSelection()"
-        v-if="!isDeveloper"
         class="secondary"
         style="width: 100%;"
         >Default</v-btn

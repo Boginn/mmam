@@ -110,7 +110,9 @@ export default {
     ],
   },
 
-  disengage: [{ text: 'Disengage', value: 'disengage' }],
+  disengage: { text: 'Disengage', value: 'disengage' },
+
+  compose: { text: 'Compose', value: 'compose' },
 
   grapple: {
     takedown: [

@@ -12,7 +12,8 @@
 
   
 // BUGS
-
+    clicking on v-progress-linear changes the health, to fix, switch from
+    v-model to :value. (handy to have atm for debugging)
 
 
 
@@ -89,9 +90,6 @@ last time:
     a combination of instructions and fighters choice of striking or grappling
     determines the moment to moment strengths of the fighter
 
-    after a successfull takedown the defender has to pass a bunch of saving throws
-    the attacker can of course be landing but it;s harder to keep initiative
-            
     
 
 

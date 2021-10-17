@@ -118,12 +118,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.float-style {
-  position: absolute;
-  top: 5%;
-  left: 25%;
-  z-index: 10;
-}
-</style>

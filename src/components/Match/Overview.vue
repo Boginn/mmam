@@ -51,11 +51,15 @@
               <b class="font-shadow blue--text">
                 {{ getFighter(fighter).match.momentum }}
               </b>
+              - s:
+              <b class="font-shadow lime--text">
+                {{ getFighter(fighter).match.save }}</b
+              >
             </div>
             <div>
               <v-progress-linear
                 height="15"
-                v-model="getFighter(fighter).match.condition"
+                :value="getFighter(fighter).match.condition"
                 :buffer-value="100"
                 color="green"
                 background-color="red"
@@ -133,7 +137,7 @@
             <div>
               <v-progress-linear
                 height="15"
-                v-model="getFighter(fighter).match.condition"
+                :value="getFighter(fighter).match.condition"
                 :buffer-value="100"
                 color="green"
                 background-color="red"
@@ -162,6 +166,10 @@
               - m:
               <b class="font-shadow blue--text">
                 {{ getFighter(fighter).match.momentum }}</b
+              >
+              - s:
+              <b class="font-shadow lime--text">
+                {{ getFighter(fighter).match.save }}</b
               >
             </div>
           </div></v-col

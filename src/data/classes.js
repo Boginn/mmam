@@ -220,6 +220,30 @@ export default {
       this.date = date;
     }
   },
+  Outcome: class {
+    msg = undefined;
+
+    att = {
+      exposed: 0,
+      damage: 0,
+      learned: 0,
+      momentum: false,
+      save: false,
+      dc: null,
+    };
+
+    def = {
+      exposed: 0,
+      damage: 0,
+      learned: 0,
+      momentum: false,
+      save: false,
+      dc: null,
+    };
+
+    point = false;
+    significant = false;
+  },
   Tactic: class {
     clubId;
     instructions = {

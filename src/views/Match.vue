@@ -880,7 +880,7 @@ export default {
     },
 
     //scoring/points/counting
-    decision() {
+    scoreRounds() {
       const {
         ringTruePointsLeft,
         ringTruePointsCenter,
@@ -905,6 +905,9 @@ export default {
         ringJudgesRight,
         ringTruePointsRight
       );
+    },
+    decision() {
+      this.scoreRounds();
 
       // for center ring, the club with more fighters standing takes it
       if (this.homeStillStanding > this.awayStillStanding) {
@@ -966,6 +969,8 @@ export default {
             this.awayTactic.selection.right
           );
         }
+        this.$store.dispatch('setScore', this.score);
+
         this.isScored = true;
       }
     },
@@ -1036,7 +1041,6 @@ export default {
       } else {
         //action happens
         let timeoutIntervalMultiplier = 2;
-        // INTERVAL are throughout, make sure they sync
         let msg;
         let ring;
         // fighter variables
@@ -1065,6 +1069,9 @@ export default {
         //pick fighter initiative
         const homeInitiative = matchEngine.checkInitiative(home);
         const awayInitiative = matchEngine.checkInitiative(away);
+
+        console.log(homeInitiative);
+        console.log(awayInitiative);
 
         if (homeInitiative >= awayInitiative) {
           //tiniest home advantage
@@ -1123,20 +1130,6 @@ export default {
         }, this.timeoutInterval * timeoutIntervalMultiplier); // INTERVAL
         timeoutIntervalMultiplier += 1;
 
-        /*
-        //check for disengage // could be part of updateFighterMatchStats?
-        // all it's doing is giving exposed back.. could be called sth else
-        if (outcome.disengage) {
-          console.log('disengaging');
-          defender.match.exposed -= matchEngine.disengage(defender);
-          if (defender.match.exposed < 0) {
-            defender.match.exposed = 0;
-          }
-          // msg = `${defender.nickname} disengages and resets`;
-          // this.$store.dispatch("addMatchMessage", msg);
-        }
-        */
-
         //updates momentum, condition, exposed and learned
         this.updateFighterMatchStats(attacker, defender, outcome);
 
@@ -1160,11 +1153,10 @@ export default {
         this.$store.dispatch('setScore', this.score);
 
         if (outcome.point) {
-          // TODO
           this.tallyPoints(ring, outcome);
         }
 
-        //Find:SUBSTITUTION
+        //SUBSTITUTION
         if (
           this.ringFinishedCenter &&
           this.substitutionAvailable &&
@@ -1174,9 +1166,8 @@ export default {
           this.pendingSub = true; //triggers makeSubstitution at the beginning of getOn()
           this.isPaused = true;
           this.isDisabled = false;
-          // give some time for sub
-          // timeoutIntervalMultiplier += 3;
         }
+
         // enable button / loop
         setTimeout(() => {
           this.isDisabled = false;
@@ -1210,7 +1201,7 @@ export default {
 
 */
       let msg = `That concludes the match`;
-      let fighterResult = this.checkCondition(fighter);
+      let fighterResult = matchEngine.checkCondition(fighter);
 
       timeoutIntervalMultiplier += 0.1;
 
@@ -1250,35 +1241,9 @@ export default {
             if (this.awaySubs.length == 0) {
               this.score.home += 3;
               this.isFullTime = true;
-              /*
-              // this here to pass scoring of rounds regardless of how it ends
-              const {
-                ringTruePointsLeft,
-                ringTruePointsCenter,
-                ringTruePointsRight,
-              } = this.ringTruePoints;
-              const {
-                ringJudgesLeft,
-                ringJudgesCenter,
-                ringJudgesRight,
-              } = this.ringJudges;
 
-              this.ringDecisions.ringDecisionLeft = decisionEngine.scoreRounds(
-                ringJudgesLeft,
-                ringTruePointsLeft
-              );
-              this.ringDecisions.ringDecisionCenter = decisionEngine.scoreRounds(
-                ringJudgesCenter,
-                ringTruePointsCenter
-              );
-              this.ringDecisions.ringDecisionRight = decisionEngine.scoreRounds(
-                ringJudgesRight,
-                ringTruePointsRight
-              );
+              this.scoreRounds();
 
-              console.log(this.decisions);
-              //
-*/
               setTimeout(() => {
                 this.$store.dispatch('addMatchMessage', msg);
                 this.isDisabled = false;
@@ -1294,33 +1259,9 @@ export default {
             if (this.homeSubs.length == 0) {
               this.score.away += 3;
               this.isFullTime = true;
-              /*
-              // this here to pass scoring of rounds regardless of how it ends
-              const {
-                ringTruePointsLeft,
-                ringTruePointsCenter,
-                ringTruePointsRight,
-              } = this.ringTruePoints;
-              const {
-                ringJudgesLeft,
-                ringJudgesCenter,
-                ringJudgesRight,
-              } = this.ringJudges;
-              this.ringDecisions.ringDecisionLeft = decisionEngine.scoreRounds(
-                ringJudgesLeft,
-                ringTruePointsLeft
-              );
-              this.ringDecisions.ringDecisionCenter = decisionEngine.scoreRounds(
-                ringJudgesCenter,
-                ringTruePointsCenter
-              );
-              this.ringDecisions.ringDecisionRight = decisionEngine.scoreRounds(
-                ringJudgesRight,
-                ringTruePointsRight
-              );
-              console.log(this.decisions);
-              //
-*/
+
+              this.scoreRounds();
+
               setTimeout(() => {
                 this.$store.dispatch('addMatchMessage', msg);
                 this.isDisabled = false;
@@ -1397,20 +1338,15 @@ export default {
         }, 250);
       }, 250);
     },
-    checkCondition(fighter) {
-      let result = { finished: false, msg: undefined };
-      if (fighter.match.condition <= 0) {
-        result.finished = true;
-        result.msg = `That's enough for ${fighter.nickname}. He's finished!`;
-      }
-      return result;
-    },
+
     updateFighterMatchStats(attacker, defender, outcome) {
       const { att, def } = outcome;
       attacker.match.condition -= att.damage;
       attacker.match.exposed += att.exposed;
       attacker.match.learned += att.learned;
       attacker.match.momentum = att.momentum;
+      attacker.match.save = att.save;
+      attacker.match.dc = att.dc;
 
       attacker.match.exposed = matchEngine.getFlooredToHundred(
         attacker.match.exposed
@@ -1422,7 +1358,9 @@ export default {
       defender.match.condition -= def.damage;
       defender.match.exposed += def.exposed;
       defender.match.learned += def.learned;
-      attacker.match.momentum = def.momentum;
+      defender.match.momentum = def.momentum;
+      defender.match.save = def.save;
+      defender.match.dc = def.dc;
 
       defender.match.exposed = matchEngine.getFlooredToHundred(
         defender.match.exposed

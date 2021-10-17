@@ -433,16 +433,8 @@ export default {
       );
     }
 
-    function checkCondition(fighter) {
-      let result = { finished: false };
-      if (fighter.match.condition <= 0) {
-        result.finished = true;
-      }
-      return result;
-    }
-
     function checkForFinish(fighter, ring, isHomeAttacking, winner) {
-      let fighterResult = checkCondition(fighter);
+      let fighterResult = matchEngine.checkCondition(fighter);
       console.log(fighter);
       console.log(fighterResult);
 

@@ -1,35 +1,12 @@
 import matchData from '@/data/matchData.js';
-
-class Outcome {
-  msg = undefined;
-
-  att = {
-    exposed: 0,
-    damage: 0,
-    learned: 0,
-    momentum: false,
-    save: false,
-    dc: null,
-  };
-
-  def = {
-    exposed: 0,
-    damage: 0,
-    learned: 0,
-    momentum: false,
-    save: false,
-    dc: false,
-  };
-
-  point = false;
-  significant = false;
-}
+import classes from '@/data/classes.js';
+import { singleLeg } from '@/engine/actions/grapple/';
 
 export default {
   //services
-  getArchivedMatchBlueprint(id) {
-    return new matchData.ArchivedMatch(parseInt(id) + 100000);
-  },
+  // getArchivedMatchBlueprint(id) {
+  //   return new matchData.ArchivedMatch(parseInt(id) + 100000);
+  // },
   rollEvent(currentSecond, happenChance) {
     var chance;
 
@@ -65,7 +42,8 @@ export default {
     return Math.floor((attr - 10) / 2);
   },
   getRollWithMod(attr) {
-    return this.rollTwenty() + this.getModifier(attr);
+    let roll = this.rollTwenty() + this.getModifier(attr);
+    return roll <= 0 ? 1 : roll;
   },
   getFlooredToHundred(number) {
     return number > 100 ? 100 : number;
@@ -183,26 +161,34 @@ export default {
     if (fighter.tactic.instructions.risk == 1) {
       // if SAFE
       exposedFactor = 40;
-    } else if (fighter.tactic.instructions.risk == 3) {
-      // if RECKLESS
-      exposedFactor = 80;
-    } else {
+    } else if (fighter.tactic.instructions.risk == 2) {
       // if NORMAL
       exposedFactor = 60;
+    } else {
+      // if RECKLESS
+      exposedFactor = 80;
     }
     return exposedFactor;
+  },
+  checkCondition(fighter) {
+    let result = { finished: false, msg: undefined };
+    if (fighter.match.condition <= 0) {
+      result.finished = true;
+      result.msg = `That's enough for ${fighter.nickname}. He's finished!`;
+    }
+    return result;
   },
 
   //checks (physical)
   normalMovePhysicalCheck(fighter) {
-    var array = [];
+    let array = [];
     array.push(this.getRollWithMod(fighter.physical.pace));
     array.push(this.getRollWithMod(fighter.physical.acceleration));
     array.push(this.getRollWithMod(fighter.physical.agility));
     return this.processCheck(array, fighter);
   },
   bigActionPhysicalCheck(fighter) {
-    var array = [];
+    let array = [];
     array.push(this.getRollWithMod(fighter.physical.strength));
     array.push(this.getRollWithMod(fighter.physical.explosiveness));
     array.push(this.getRollWithMod(fighter.physical.acceleration));
@@ -210,66 +196,56 @@ export default {
     return this.processCheck(array, fighter);
   },
 
-  //specific checks (skill)
-
-  //takedown
-  singleLegSkillCheckAttack(fighter) {
-    var array = [];
+  //disengage check
+  disengageCheck(fighter) {
+    let array = [];
     array.push(this.getRollWithMod(fighter.skill.positioning));
     array.push(this.getRollWithMod(fighter.skill.decisions));
+    array.push(this.getRollWithMod(fighter.skill.versatility));
     array.push(this.getRollWithMod(fighter.skill.fluidity));
-    array.push(this.getRollWithMod(fighter.skill.versatility));
-
-    return this.getAverage(array);
+    return this.processCheck(array, fighter);
   },
-  singleLegSkillCheckDefend(fighter) {
-    var array = [];
-    array.push(this.getRollWithMod(fighter.skill.positioning));
-    array.push(this.getRollWithMod(fighter.skill.decisions));
-    array.push(this.getRollWithMod(fighter.skill.versatility));
-    array.push(this.getRollWithMod(fighter.skill.anticipation));
 
-    return this.getAverage(array);
-  },
+  //specific checks (skill)
 
   //combo
   oneTwoSkillCheckAttack(fighter) {
-    var array = [];
+    let array = [];
     array.push(this.getRollWithMod(fighter.skill.positioning));
     array.push(this.getRollWithMod(fighter.skill.decisions));
     array.push(this.getRollWithMod(fighter.skill.footwork));
     array.push(this.getRollWithMod(fighter.skill.sharpness));
 
-    return this.getAverage(array);
+    return this.processCheck(array, fighter);
   },
   oneTwoSkillCheckDefend(fighter) {
-    var array = [];
+    let array = [];
     array.push(this.getRollWithMod(fighter.skill.positioning));
     array.push(this.getRollWithMod(fighter.skill.decisions));
     array.push(this.getRollWithMod(fighter.skill.footwork));
     array.push(this.getRollWithMod(fighter.skill.anticipation));
 
-    return this.getAverage(array);
+    return this.processCheck(array, fighter);
   },
   oneTwoThreeSkillCheckAttack(fighter) {
-    var array = [];
+    let array = [];
     array.push(this.getRollWithMod(fighter.skill.decisions));
     array.push(this.getRollWithMod(fighter.skill.footwork));
     array.push(this.getRollWithMod(fighter.skill.sharpness));
     array.push(this.getRollWithMod(fighter.physical.workRate));
-    return this.getAverage(array);
+    return this.processCheck(array, fighter);
   },
   oneTwoThreeSkillCheckDefend(fighter) {
-    var array = [];
+    let array = [];
     array.push(this.getRollWithMod(fighter.skill.positioning));
     array.push(this.getRollWithMod(fighter.skill.footwork));
     array.push(this.getRollWithMod(fighter.skill.anticipation));
     array.push(this.getRollWithMod(fighter.skill.fluidity));
 
-    return this.getAverage(array);
+    return this.processCheck(array, fighter);
   },
   variousComboSkillCheckAttack(fighter) {
-    var array = [];
+    let array = [];
     array.push(this.getRollWithMod(fighter.skill.positioning));
     array.push(this.getRollWithMod(fighter.skill.decisions));
     array.push(this.getRollWithMod(fighter.skill.footwork));
@@ -277,10 +253,10 @@ export default {
     array.push(this.getRollWithMod(fighter.physical.workRate));
     array.push(this.getRollWithMod(fighter.skill.vision));
 
-    return this.getAverage(array);
+    return this.processCheck(array, fighter);
   },
   variousComboSkillCheckDefend(fighter) {
-    var array = [];
+    let array = [];
     array.push(this.getRollWithMod(fighter.skill.positioning));
     array.push(this.getRollWithMod(fighter.skill.decisions));
     array.push(this.getRollWithMod(fighter.skill.footwork));
@@ -288,7 +264,7 @@ export default {
     array.push(this.getRollWithMod(fighter.skill.fluidity));
     array.push(this.getRollWithMod(fighter.physical.workRate));
 
-    return this.getAverage(array);
+    return this.processCheck(array, fighter);
   },
 
   //match
@@ -303,34 +279,30 @@ export default {
     // console.log(fighter);
 
     //stamina mod
-    if (fighter.condition < 60) {
-      stamMod = this.rollTwenty() + this.getModifier(fighter.physical.stamina);
+    if (fighter.match.condition < 60) {
+      stamMod = this.getModifier(fighter.physical.stamina);
       // console.log(`${stamMod} stam mod`);
     }
     //vision check for position mod
-    var visionCheck =
-      this.rollTwenty() + this.getModifier(fighter.skill.vision);
-    if (visionCheck > 10) {
-      var positioningCheck =
-        this.rollTwenty() + this.getModifier(fighter.skill.positioning);
-      var accelerationCheck =
-        this.rollTwenty() + this.getModifier(fighter.physical.acceleration);
-      var average = Math.floor((positioningCheck * 2 + accelerationCheck) / 3);
-      positionMod = this.rollTwenty() + this.getModifier(average);
-      // console.log(`${positionMod} pos mod`);
+    let visionCheck = this.getRollWithMod(fighter.skill.vision);
+    if (visionCheck >= 7) {
+      positionMod = this.getAverage([
+        this.getModifier(fighter.skill.positioning),
+        this.getModifier(fighter.physical.acceleration),
+      ]);
     }
     // work rate mod
-    workRateMod =
-      this.rollTwenty() + this.getModifier(fighter.physical.workRate);
+    workRateMod = this.getModifier(fighter.physical.workRate);
     // console.log(`${workRateMod} workrate mod`);
-
-    let initiative =
-      fighter.match.condition + stamMod + positionMod + workRateMod;
+    console.log(`${stamMod} stam, ${positionMod} pos, ${workRateMod}work`);
+    const initiative = stamMod + positionMod + workRateMod + 20;
     // console.log(initiative);
 
-    return fighter.match.momentum
-      ? this.computedMomentum(fighter) * initiative
-      : initiative;
+    if (fighter.match.momentum) {
+      return initiative * this.computedMomentum(fighter);
+    } else {
+      return initiative;
+    }
   },
 
   pickTactic(ring, tactic) {
@@ -361,20 +333,16 @@ export default {
 
   pickMethodAttack(fighter) {
     let method; // returned
-    //check gameplan of fighter! later -- could be lists that check against
+    console.log(fighter.match.save);
+    if (fighter.match.save) {
+      return matchData.disengage.value; // 'disengage';
+    }
 
-    //if fighter is exposed he might want to disengage
-    const exposedFactor = this.getExposedFactor(fighter);
-
-    const isExposed = this.determineExposedByFactor(exposedFactor);
+    //if fighter is exposed he might want to compose
+    const isExposed = fighter.exposed > this.getExposedFactor(fighter);
+    console.log(isExposed);
     if (isExposed) {
-      console.log('disengaging');
-      // then DISENGAGE
-      matchData.disengage.forEach((element) => {
-        if (element.value == 'disengage') {
-          return element;
-        }
-      });
+      return matchData.compose.value; // 'compose';
     }
 
     //for now base the element picking on type of fighter
@@ -390,7 +358,7 @@ export default {
         matchData.engage.closeDistance.forEach((element) => {
           if (element.value == 'strike') {
             // console.log(element);
-            method = element;
+            method = element.value;
           }
         });
       } else {
@@ -399,7 +367,7 @@ export default {
           if (element.value == 'strike') {
             // console.log(element);
 
-            method = element;
+            method = element.value;
           }
         });
       }
@@ -410,7 +378,7 @@ export default {
           if (element.value == 'grapple') {
             // console.log(element);
 
-            method = element;
+            method = element.value;
           }
         });
       } else {
@@ -418,7 +386,7 @@ export default {
           if (element.value == 'grapple') {
             // console.log(element);
 
-            method = element;
+            method = element.value;
           }
         });
       }
@@ -436,12 +404,14 @@ export default {
     // won't work, the function doesnt recognize
     // this.variables
 
-    if (method.value == 'grapple') {
+    if (method == 'grapple') {
       outcome = this.grapple(attacker, defender);
-    } else if (method.value == 'strike') {
+    } else if (method == 'strike') {
       outcome = this.strike(attacker, defender);
-    } else if (method.value == 'disengage') {
+    } else if (method == 'disengage') {
       outcome = this.disengage(attacker, defender);
+    } else if (method == 'compose') {
+      outcome = this.compose(attacker, defender);
     }
 
     return outcome;
@@ -450,7 +420,6 @@ export default {
   /*AFTER .engage*/
   grapple(attacker, defender) {
     let action;
-    console.log('he');
 
     //maybe check fighter pref, gameplan
     const chance = this.roll(2);
@@ -482,9 +451,50 @@ export default {
     return action;
   },
   disengage(attacker, defender) {
-    let outcome = new Outcome();
+    let outcome = new classes.Outcome();
+    let { att } = outcome;
+    let result = this.roll(20);
+
+    // Physical checks
+    let attackPhysMod = this.bigActionPhysicalCheck(attacker);
+    let defendPhysMod = this.bigActionPhysicalCheck(defender);
+    console.log(attackPhysMod, defendPhysMod);
+
+    if (this.getDifference(attackPhysMod, defendPhysMod) >= 15) {
+      if (attackPhysMod > defendPhysMod) {
+        result += attackPhysMod;
+      } else {
+        result -= defendPhysMod;
+      }
+    } else if (this.getDifference(attackPhysMod, defendPhysMod) >= 10) {
+      if (attackPhysMod > defendPhysMod) {
+        result += Math.floor(attackPhysMod / 2);
+      } else {
+        result -= Math.floor(defendPhysMod / 2);
+      }
+    }
+
+    console.log(attacker.dc);
+    console.log(result);
+
+    if (result >= attacker.dc) {
+      att.save = false;
+      outcome.msg = `${attacker.nickname} successfully disengages.`;
+    } else {
+      outcome.msg = `${attacker.nickname} tries to escape but fails.`;
+    }
+
+    // exposedDiscount += Math.floor(attacker.match.condition / 10);
+    console.log(
+      'A disengage() happened (instead of compose, strike or grapple) '
+    );
+
+    return outcome;
+  },
+  compose(attacker, defender) {
+    let outcome = new classes.Outcome();
     let { att, def } = outcome;
-    //award less exposed and less learned from opponent for disengaging
+    //award less exposed and less learned from opponent for composing
     if (this.getRollWithMod(attacker.mental.adaptability) >= 10) {
       att.exposed -= this.roll(10);
       if (this.getRollWithMod(defender.mental.adaptability) <= 10) {
@@ -504,9 +514,14 @@ export default {
       }
     }
 
+    console.log(att.exposed);
+    console.log(def.learned);
+
+    outcome.msg = `${attacker.nickname} composes himself and resets.`;
+
     // exposedDiscount += Math.floor(attacker.match.condition / 10);
     console.log(
-      'A disengage() happened (instead of strike or grapple), fighter gained some condition. return Integer'
+      'A compose() happened (instead of disengage, strike or grapple), fighter gained some condition. '
     );
 
     return outcome;
@@ -518,21 +533,21 @@ export default {
     let takedown = takedowns[this.roll(takedowns.length) - 1];
 
     if (takedown.value == 'singleLeg') {
-      action = this.singleLeg(takedown, attacker, defender);
+      action = singleLeg(takedown, attacker, defender);
     } else if (takedown.value == 'doubleLeg') {
       ///TODO
-      action = this.singleLeg(takedown, attacker, defender);
+      action = singleLeg(takedown, attacker, defender);
     } else if (takedown.value == 'hipToss') {
       ///TODO
-      action = this.singleLeg(takedown, attacker, defender);
+      action = singleLeg(takedown, attacker, defender);
     } else if (takedown.value == 'trip') {
       ///TODO
-      action = this.singleLeg(takedown, attacker, defender);
+      action = singleLeg(takedown, attacker, defender);
     } else if (takedown.value == 'throw') {
       ///TODO
-      action = this.singleLeg(takedown, attacker, defender);
+      action = singleLeg(takedown, attacker, defender);
     } else {
-      action = this.singleLeg(takedown, attacker, defender);
+      action = singleLeg(takedown, attacker, defender);
     }
 
     return action;
@@ -587,136 +602,10 @@ export default {
 
   /*FINAL ACTION IN THE CHAIN*/
   /*AFTER .engage.grapple.takedown*/
-  singleLeg(action, attacker, defender) {
-    let outcome = new Outcome();
-    let { att, def } = outcome;
-    let finalAttack, finalDefend;
-    let physDC = 10;
-    let skillDC = 10;
-
-    // Physical checks
-    let attackPhysMod = this.bigActionPhysicalCheck(attacker);
-    let defendPhysMod = this.bigActionPhysicalCheck(defender);
-
-    if (this.getDifference(attackPhysMod, defendPhysMod) >= physDC) {
-      if (attackPhysMod > defendPhysMod) {
-        def.exposed = def.exposed + physDC;
-        att.learned = att.learned + physDC;
-      } else {
-        def.learned = def.learned + physDC;
-        att.exposed = att.exposed + physDC;
-      }
-    } else if (this.getDifference(attackPhysMod, defendPhysMod) >= physDC / 2) {
-      if (attackPhysMod > defendPhysMod) {
-        def.exposed = def.exposed + physDC / 2;
-        att.learned = att.learned + physDC / 2;
-      } else {
-        def.learned = def.learned + physDC / 2;
-        att.exposed = att.exposed + physDC / 2;
-      }
-    } else {
-      def.learned = def.learned + defendPhysMod;
-      att.learned = att.learned + attackPhysMod;
-    }
-
-    // Skill checks
-    let attackSkillMod = this.singleLegSkillCheckAttack(attacker);
-    let defendSkillMod = this.singleLegSkillCheckDefend(defender);
-
-    if (
-      this.getRollWithMod(attacker.physical.pace) >=
-      this.getRollWithMod(defender.skill.anticipation)
-    ) {
-      attackSkillMod = attackSkillMod + skillDC;
-    } else if (
-      this.getRollWithMod(attacker.skill.fluidity) >=
-      this.getRollWithMod(defender.skill.versatility)
-    ) {
-      attackSkillMod = attackSkillMod + skillDC;
-    } else {
-      defendSkillMod = defendSkillMod + skillDC;
-    }
-
-    if (
-      this.getRollWithMod(attacker.mental.determination) >=
-      this.getRollWithMod(defender.mental.pressure)
-    ) {
-      attackSkillMod = attackSkillMod + skillDC;
-    } else {
-      defendSkillMod = defendSkillMod + skillDC;
-    }
-
-    // Final outcome
-    finalAttack = attackSkillMod + attackPhysMod;
-    finalDefend = defendSkillMod + defendPhysMod;
-
-    console.log(finalAttack);
-    console.log(finalDefend);
-
-    if (finalAttack >= finalDefend) {
-      if (this.getDifference(finalAttack, finalDefend) >= 15) {
-        //complete , point, significant, big dc, save true for defender
-        def.exposed = def.exposed + 15;
-        att.learned = att.learned + 10;
-        def.damage = def.damage + 10 - 7;
-
-        def.save = true;
-        def.dc = 11 + this.getModifier(attacker.skill.versatility);
-
-        outcome.significant = true;
-        outcome.point = true;
-        outcome.msg = `${attacker.nickname} lands a devistating ${action.text} on ${defender.nickname}`;
-      } else if (this.getDifference(finalAttack, finalDefend) >= 10) {
-        //complete, point, significant, save true for defender
-        att.learned = att.learned + 5;
-        def.damage = def.damage + 4 - 2;
-
-        def.save = true;
-        def.dc = 8 + this.getModifier(attacker.skill.versatility);
-
-        outcome.significant = true;
-        outcome.point = true;
-        outcome.msg = `${attacker.nickname} completes a significant ${action.text} on ${defender.nickname}`;
-      } else {
-        //complete, point
-        att.learned = att.learned + 5;
-        def.damage = def.damage + 2 - 2;
-
-        def.save = true;
-        def.dc = 3 + this.getModifier(attacker.skill.versatility);
-
-        outcome.point = true;
-        outcome.msg = `${attacker.nickname} barely lands a ${action.text} on ${defender.nickname}`;
-      }
-    } else {
-      if (this.getDifference(finalAttack, finalDefend) >= 15) {
-        //not complete, disengage
-        att.exposed = att.exposed + 5;
-        def.learned = def.learned + 5;
-        outcome.msg = `${attacker.nickname} completely fumbles a ${action.text} attempt on ${defender.nickname}`;
-      } else if (this.getDifference(finalAttack, finalDefend) >= 10) {
-        //not complete, attacker learns
-        att.learned = att.learned + 5;
-        outcome.msg = `${attacker.nickname} fails to complete a ${action.text} on ${defender.nickname}`;
-      } else {
-        //not complete, defender exposed
-        def.exposed = def.exposed + 5;
-        outcome.msg = `${attacker.nickname} almost gets the ${action.text} on ${defender.nickname}`;
-      }
-    }
-
-    // attach
-    action = {
-      ...action,
-      ...outcome,
-    };
-
-    return action;
-  },
 
   /*AFTER .engage.strike.combo*/
   oneTwo(action, attacker, defender) {
-    let outcome = new Outcome();
+    let outcome = new classes.Outcome();
     let { att, def } = outcome;
     let finalAttack, finalDefend;
     let physDC = 5;
@@ -834,7 +723,7 @@ export default {
   },
 
   oneTwoThree(action, attacker, defender) {
-    let outcome = new Outcome();
+    let outcome = new classes.Outcome();
     let { att, def } = outcome;
     let finalAttack, finalDefend;
     let physDC = 12;
@@ -899,8 +788,8 @@ export default {
     finalAttack = attackSkillMod + attackPhysMod;
     finalDefend = defendSkillMod + defendPhysMod;
 
-    console.log(finalAttack);
-    console.log(finalDefend);
+    console.log(`${finalAttack} final Attack`);
+    console.log(`${finalDefend} final Defend`);
 
     if (finalAttack >= finalDefend) {
       if (this.getDifference(finalAttack, finalDefend) >= 17) {
@@ -955,7 +844,7 @@ export default {
   },
 
   variousCombo(action, attacker, defender) {
-    let outcome = new Outcome();
+    let outcome = new classes.Outcome();
     let { att, def } = outcome;
     let finalAttack, finalDefend;
     let physDC = this.rollTwenty();
@@ -1103,9 +992,6 @@ export default {
     return this.roll(fighter.type.grappler) > this.roll(fighter.type.striker)
       ? false //grappler
       : true; //striker
-  },
-  determineExposedByFactor(fighter, factor) {
-    return fighter.exposed > factor ? true : false;
   },
 
   //simulate

@@ -7,7 +7,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    isDeveloper: false,
+    isDeveloper: true,
 
     //ui
     day: 1,
