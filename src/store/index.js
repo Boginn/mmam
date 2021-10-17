@@ -36,7 +36,11 @@ export default new Vuex.Store({
     matchMessages: [],
     matchMessagesForRings: [[], [], []],
 
-    matchData: data.matchData,
+    matchData: {
+      score: { home: 0, away: 0 },
+      names: { home: '', away: '' },
+      minute: null,
+    },
 
     //user
     selectedClubId: null,
@@ -371,7 +375,6 @@ export default new Vuex.Store({
 
     //match
     SET_IS_LIVE(state, payload) {
-      state.matchData.score = data.matchData.score;
       state.matchMessages = [];
       state.matchMessagesForRings = [[], [], []];
       state.isLive = payload;
@@ -462,7 +465,7 @@ export default new Vuex.Store({
       console.log('added match');
       console.log(payload);
 
-      state.archivedMatchId = state.archivedMatchId + 1;
+      state.archivedMatchId += 1;
       const id = state.archivedMatchId;
       payload = { ...payload, id: id };
       state.matches.push(payload);

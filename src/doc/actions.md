@@ -29,8 +29,8 @@ For now it rolls against the list of takedowns(singleLeg, doubleLeg, hipToss etc
 <h2> calls chosen action (singleLeg, oneTwo etc)</h2>
 <ul>
   <li>the action gets a physical DC and a skill DC</li>
-  <li>physical checks are done. those are universal: (normalMovePhysicalCheck, bigActionPhysicalCheck)</li>
-  <li>skill checks are done. those are unique to each action</li>
+  <li>physical checks are done. those are universal: (normalMovePhysicalCheck, bigActionPhysicalCheck). varying on success it rewards exposed/learned</li>
+  <li>skill checks are done. those are unique to each action, first a regular check, then a skill DC modifier and finally both roll against that dc for a bonus to their mod</li>
   <li>those are added and compared. if the attacker has more or equal he sees a varying degree of success: 
     <ul>
       <li>>= 15, devastating</li>

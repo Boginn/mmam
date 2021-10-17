@@ -139,22 +139,21 @@ export default {
     });
   },
 
-  seedRosterToClubs: (clubs, roster) => {
-    clubs.forEach((team) => {
-      let counter = Math.floor(roster.length / clubs.length);
-      console.log(counter);
+  checkContract: (clubs, roster) => {
+    let arr = [];
 
-      for (let i = 0; i < counter; i++) {
-        if (roster[i].contract) {
-          counter = counter + 1;
-        } else {
-          team.squad.push(roster[i].id);
-          roster[i].contract = true;
-        }
-      }
+    clubs.forEach((team) => {
+      team.squad.forEach((fighter) => {
+        arr.push(fighter);
+      });
     });
-    console.log('engine.seedRosterToClubs');
-    console.log(roster);
+    arr.forEach((item) => {
+      roster.forEach((fighter) => {
+        if (fighter.id == item) {
+          fighter.contract = true;
+        }
+      });
+    });
   },
 
   seedStaffToClubs: (clubs, staff) => {

@@ -72,7 +72,7 @@
 
           <!-- eslint-disable-next-line -->
           <template v-slot:item.selection="{ item }">
-            <v-row>
+            <v-row class="justify-center">
               <v-btn
                 x-small
                 class="ma-1"

@@ -220,10 +220,11 @@ export default {
     homeSubs: [],
     awaySubs: [],
 
-    score: {
-      home: 0,
-      away: 0,
-    },
+    // score: {
+    //   home: 0,
+    //   away: 0,
+    // },
+
     substitutionMade: false,
     pendingSub: false,
     ringActivity: [
@@ -351,7 +352,11 @@ export default {
       return this.$store.getters.commission;
     },
 
-    //judges card
+    //judgeing/score
+    score() {
+      let matchData = this.$store.getters.matchData;
+      return matchData.score;
+    },
     truePoints() {
       const {
         ringTruePointsLeft,
@@ -529,7 +534,6 @@ export default {
         this.tabs[i].value = false;
       }
       this.tabs[selection].value = true;
-      console.log(this.tabs[selection].value);
     },
 
     //services
@@ -550,6 +554,12 @@ export default {
     },
 
     archiveMatch() {
+      // if (this.score.home > 3) {
+      //   this.score.home = 3;
+      // }
+      // if (this.score.away > 3) {
+      //   this.score.away = 3;
+      // }
       const match = {
         id: undefined,
         date: this.match.date,
@@ -702,8 +712,8 @@ export default {
       const newsItem = data.news.match.complete[0];
       let { title, content } = newsItem;
 
-      if (this.homeClub.npc) {
-        content = engine.formatNewsClub(content, this.homeClub.name);
+      if (!this.homeClub.npc) {
+        content = engine.formatNewsClub(content, this.awayClub.name);
         content = engine.formatNewsPoints(
           content,
           homeClubData.competitions.league.points
@@ -712,8 +722,9 @@ export default {
           content,
           homeClubData.competitions.league.finishes
         );
-      } else {
-        content = engine.formatNewsClub(content, this.awayClub.name);
+      }
+      if (!this.awayClub.npc) {
+        content = engine.formatNewsClub(content, this.homeClub.name);
         content = engine.formatNewsPoints(
           content,
           awayClubData.competitions.league.points
@@ -908,12 +919,12 @@ export default {
     },
     decision() {
       this.scoreRounds();
-
+      let score = { home: this.score.home, away: this.score.away };
       // for center ring, the club with more fighters standing takes it
       if (this.homeStillStanding > this.awayStillStanding) {
-        this.score.home += 2;
+        score.home += 2;
       } else if (this.homeStillStanding < this.awayStillStanding) {
-        this.score.away += 2;
+        score.away += 2;
       } else {
         // we go to a decision
         if (this.ringFinishedLeft) {
@@ -928,7 +939,7 @@ export default {
         this.selectTab(3);
       }
 
-      this.$store.dispatch('setScore', this.score);
+      this.$store.dispatch('setScore', score);
     },
 
     countActivity(ring, outcome) {
@@ -946,30 +957,11 @@ export default {
     },
     countScore(result) {
       if (!this.isScored) {
-        this.score.home = this.score.home + result[1].home;
-        this.score.away = this.score.away + result[1].away;
+        let score = { home: this.score.home, away: this.score.away };
+        score.home += result[1].home;
+        score.away += result[1].away;
 
-        this.commitFighterForm(
-          result[0].center,
-          this.homeTactic.selection.center,
-          this.awayTactic.selection.center
-        );
-
-        if (!this.ringFinishedLeft) {
-          this.commitFighterForm(
-            result[0].left,
-            this.homeTactic.selection.left,
-            this.awayTactic.selection.left
-          );
-        }
-        if (!this.ringFinishedRight) {
-          this.commitFighterForm(
-            result[0].right,
-            this.homeTactic.selection.right,
-            this.awayTactic.selection.right
-          );
-        }
-        this.$store.dispatch('setScore', this.score);
+        this.$store.dispatch('setScore', score);
 
         this.isScored = true;
       }
@@ -1202,6 +1194,7 @@ export default {
 */
       let msg = `That concludes the match`;
       let fighterResult = matchEngine.checkCondition(fighter);
+      let score = { home: this.score.home, away: this.score.away };
 
       timeoutIntervalMultiplier += 0.1;
 
@@ -1221,15 +1214,15 @@ export default {
 
           //do depending on which side
           if (isHomeAttacking) {
-            this.score.home += 1;
+            score.home += 1;
             this.homeSubs.push(winner.id);
             this.finishes.home++;
           } else {
-            this.score.away += 1;
+            score.away += 1;
             this.awaySubs.push(winner.id);
             this.finishes.away++;
           }
-          this.$store.dispatch('setScore', this.score);
+          this.$store.dispatch('setScore', score);
         } else if (ring == 2) {
           this.finishInCenter();
           this.$store.dispatch('addFighterForm', { id: winner.id, item: 'F' });
@@ -1239,7 +1232,7 @@ export default {
           if (isHomeAttacking) {
             this.finishes.home++;
             if (this.awaySubs.length == 0) {
-              this.score.home += 3;
+              score.home += 3;
               this.isFullTime = true;
 
               this.scoreRounds();
@@ -1257,7 +1250,7 @@ export default {
           } else {
             this.finishes.away++;
             if (this.homeSubs.length == 0) {
-              this.score.away += 3;
+              score.away += 3;
               this.isFullTime = true;
 
               this.scoreRounds();
@@ -1271,7 +1264,7 @@ export default {
             //   this.score.away += 3;
             // }
           }
-          this.$store.dispatch('setScore', this.score);
+          this.$store.dispatch('setScore', score);
         } else if (ring == 3) {
           this.finishInRight();
           this.$store.dispatch('addFighterForm', { id: winner.id, item: 'F' });
@@ -1279,17 +1272,17 @@ export default {
 
           //do depending on which side
           if (isHomeAttacking) {
-            this.score.home += 1;
+            score.home += 1;
 
             this.homeSubs.push(winner.id);
             this.finishes.home++;
           } else {
-            this.score.away += 1;
+            score.away += 1;
 
             this.awaySubs.push(winner.id);
             this.finishes.away++;
           }
-          this.$store.dispatch('setScore', this.score);
+          this.$store.dispatch('setScore', score);
         }
       }
     },
@@ -1348,11 +1341,14 @@ export default {
       attacker.match.save = att.save;
       attacker.match.dc = att.dc;
 
-      attacker.match.exposed = matchEngine.getFlooredToHundred(
+      attacker.match.exposed = matchEngine.stayPercentage(
         attacker.match.exposed
       );
-      attacker.match.learned = matchEngine.getFlooredToHundred(
+      attacker.match.learned = matchEngine.stayPercentage(
         attacker.match.learned
+      );
+      attacker.match.condition = matchEngine.stayPercentage(
+        attacker.match.condition
       );
 
       defender.match.condition -= def.damage;
@@ -1362,11 +1358,14 @@ export default {
       defender.match.save = def.save;
       defender.match.dc = def.dc;
 
-      defender.match.exposed = matchEngine.getFlooredToHundred(
+      defender.match.exposed = matchEngine.stayPercentage(
         defender.match.exposed
       );
-      defender.match.learned = matchEngine.getFlooredToHundred(
+      defender.match.learned = matchEngine.stayPercentage(
         defender.match.learned
+      );
+      defender.match.condition = matchEngine.stayPercentage(
+        defender.match.condition
       );
     },
     tallyPoints(ring, outcome) {

@@ -105,7 +105,9 @@ export default {
 
       //seeds players to clubs linearly
       //later will add players to squads permanently
-      engine.seedRosterToClubs(this.league, this.roster); // temp
+      // engine.seedRosterToClubs(this.league, this.roster); // temp
+      engine.checkContract(this.league, this.roster);
+      console.log(this.roster);
       //and the coaches
       engine.seedStaffToClubs(this.league, this.staff);
       console.log(this.staff);
@@ -125,7 +127,7 @@ export default {
   },
 
   data: () => ({
-    selectedClubId: 1001,
+    selectedClubId: 1004,
     selectedName: 'Finnbogi Jökull Pétursson',
     selectedLeague: data.clubs.england,
     selectedRoster: data.fighters.roster,

@@ -29,10 +29,4 @@ export default {
     archivedMatch: 78000,
     news: 900000,
   },
-
-  matchData: {
-    score: { home: 0, away: 0 },
-    names: { home: '', away: '' },
-    minute: null,
-  },
 };

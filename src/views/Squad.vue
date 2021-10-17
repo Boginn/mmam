@@ -16,6 +16,12 @@
           :hide-default-footer="true"
         >
           <!-- eslint-disable-next-line -->
+          <template v-slot:header.personal.name="{ header }">
+            <div class="justify-center title">
+              {{ getClub(id).name }}
+            </div>
+          </template>
+          <!-- eslint-disable-next-line -->
           <template v-slot:item.personal.name="{ item }">
             <router-link :to="`/roster/${item.id}`" class="table">
               <v-icon class="mb-1" small>mdi-arrow-top-left</v-icon>

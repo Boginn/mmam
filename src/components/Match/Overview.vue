@@ -59,7 +59,7 @@
             <div>
               <v-progress-linear
                 height="15"
-                :value="getFighter(fighter).match.condition"
+                v-model="getFighter(fighter).match.condition"
                 :buffer-value="100"
                 color="green"
                 background-color="red"
@@ -137,7 +137,7 @@
             <div>
               <v-progress-linear
                 height="15"
-                :value="getFighter(fighter).match.condition"
+                v-model="getFighter(fighter).match.condition"
                 :buffer-value="100"
                 color="green"
                 background-color="red"

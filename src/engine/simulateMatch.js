@@ -413,11 +413,14 @@ export default {
       attacker.match.learned += outcome.attackerLearned;
       attacker.match.momentum = outcome.attackerMomentum;
 
-      attacker.match.exposed = matchEngine.getFlooredToHundred(
+      attacker.match.exposed = matchEngine.stayPercentage(
         attacker.match.exposed
       );
-      attacker.match.learned = matchEngine.getFlooredToHundred(
+      attacker.match.learned = matchEngine.stayPercentage(
         attacker.match.learned
+      );
+      attacker.match.condition = matchEngine.stayPercentage(
+        attacker.match.condition
       );
 
       defender.match.condition -= outcome.defenderDamage;
@@ -425,11 +428,14 @@ export default {
       defender.match.learned += outcome.defenderLearned;
       attacker.match.momentum = outcome.defenderMomentum;
 
-      defender.match.exposed = matchEngine.getFlooredToHundred(
+      defender.match.exposed = matchEngine.stayPercentage(
         defender.match.exposed
       );
-      defender.match.learned = matchEngine.getFlooredToHundred(
+      defender.match.learned = matchEngine.stayPercentage(
         defender.match.learned
+      );
+      defender.match.condition = matchEngine.stayPercentage(
+        defender.match.condition
       );
     }
 

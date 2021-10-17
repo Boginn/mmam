@@ -201,9 +201,10 @@ export default {
       cup: {},
     };
 
-    constructor(name, nationality) {
+    constructor(name, nationality, squad) {
       this.name = name;
       this.nationality = nationality;
+      this.squad = squad;
     }
   },
   Match: class {

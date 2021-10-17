@@ -1,6 +1,34 @@
 import classes from '@/data/classes.js';
 import eng from '@/engine/matchEngine.js';
 
+const skillDCMod = (attacker, defender, skillDC) => {
+  if (
+    eng.getRollWithMod(attacker.physical.pace) >=
+    eng.getRollWithMod(defender.skill.anticipation)
+  ) {
+    skillDC -= 2;
+  }
+
+  if (
+    eng.getRollWithMod(attacker.skill.fluidity) >=
+    eng.getRollWithMod(defender.skill.versatility)
+  ) {
+    skillDC -= 2;
+  } else {
+    skillDC += 2;
+  }
+
+  if (
+    eng.getRollWithMod(attacker.mental.determination) >=
+    eng.getRollWithMod(defender.mental.pressure)
+  ) {
+    skillDC -= 2;
+  } else {
+    skillDC += 2;
+  }
+  return skillDC;
+};
+
 const skillCheckAttack = (fighter) => {
   let array = [];
   array.push(eng.getRollWithMod(fighter.skill.positioning));
@@ -10,6 +38,7 @@ const skillCheckAttack = (fighter) => {
 
   return eng.processCheck(array, fighter);
 };
+
 const skillCheckDefend = (fighter) => {
   let array = [];
   array.push(eng.getRollWithMod(fighter.skill.positioning));
@@ -23,68 +52,43 @@ const skillCheckDefend = (fighter) => {
 export const singleLeg = (action, attacker, defender) => {
   let outcome = new classes.Outcome();
   let { att, def } = outcome;
-  let finalAttack, finalDefend;
+
   let physDC = 10;
   let skillDC = 10;
 
   // Physical checks
   let attackPhysMod = eng.bigActionPhysicalCheck(attacker);
   let defendPhysMod = eng.bigActionPhysicalCheck(defender);
+  console.log(attackPhysMod, 'attack physical mod');
+  console.log(defendPhysMod, 'defend physical mod');
 
-  if (eng.getDifference(attackPhysMod, defendPhysMod) >= physDC) {
-    if (attackPhysMod > defendPhysMod) {
-      def.exposed += physDC;
-      att.learned += physDC;
-    } else {
-      att.exposed += physDC;
-      def.learned += physDC;
-    }
-  } else if (eng.getDifference(attackPhysMod, defendPhysMod) >= physDC / 2) {
-    if (attackPhysMod > defendPhysMod) {
-      def.exposed += physDC / 2;
-      att.learned += physDC / 2;
-    } else {
-      def.learned += physDC / 2;
-      att.exposed += physDC / 2;
-    }
-  } else {
-    def.learned += defendPhysMod;
-    att.learned += attackPhysMod;
-  }
+  const bigActionOutcome = eng.bigAction(attackPhysMod, defendPhysMod, physDC);
+  def.exposed += bigActionOutcome.def.exposed;
+  def.learned += bigActionOutcome.att.learned;
+  att.exposed += bigActionOutcome.def.exposed;
+  att.learned += bigActionOutcome.att.learned;
 
   // Skill checks
   let attackSkillMod = skillCheckAttack(attacker);
   let defendSkillMod = skillCheckDefend(defender);
+  console.log(attackSkillMod, 'attack skill mod');
+  console.log(defendSkillMod, 'defend skill mod');
 
-  if (
-    eng.getRollWithMod(attacker.physical.pace) >=
-    eng.getRollWithMod(defender.skill.anticipation)
-  ) {
-    attackSkillMod = attackSkillMod + skillDC;
-  } else if (
-    eng.getRollWithMod(attacker.skill.fluidity) >=
-    eng.getRollWithMod(defender.skill.versatility)
-  ) {
-    attackSkillMod = attackSkillMod + skillDC;
-  } else {
-    defendSkillMod = defendSkillMod + skillDC;
+  skillDC = skillDCMod(attacker, defender, skillDC);
+
+  if (attackSkillMod >= skillDC) {
+    attackSkillMod += skillDC / 2;
   }
-
-  if (
-    eng.getRollWithMod(attacker.mental.determination) >=
-    eng.getRollWithMod(defender.mental.pressure)
-  ) {
-    attackSkillMod = attackSkillMod + skillDC;
-  } else {
-    defendSkillMod = defendSkillMod + skillDC;
+  if (defendSkillMod >= skillDC) {
+    defendSkillMod += skillDC / 2;
   }
 
   // Final outcome
-  finalAttack = attackSkillMod + attackPhysMod;
-  finalDefend = defendSkillMod + defendPhysMod;
+  const finalAttack = attackSkillMod + attackPhysMod;
+  const finalDefend = defendSkillMod + defendPhysMod;
 
-  console.log(finalAttack);
-  console.log(finalDefend);
+  console.log(finalAttack, 'attack final mod');
+  console.log(finalDefend, 'defend final mod');
 
   if (finalAttack >= finalDefend) {
     // in any case
