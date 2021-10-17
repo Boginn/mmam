@@ -1,5 +1,6 @@
 import matchEngine from './matchEngine';
-import decisionEngine from './decisionEngine';
+import matchBrain from './matchBrain';
+// import decisionEngine from './decisionEngine';
 
 export default {
   //data
@@ -92,67 +93,74 @@ export default {
     let defendTactic = isHomeAttack ? awayTactic : awayTactic;
 
     //init
-    //same some? exact
-    function seedRoundsToPointCounters() {
-      const {
-        ringTruePointsLeft,
-        ringTruePointsCenter,
-        ringTruePointsRight,
-      } = ringTruePoints;
-      rounds.forEach((element) => {
-        ringTruePointsLeft.push({
-          round: element,
-          home: 0,
-          away: 0,
-          homeSignificant: 0,
-          awaySignificant: 0,
-        });
-        ringTruePointsCenter.push({
-          round: element,
-          home: 0,
-          away: 0,
-          homeSignificant: 0,
-          awaySignificant: 0,
-        });
-        ringTruePointsRight.push({
-          round: element,
-          home: 0,
-          away: 0,
-          homeSignificant: 0,
-          awaySignificant: 0,
-        });
-      });
-    }
-    //same some? exact
-    function resetFighterMatchStats() {
-      function reset(item) {
-        item.match.save = false;
-        item.match.dc = null;
-        item.match.exposed = 0;
-        item.match.condition =
-          item.fitness > item.condition ? item.fitness : item.condition;
-        item.match.learned = 0;
-        item.match.momentum = false;
-        item.match.finished = false;
-        item.match.substituted = false;
-      }
 
-      reset(fighters.left.home);
-      reset(fighters.left.away);
-      reset(fighters.center.home);
-      reset(fighters.center.away);
-      reset(fighters.right.home);
-      reset(fighters.right.away);
+    // function seedRoundsToPointCounters() {
+    //   const {
+    //     ringTruePointsLeft,
+    //     ringTruePointsCenter,
+    //     ringTruePointsRight,
+    //   } = ringTruePoints;
+    //   rounds.forEach((element) => {
+    //     ringTruePointsLeft.push({
+    //       round: element,
+    //       home: 0,
+    //       away: 0,
+    //       homeSignificant: 0,
+    //       awaySignificant: 0,
+    //     });
+    //     ringTruePointsCenter.push({
+    //       round: element,
+    //       home: 0,
+    //       away: 0,
+    //       homeSignificant: 0,
+    //       awaySignificant: 0,
+    //     });
+    //     ringTruePointsRight.push({
+    //       round: element,
+    //       home: 0,
+    //       away: 0,
+    //       homeSignificant: 0,
+    //       awaySignificant: 0,
+    //     });
+    //   });
+    // }
+
+    function resetFighterMatchStats() {
+      // function reset(item) {
+      //   item.match.save = false;
+      //   item.match.dc = null;
+      //   item.match.exposed = 0;
+      //   item.match.condition =
+      //     item.fitness > item.condition ? item.fitness : item.condition;
+      //   item.match.learned = 0;
+      //   item.match.momentum = false;
+      //   item.match.finished = false;
+      //   item.match.substituted = false;
+      // }
+
+      matchBrain.reset(fighters.left.home);
+      matchBrain.reset(fighters.left.away);
+      matchBrain.reset(fighters.center.home);
+      matchBrain.reset(fighters.center.away);
+      matchBrain.reset(fighters.right.home);
+      matchBrain.reset(fighters.right.away);
     }
 
     //run
-    seedRoundsToPointCounters();
+    matchBrain.seedRoundsToPointCounters(ringTruePoints, rounds);
     resetFighterMatchStats();
     startRound();
     getOn();
 
     //same some
     function archiveMatch() {
+      if (score.home > 3) {
+        score.home = 3;
+      }
+      if (score.away > 3) {
+        score.away = 3;
+      }
+
       const matchToArchive = {
         id: undefined,
         date: match.date,
@@ -321,7 +329,7 @@ export default {
         let home, away, attacker, defender;
 
         //pick ring
-        ring = pickRing();
+        ring = matchBrain.pickRing(ringFinishedLeft, ringFinishedRight);
         console.log(ring + 'ring picked');
         console.log(ringFinishedLeft);
         console.log(ringFinishedCenter);
@@ -373,13 +381,13 @@ export default {
         let outcome = matchEngine.engage(attackMethod, attacker, defender);
         console.log(outcome);
         //count activity
-        countActivity(ring, outcome);
+        matchBrain.countActivity(ring, outcome, isHomeAttack, ringActivity);
 
         //OUTCOME
         //sort out the outcome,
 
         //updates momentum, condition, exposed and learned
-        updateFighterMatchStats(attacker, defender, outcome);
+        matchBrain.updateFighterMatchStats(attacker, defender, outcome);
 
         // checks condition to see if there was a finish
         checkForFinish(defender, ring, isHomeAttack, attacker);
@@ -388,7 +396,13 @@ export default {
 
         if (outcome.point) {
           // TODO
-          tallyPoints(ring, outcome);
+          matchBrain.tallyPoints(
+            ring,
+            outcome,
+            isHomeAttack,
+            ringTruePoints,
+            round
+          );
         }
 
         console.log('tally done');
@@ -437,70 +451,70 @@ export default {
       ringFinishedCenter = false;
       pendingSub = false;
     }
+
+    // function pickRing() {
+    //   if (ringFinishedLeft && ringFinishedRight) {
+    //     return 2;
+    //   } else if (ringFinishedLeft) {
+    //     return matchEngine.roll(2) + 1;
+    //   } else if (ringFinishedRight) {
+    //     return matchEngine.roll(2);
+    //   } else {
+    //     return matchEngine.roll(3);
+    //   }
+    // }
+
+    // function countActivity(ring, outcome) {
+    //   if (isHomeAttack) {
+    //     ringActivity[ring - 1].home += 1;
+    //     if (outcome.significant) {
+    //       ringActivity[ring - 1].homeSignificant += 1;
+    //     }
+    //   } else {
+    //     ringActivity[ring - 1].away += 1;
+    //     if (outcome.significant) {
+    //       ringActivity[ring - 1].awaySignificant += 1;
+    //     }
+    //   }
+    // }
     //same exact
-    function pickRing() {
-      if (ringFinishedLeft && ringFinishedRight) {
-        return 2;
-      } else if (ringFinishedLeft) {
-        return matchEngine.roll(2) + 1;
-      } else if (ringFinishedRight) {
-        return matchEngine.roll(2);
-      } else {
-        return matchEngine.roll(3);
-      }
-    }
-    //same exact
-    function countActivity(ring, outcome) {
-      if (isHomeAttack) {
-        ringActivity[ring - 1].home += 1;
-        if (outcome.significant) {
-          ringActivity[ring - 1].homeSignificant += 1;
-        }
-      } else {
-        ringActivity[ring - 1].away += 1;
-        if (outcome.significant) {
-          ringActivity[ring - 1].awaySignificant += 1;
-        }
-      }
-    }
-    //same exact
-    function updateFighterMatchStats(attacker, defender, outcome) {
-      const { att, def } = outcome;
+    // function updateFighterMatchStats(attacker, defender, outcome) {
+    //   const { att, def } = outcome;
 
-      attacker.match.condition -= att.damage;
-      attacker.match.exposed += att.exposed;
-      attacker.match.learned += att.learned;
-      attacker.match.momentum = att.momentum;
-      attacker.match.save = att.save;
-      attacker.match.dc = att.dc;
+    //   attacker.match.condition -= att.damage;
+    //   attacker.match.exposed += att.exposed;
+    //   attacker.match.learned += att.learned;
+    //   attacker.match.momentum = att.momentum;
+    //   attacker.match.save = att.save;
+    //   attacker.match.dc = att.dc;
 
-      attacker.match.exposed = matchEngine.stayPercentage(
-        attacker.match.exposed
-      );
-      attacker.match.learned = matchEngine.stayPercentage(
-        attacker.match.learned
-      );
-      attacker.match.condition = matchEngine.stayPercentage(
-        attacker.match.condition
-      );
+    //   attacker.match.exposed = matchEngine.stayPercentage(
+    //     attacker.match.exposed
+    //   );
+    //   attacker.match.learned = matchEngine.stayPercentage(
+    //     attacker.match.learned
+    //   );
+    //   attacker.match.condition = matchEngine.stayPercentage(
+    //     attacker.match.condition
+    //   );
 
-      defender.match.condition -= def.damage;
-      defender.match.exposed += def.exposed;
-      defender.match.learned += def.learned;
-      defender.match.momentum = def.momentum;
-      defender.match.save = def.save;
-      defender.match.dc = def.dc;
+    //   defender.match.condition -= def.damage;
+    //   defender.match.exposed += def.exposed;
+    //   defender.match.learned += def.learned;
+    //   defender.match.momentum = def.momentum;
+    //   defender.match.save = def.save;
+    //   defender.match.dc = def.dc;
 
-      defender.match.exposed = matchEngine.stayPercentage(
-        defender.match.exposed
-      );
-      defender.match.learned = matchEngine.stayPercentage(
-        defender.match.learned
-      );
-      defender.match.condition = matchEngine.stayPercentage(
-        defender.match.condition
-      );
-    }
+    //   defender.match.exposed = matchEngine.stayPercentage(
+    //     defender.match.exposed
+    //   );
+    //   defender.match.learned = matchEngine.stayPercentage(
+    //     defender.match.learned
+    //   );
+    //   defender.match.condition = matchEngine.stayPercentage(
+    //     defender.match.condition
+    //   );
+    // }
     // same sorta
     function checkForFinish(fighter, ring, isHomeAttacking, winner) {
       let fighterResult = matchEngine.checkCondition(fighter);
@@ -540,6 +554,10 @@ export default {
             if (awaySubs.length == 0) {
               score.home += 3;
               isFullTime = true;
+
+              // sets this.decisions
+              // matchBrain.scoreRounds(ringTruePoints, ringJudges, decisions);
+
               console.log('isFullTime = true');
             } else {
               console.log(awaySubs);
@@ -551,6 +569,10 @@ export default {
             if (homeSubs.length == 0) {
               score.away += 3;
               isFullTime = true;
+
+              // sets this.decisions
+              // matchBrain.scoreRounds(ringTruePoints, ringJudges, decisions);
+
               console.log('isFullTime = true');
             } else {
               console.log(homeSubs);
@@ -577,84 +599,84 @@ export default {
         }
       }
     }
-    // same exact
-    function tallyPoints(ring, outcome) {
-      const {
-        ringTruePointsLeft,
-        ringTruePointsCenter,
-        ringTruePointsRight,
-      } = ringTruePoints;
-      // console.log(ringTruePointsLeft)
-      // console.log(ringTruePointsCenter)
-      // console.log(ringTruePointsRight)
-      // console.log(ringTruePoints)
-      if (ring == 1) {
-        // LEFT
-        if (isHomeAttack) {
-          ringTruePointsLeft[round - 1].home += 1;
-          if (outcome.significant) {
-            ringTruePointsLeft[round - 1].homeSignificant += 1;
-          }
-        } else {
-          ringTruePointsLeft[round - 1].away += 1;
-          if (outcome.significant) {
-            ringTruePointsLeft[round - 1].awaySignificant += 1;
-          }
-        }
-      } else if (ring == 2) {
-        // CENTER
-        if (isHomeAttack) {
-          ringTruePointsCenter[round - 1].home += 1;
-          if (outcome.significant) {
-            ringTruePointsCenter[round - 1].homeSignificant += 1;
-          }
-        } else {
-          ringTruePointsCenter[round - 1].away += 1;
-          if (outcome.significant) {
-            ringTruePointsCenter[round - 1].awaySignificant += 1;
-          }
-        }
-      } else if (ring == 3) {
-        // RIGHT
-        if (isHomeAttack) {
-          ringTruePointsRight[round - 1].home += 1;
-          if (outcome.significant) {
-            ringTruePointsLeft[round - 1].homeSignificant += 1;
-          }
-        } else {
-          ringTruePointsRight[round - 1].away += 1;
-          if (outcome.significant) {
-            ringTruePointsRight[round - 1].awaySignificant += 1;
-          }
-        }
-      }
-    }
-    //same exact
-    function scoreRounds() {
-      const {
-        ringTruePointsLeft,
-        ringTruePointsCenter,
-        ringTruePointsRight,
-      } = ringTruePoints;
-      const { ringJudgesLeft, ringJudgesCenter, ringJudgesRight } = ringJudges;
 
-      // sets this.decisions
-      decisions.ringDecisionLeft = decisionEngine.scoreRounds(
-        ringJudgesLeft,
-        ringTruePointsLeft
-      );
-      decisions.ringDecisionCenter = decisionEngine.scoreRounds(
-        ringJudgesCenter,
-        ringTruePointsCenter
-      );
-      decisions.ringDecisionRight = decisionEngine.scoreRounds(
-        ringJudgesRight,
-        ringTruePointsRight
-      );
-    }
+    // function tallyPoints(ring, outcome) {
+    //   const {
+    //     ringTruePointsLeft,
+    //     ringTruePointsCenter,
+    //     ringTruePointsRight,
+    //   } = ringTruePoints;
+    //   // console.log(ringTruePointsLeft)
+    //   // console.log(ringTruePointsCenter)
+    //   // console.log(ringTruePointsRight)
+    //   // console.log(ringTruePoints)
+    //   if (ring == 1) {
+    //     // LEFT
+    //     if (isHomeAttack) {
+    //       ringTruePointsLeft[round - 1].home += 1;
+    //       if (outcome.significant) {
+    //         ringTruePointsLeft[round - 1].homeSignificant += 1;
+    //       }
+    //     } else {
+    //       ringTruePointsLeft[round - 1].away += 1;
+    //       if (outcome.significant) {
+    //         ringTruePointsLeft[round - 1].awaySignificant += 1;
+    //       }
+    //     }
+    //   } else if (ring == 2) {
+    //     // CENTER
+    //     if (isHomeAttack) {
+    //       ringTruePointsCenter[round - 1].home += 1;
+    //       if (outcome.significant) {
+    //         ringTruePointsCenter[round - 1].homeSignificant += 1;
+    //       }
+    //     } else {
+    //       ringTruePointsCenter[round - 1].away += 1;
+    //       if (outcome.significant) {
+    //         ringTruePointsCenter[round - 1].awaySignificant += 1;
+    //       }
+    //     }
+    //   } else if (ring == 3) {
+    //     // RIGHT
+    //     if (isHomeAttack) {
+    //       ringTruePointsRight[round - 1].home += 1;
+    //       if (outcome.significant) {
+    //         ringTruePointsRight[round - 1].homeSignificant += 1;
+    //       }
+    //     } else {
+    //       ringTruePointsRight[round - 1].away += 1;
+    //       if (outcome.significant) {
+    //         ringTruePointsRight[round - 1].awaySignificant += 1;
+    //       }
+    //     }
+    //   }
+    // }
+
+    // function scoreRounds() {
+    //   const {
+    //     ringTruePointsLeft,
+    //     ringTruePointsCenter,
+    //     ringTruePointsRight,
+    //   } = ringTruePoints;
+    //   const { ringJudgesLeft, ringJudgesCenter, ringJudgesRight } = ringJudges;
+
+    //   // sets this.decisions
+    //   decisions.ringDecisionLeft = decisionEngine.scoreRounds(
+    //     ringJudgesLeft,
+    //     ringTruePointsLeft
+    //   );
+    //   decisions.ringDecisionCenter = decisionEngine.scoreRounds(
+    //     ringJudgesCenter,
+    //     ringTruePointsCenter
+    //   );
+    //   decisions.ringDecisionRight = decisionEngine.scoreRounds(
+    //     ringJudgesRight,
+    //     ringTruePointsRight
+    //   );
+    // }
 
     function decision() {
-      scoreRounds();
+      matchBrain.scoreRounds(ringTruePoints, ringJudges, decisions);
       // for center ring, the club with more fighters standing takes it
       if (homeStillStanding > awayStillStanding) {
         console.log('home?');

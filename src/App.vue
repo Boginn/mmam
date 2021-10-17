@@ -127,7 +127,7 @@ export default {
   },
 
   data: () => ({
-    selectedClubId: 1004,
+    selectedClubId: 1001,
     selectedName: 'Finnbogi Jökull Pétursson',
     selectedLeague: data.clubs.england,
     selectedRoster: data.fighters.roster,
@@ -317,7 +317,7 @@ export default {
         console.log('I did sims and its not matchday');
         console.log(this.matches);
         // this.continue();
-        this.$store.dispatch('setIsPostMatch', true);
+        // this.$store.dispatch('setIsPostMatch', false);
       }
       if (didYouSimulateAnyMatches && this.isMatchday) {
         console.log('I did sims on matchday');
@@ -438,6 +438,10 @@ export default {
       this.$store.dispatch('addClubData', result.homeClubData);
       this.$store.dispatch('addClubData', result.awayClubData);
       this.$store.dispatch('addFighterData', result.fighterData);
+
+      result.fighterForms.forEach((element) => {
+        this.$store.dispatch('addFighterForm', element);
+      });
     },
 
     //seeding

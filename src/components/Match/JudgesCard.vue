@@ -111,7 +111,7 @@ export default {
       );
 
       //save
-      this.$parent.cards = result[0];
+      // this.$parent.cards = result[0];
       console.log(result[0]);
       this.$emit('countScore', result);
     },

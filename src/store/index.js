@@ -39,7 +39,6 @@ export default new Vuex.Store({
     matchData: {
       score: { home: 0, away: 0 },
       names: { home: '', away: '' },
-      minute: null,
     },
 
     //user
@@ -428,6 +427,7 @@ export default new Vuex.Store({
 
     //matchData
     SET_SCORE(state, payload) {
+      console.log(`setting score in state: ${payload}`);
       let { home, away } = payload;
       if (home > 3) {
         home = 3;

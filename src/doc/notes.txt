@@ -2,23 +2,23 @@
 
 
 // TODOS
-  I should go through and leave notes ASAP
-  hold off on refactoring alon the way
-  refrain from spending too much time on match engine for the time being
-  focus on getting all the data flow smooth first
-
-  make a fixtureEngine, getPostMatch and getFixtures functions
+  I should go through and leave notes
+  
+    make fighters chins take permanent daamge after knockouts
+    make fighters power fluctuate a bit according to morale, form and training
 
 
   
 // BUGS
-    clicking on v-progress-linear changes the health, to fix, switch from
-    v-model to :value. (handy to have atm for debugging)
+    clicking on v-progress-linear changes the health,
+    (handy to have atm for debugging)
+        => fix, switch from v-model to :value. 
 
 
-
-
-
+    commitFighterForm is wtf
+    was a bug where this.cards.foreach fd up
+    hard to reproduce when my team is so much better
+    this means the only form updates are when there's a finish(works in simMatch too)
 
 
 
@@ -42,41 +42,24 @@ implement:
         
 
     match:
-        simulateMatch will of course need an overhaul
-        check and see if possible yet,
-        maybe only matchEngine will get further code,
-        Match might be about done and simulate should follow
 
 
-        go through each check vs check to see disrepancies, (game balance)
-        MAKE SURE to balance all fighters to 10
+ 
+        manager might be able to ask fighters to specifically strike or grapple but it's
+        ultimately up to the fighters. fighters, in most situations, will follow other 
+        instructions well however.
 
-   
+        a flash knockout can occur
+            if (roll 100 + momentum? 2 + morale? 2 + form? 2) bigger than 100
+            then flash knockout occurs
 
-            after landing a good successfull takedown 
-                give momentum to controling fighter
-                if other fighter gets initiative it is used to get up
-            
+            momentum triggers -- 
+                finishing someone gives momentum hm only if in center ring
 
-            momentum triggers -- finishing someone gives momentum hm only if in center ring
-            judges need to get activity numbers
-            write actions
-
+      
 
 last time:
     
-
-        I need to document how I want to do each action in matchEngine, make a data flow thingy
-
-        I need to change disengage. it should refer to resetting position from being controlled
-        (i.e. fighter.match.save==true). The fighter has to use his initiative to 
-        disengage/reset if (save==true)
-        A new action called, maybe 'compose' or 'rest', it will be an action fighters can
-        take when they have initiative, letting them compose and regain condition. 
-        they take that action based on manager instructions. 
-
-        manager might be able to ask fighters to specifically strike or grapple but it's
-        ultimately up to the fighters. fighters follow other instructions well however.
 
 
 
@@ -84,13 +67,8 @@ last time:
 
    
   features:
-    striking does more damage but opens you up to grappling more
-    grappling stalls the fight more but can lead to submissions too
 
-    a combination of instructions and fighters choice of striking or grappling
-    determines the moment to moment strengths of the fighter
-
-    
+    put in a league tab in Match.vue to see the live league table
 
 
 

@@ -501,9 +501,9 @@ export default {
     defaultSelection() {
       //for lazy
       this.tactic.clubId = this.id;
-      this.setMentality(1);
-      this.setRisk(1);
-      this.setGamesmanship(1);
+      this.setMentality(2);
+      this.setRisk(2);
+      this.setGamesmanship(2);
 
       this.tactic.selection = {
         left: this.club.squad[0],

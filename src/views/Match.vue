@@ -165,6 +165,7 @@
 import data from '@/data/data.js';
 import classes from '@/data/classes.js';
 import matchEngine from '@/engine/matchEngine.js';
+import matchBrain from '@/engine/matchBrain.js';
 import engine from '@/engine/engine.js';
 import decisionEngine from '@/engine/decisionEngine.js';
 
@@ -182,12 +183,17 @@ export default {
   },
 
   created() {
-    this.seedRoundsToPointCounters();
+    matchBrain.seedRoundsToPointCounters(this.ringTruePoints, this.rounds);
     this.resetFighterMatchStats();
     this.assignJudges();
     this.setTactics();
     this.$store.dispatch('setNames', this.names);
     this.$store.dispatch('setIsLive', true);
+  },
+
+  beforeDestroy() {
+    this.$store.dispatch('setScore', { home: 0, away: 0 });
+    this.$store.dispatch('setNames', { home: '', away: '' });
   },
 
   data: () => ({
@@ -458,55 +464,55 @@ export default {
   methods: {
     //init
     resetFighterMatchStats() {
-      function reset(item) {
-        item.match.save = false;
-        item.match.dc = null;
-        item.match.exposed = 0;
-        item.match.condition =
-          item.fitness > item.condition ? item.fitness : item.condition;
-        item.match.learned = 0;
-        item.match.momentum = false;
-        item.match.finished = false;
-        item.match.substituted = false;
-      }
+      // function reset(item) {
+      //   item.match.save = false;
+      //   item.match.dc = null;
+      //   item.match.exposed = 0;
+      //   item.match.condition =
+      //     item.fitness > item.condition ? item.fitness : item.condition;
+      //   item.match.learned = 0;
+      //   item.match.momentum = false;
+      //   item.match.finished = false;
+      //   item.match.substituted = false;
+      // }
 
-      reset(this.getFighter(this.homeClub.tactic.selection.center));
-      reset(this.getFighter(this.homeClub.tactic.selection.left));
-      reset(this.getFighter(this.homeClub.tactic.selection.right));
-      reset(this.getFighter(this.awayClub.tactic.selection.center));
-      reset(this.getFighter(this.awayClub.tactic.selection.left));
-      reset(this.getFighter(this.awayClub.tactic.selection.right));
+      matchBrain.reset(this.getFighter(this.homeClub.tactic.selection.center));
+      matchBrain.reset(this.getFighter(this.homeClub.tactic.selection.left));
+      matchBrain.reset(this.getFighter(this.homeClub.tactic.selection.right));
+      matchBrain.reset(this.getFighter(this.awayClub.tactic.selection.center));
+      matchBrain.reset(this.getFighter(this.awayClub.tactic.selection.left));
+      matchBrain.reset(this.getFighter(this.awayClub.tactic.selection.right));
     },
-    seedRoundsToPointCounters() {
-      const {
-        ringTruePointsLeft,
-        ringTruePointsCenter,
-        ringTruePointsRight,
-      } = this.ringTruePoints;
-      this.rounds.forEach((element) => {
-        ringTruePointsLeft.push({
-          round: element,
-          home: 0,
-          away: 0,
-          homeSignificant: 0,
-          awaySignificant: 0,
-        });
-        ringTruePointsCenter.push({
-          round: element,
-          home: 0,
-          away: 0,
-          homeSignificant: 0,
-          awaySignificant: 0,
-        });
-        ringTruePointsRight.push({
-          round: element,
-          home: 0,
-          away: 0,
-          homeSignificant: 0,
-          awaySignificant: 0,
-        });
-      });
-    },
+    // seedRoundsToPointCounters() {
+    //   const {
+    //     ringTruePointsLeft,
+    //     ringTruePointsCenter,
+    //     ringTruePointsRight,
+    //   } = this.ringTruePoints;
+    //   this.rounds.forEach((element) => {
+    //     ringTruePointsLeft.push({
+    //       round: element,
+    //       home: 0,
+    //       away: 0,
+    //       homeSignificant: 0,
+    //       awaySignificant: 0,
+    //     });
+    //     ringTruePointsCenter.push({
+    //       round: element,
+    //       home: 0,
+    //       away: 0,
+    //       homeSignificant: 0,
+    //       awaySignificant: 0,
+    //     });
+    //     ringTruePointsRight.push({
+    //       round: element,
+    //       home: 0,
+    //       away: 0,
+    //       homeSignificant: 0,
+    //       awaySignificant: 0,
+    //     });
+    //   });
+    // },
     assignJudges() {
       const {
         ringJudgesLeft,
@@ -840,19 +846,19 @@ export default {
         }
       }, 1000);
     },
-    pickRing() {
-      // implement something to make less random and more based on:
-      // exposed, learned, pace, tactics
-      if (this.ringFinishedLeft && this.ringFinishedRight) {
-        return 2;
-      } else if (this.ringFinishedLeft) {
-        return matchEngine.roll(2) + 1;
-      } else if (this.ringFinishedRight) {
-        return matchEngine.roll(2);
-      } else {
-        return matchEngine.roll(3);
-      }
-    },
+    // pickRing() {
+    //   // implement something to make less random and more based on:
+    //   // exposed, learned, pace, tactics
+    //   if (this.ringFinishedLeft && this.ringFinishedRight) {
+    //     return 2;
+    //   } else if (this.ringFinishedLeft) {
+    //     return matchEngine.roll(2) + 1;
+    //   } else if (this.ringFinishedRight) {
+    //     return matchEngine.roll(2);
+    //   } else {
+    //     return matchEngine.roll(3);
+    //   }
+    // },
     makeSubstitution() {
       let msg;
       if (this.isHomeAttack) {
@@ -890,34 +896,38 @@ export default {
     },
 
     //scoring/points/counting
-    scoreRounds() {
-      const {
-        ringTruePointsLeft,
-        ringTruePointsCenter,
-        ringTruePointsRight,
-      } = this.ringTruePoints;
-      const {
-        ringJudgesLeft,
-        ringJudgesCenter,
-        ringJudgesRight,
-      } = this.ringJudges;
+    // scoreRounds(ringTruePoints, ringJudges, ringDecisions) {
+    //   const {
+    //     ringTruePointsLeft,
+    //     ringTruePointsCenter,
+    //     ringTruePointsRight,
+    //   } = this.ringTruePoints;
+    //   const {
+    //     ringJudgesLeft,
+    //     ringJudgesCenter,
+    //     ringJudgesRight,
+    //   } = this.ringJudges;
 
-      // sets this.decisions
-      this.ringDecisions.ringDecisionLeft = decisionEngine.scoreRounds(
-        ringJudgesLeft,
-        ringTruePointsLeft
-      );
-      this.ringDecisions.ringDecisionCenter = decisionEngine.scoreRounds(
-        ringJudgesCenter,
-        ringTruePointsCenter
-      );
-      this.ringDecisions.ringDecisionRight = decisionEngine.scoreRounds(
-        ringJudgesRight,
-        ringTruePointsRight
-      );
-    },
+    //   // sets this.decisions
+    //   this.ringDecisions.ringDecisionLeft = decisionEngine.scoreRounds(
+    //     ringJudgesLeft,
+    //     ringTruePointsLeft
+    //   );
+    //   this.ringDecisions.ringDecisionCenter = decisionEngine.scoreRounds(
+    //     ringJudgesCenter,
+    //     ringTruePointsCenter
+    //   );
+    //   this.ringDecisions.ringDecisionRight = decisionEngine.scoreRounds(
+    //     ringJudgesRight,
+    //     ringTruePointsRight
+    //   );
+    // },
     decision() {
-      this.scoreRounds();
+      matchBrain.scoreRounds(
+        this.ringTruePoints,
+        this.ringJudges,
+        this.ringDecisions
+      );
       let score = { home: this.score.home, away: this.score.away };
       // for center ring, the club with more fighters standing takes it
       if (this.homeStillStanding > this.awayStillStanding) {
@@ -935,7 +945,27 @@ export default {
 
         this.isDecision = true; // opens Judges' Cards !
         // countscore happens
-        // this.commitFighterForm(homeId, awayId);
+
+        // this.commitFighterForm(
+        //   this.homeTactic.selection.center,
+        //   this.awayTactic.selection.center,
+        //   this.cards.center
+        // );
+        // if (!this.ringFinishedLeft) {
+        //   this.commitFighterForm(
+        //     this.homeTactic.selection.left,
+        //     this.awayTactic.selection.left,
+        //     this.cards.left
+        //   );
+        // }
+        // if (!this.ringFinishedRight) {
+        //   this.commitFighterForm(
+        //     this.homeTactic.selection.right,
+        //     this.awayTactic.selection.right,
+        //     this.cards.right
+        //   );
+        // }
+
         this.tabs.push({ name: 'judges card', value: false });
         this.selectTab(3);
       }
@@ -943,35 +973,36 @@ export default {
       this.$store.dispatch('setScore', score);
     },
 
-    countActivity(ring, outcome) {
-      if (this.isHomeAttack) {
-        this.ringActivity[ring - 1].home += 1;
-        if (outcome.significant) {
-          this.ringActivity[ring - 1].homeSignificant += 1;
-        }
-      } else {
-        this.ringActivity[ring - 1].away += 1;
-        if (outcome.significant) {
-          this.ringActivity[ring - 1].awaySignificant += 1;
-        }
-      }
-    },
+    // countActivity(ring, outcome) {
+    //   if (this.isHomeAttack) {
+    //     this.ringActivity[ring - 1].home += 1;
+    //     if (outcome.significant) {
+    //       this.ringActivity[ring - 1].homeSignificant += 1;
+    //     }
+    //   } else {
+    //     this.ringActivity[ring - 1].away += 1;
+    //     if (outcome.significant) {
+    //       this.ringActivity[ring - 1].awaySignificant += 1;
+    //     }
+    //   }
+    // },
     countScore(result) {
       if (!this.isScored) {
         let score = { home: this.score.home, away: this.score.away };
         score.home += result[1].home;
         score.away += result[1].away;
+        this.cards = result[0];
 
         this.$store.dispatch('setScore', score);
 
         this.isScored = true;
       }
     },
-    commitFighterForm(home, away) {
+    commitFighterForm(home, away, cards) {
       let homeCount = 0;
       let awayCount = 0;
 
-      this.cards.forEach((judge) => {
+      cards.forEach((judge) => {
         if (judge.home == true && judge.away == false) {
           homeCount += 1;
         } else if (judge.home == false && judge.away == true) {
@@ -1040,7 +1071,10 @@ export default {
         let home, away, attacker, defender;
 
         //pick ring
-        ring = this.pickRing();
+        ring = matchBrain.pickRing(
+          this.ringFinishedLeft,
+          this.ringFinishedRight
+        );
         console.log(ring);
 
         // select fighters in ring
@@ -1110,7 +1144,12 @@ export default {
         console.log(outcome);
 
         //count activity
-        this.countActivity(ring, outcome);
+        matchBrain.countActivity(
+          ring,
+          outcome,
+          this.isHomeAttack,
+          this.ringActivity
+        );
 
         //OUTCOME
         //sort out the outcome,
@@ -1124,7 +1163,7 @@ export default {
         timeoutIntervalMultiplier += 1;
 
         //updates momentum, condition, exposed and learned
-        this.updateFighterMatchStats(attacker, defender, outcome);
+        matchBrain.updateFighterMatchStats(attacker, defender, outcome);
 
         // checks condition to see if there was a finish
         this.checkForFinish(
@@ -1146,7 +1185,13 @@ export default {
         this.$store.dispatch('setScore', this.score);
 
         if (outcome.point) {
-          this.tallyPoints(ring, outcome);
+          matchBrain.tallyPoints(
+            ring,
+            outcome,
+            this.isHomeAttack,
+            this.ringTruePoints,
+            this.round
+          );
         }
 
         //SUBSTITUTION
@@ -1236,7 +1281,12 @@ export default {
               score.home += 3;
               this.isFullTime = true;
 
-              this.scoreRounds();
+              // sets this.decisions
+              matchBrain.scoreRounds(
+                this.ringTruePoints,
+                this.ringJudges,
+                this.ringDecisions
+              );
 
               setTimeout(() => {
                 this.$store.dispatch('addMatchMessage', msg);
@@ -1254,7 +1304,12 @@ export default {
               score.away += 3;
               this.isFullTime = true;
 
-              this.scoreRounds();
+              // sets this.decisions
+              matchBrain.scoreRounds(
+                this.ringTruePoints,
+                this.ringJudges,
+                this.ringDecisions
+              );
 
               setTimeout(() => {
                 this.$store.dispatch('addMatchMessage', msg);
@@ -1333,89 +1388,90 @@ export default {
       }, 250);
     },
 
-    updateFighterMatchStats(attacker, defender, outcome) {
-      const { att, def } = outcome;
-      attacker.match.condition -= att.damage;
-      attacker.match.exposed += att.exposed;
-      attacker.match.learned += att.learned;
-      attacker.match.momentum = att.momentum;
-      attacker.match.save = att.save;
-      attacker.match.dc = att.dc;
+    // updateFighterMatchStats(attacker, defender, outcome) {
+    //   const { att, def } = outcome;
+    //   attacker.match.condition -= att.damage;
+    //   attacker.match.exposed += att.exposed;
+    //   attacker.match.learned += att.learned;
+    //   attacker.match.momentum = att.momentum;
+    //   attacker.match.save = att.save;
+    //   attacker.match.dc = att.dc;
 
-      attacker.match.exposed = matchEngine.stayPercentage(
-        attacker.match.exposed
-      );
-      attacker.match.learned = matchEngine.stayPercentage(
-        attacker.match.learned
-      );
-      attacker.match.condition = matchEngine.stayPercentage(
-        attacker.match.condition
-      );
+    //   attacker.match.exposed = matchEngine.stayPercentage(
+    //     attacker.match.exposed
+    //   );
+    //   attacker.match.learned = matchEngine.stayPercentage(
+    //     attacker.match.learned
+    //   );
+    //   attacker.match.condition = matchEngine.stayPercentage(
+    //     attacker.match.condition
+    //   );
 
-      defender.match.condition -= def.damage;
-      defender.match.exposed += def.exposed;
-      defender.match.learned += def.learned;
-      defender.match.momentum = def.momentum;
-      defender.match.save = def.save;
-      defender.match.dc = def.dc;
+    //   defender.match.condition -= def.damage;
+    //   defender.match.exposed += def.exposed;
+    //   defender.match.learned += def.learned;
+    //   defender.match.momentum = def.momentum;
+    //   defender.match.save = def.save;
+    //   defender.match.dc = def.dc;
 
-      defender.match.exposed = matchEngine.stayPercentage(
-        defender.match.exposed
-      );
-      defender.match.learned = matchEngine.stayPercentage(
-        defender.match.learned
-      );
-      defender.match.condition = matchEngine.stayPercentage(
-        defender.match.condition
-      );
-    },
-    tallyPoints(ring, outcome) {
-      const {
-        ringTruePointsLeft,
-        ringTruePointsCenter,
-        ringTruePointsRight,
-      } = this.ringTruePoints;
-      if (ring == 1) {
-        // LEFT
-        if (this.isHomeAttack) {
-          ringTruePointsLeft[this.round - 1].home += 1;
-          if (outcome.significant) {
-            ringTruePointsLeft[this.round - 1].homeSignificant += 1;
-          }
-        } else {
-          ringTruePointsLeft[this.round - 1].away += 1;
-          if (outcome.significant) {
-            ringTruePointsLeft[this.round - 1].awaySignificant += 1;
-          }
-        }
-      } else if (ring == 2) {
-        // CENTER
-        if (this.isHomeAttack) {
-          ringTruePointsCenter[this.round - 1].home += 1;
-          if (outcome.significant) {
-            ringTruePointsCenter[this.round - 1].homeSignificant += 1;
-          }
-        } else {
-          ringTruePointsCenter[this.round - 1].away += 1;
-          if (outcome.significant) {
-            ringTruePointsCenter[this.round - 1].awaySignificant += 1;
-          }
-        }
-      } else if (ring == 3) {
-        // RIGHT
-        if (this.isHomeAttack) {
-          ringTruePointsRight[this.round - 1].home += 1;
-          if (outcome.significant) {
-            ringTruePointsLeft[this.round - 1].homeSignificant += 1;
-          }
-        } else {
-          ringTruePointsRight[this.round - 1].away += 1;
-          if (outcome.significant) {
-            ringTruePointsRight[this.round - 1].awaySignificant += 1;
-          }
-        }
-      }
-    },
+    //   defender.match.exposed = matchEngine.stayPercentage(
+    //     defender.match.exposed
+    //   );
+    //   defender.match.learned = matchEngine.stayPercentage(
+    //     defender.match.learned
+    //   );
+    //   defender.match.condition = matchEngine.stayPercentage(
+    //     defender.match.condition
+    //   );
+    // },
+
+    // tallyPoints(ring, outcome, isHomeAttack, ringTruePoints) {
+    //   const {
+    //     ringTruePointsLeft,
+    //     ringTruePointsCenter,
+    //     ringTruePointsRight,
+    //   } = this.ringTruePoints;
+    //   if (ring == 1) {
+    //     // LEFT
+    //     if (this.isHomeAttack) {
+    //       ringTruePointsLeft[this.round - 1].home += 1;
+    //       if (outcome.significant) {
+    //         ringTruePointsLeft[this.round - 1].homeSignificant += 1;
+    //       }
+    //     } else {
+    //       ringTruePointsLeft[this.round - 1].away += 1;
+    //       if (outcome.significant) {
+    //         ringTruePointsLeft[this.round - 1].awaySignificant += 1;
+    //       }
+    //     }
+    //   } else if (ring == 2) {
+    //     // CENTER
+    //     if (this.isHomeAttack) {
+    //       ringTruePointsCenter[this.round - 1].home += 1;
+    //       if (outcome.significant) {
+    //         ringTruePointsCenter[this.round - 1].homeSignificant += 1;
+    //       }
+    //     } else {
+    //       ringTruePointsCenter[this.round - 1].away += 1;
+    //       if (outcome.significant) {
+    //         ringTruePointsCenter[this.round - 1].awaySignificant += 1;
+    //       }
+    //     }
+    //   } else if (ring == 3) {
+    //     // RIGHT
+    //     if (this.isHomeAttack) {
+    //       ringTruePointsRight[this.round - 1].home += 1;
+    //       if (outcome.significant) {
+    //         ringTruePointsRight[this.round - 1].homeSignificant += 1;
+    //       }
+    //     } else {
+    //       ringTruePointsRight[this.round - 1].away += 1;
+    //       if (outcome.significant) {
+    //         ringTruePointsRight[this.round - 1].awaySignificant += 1;
+    //       }
+    //     }
+    //   }
+    // },
   },
 };
 </script>
