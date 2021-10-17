@@ -299,7 +299,7 @@ export default {
       npcMatches.forEach((match) => {
         if (match.date == this.day) {
           // simulate all non npc matches
-          this.simulateMatch(match);
+          this.prepSimulateMatch(match);
           didYouSimulateAnyMatches = true;
         }
       });
@@ -391,7 +391,7 @@ export default {
         this.$router.push(`/tactics`);
       }
     },
-    simulateMatch(match) {
+    prepSimulateMatch(match) {
       //tactics, clubs, fighters
       const clubs = [];
       match.clubs.forEach((c) => {
@@ -437,6 +437,7 @@ export default {
       this.$store.dispatch('addMatch', result.result);
       this.$store.dispatch('addClubData', result.homeClubData);
       this.$store.dispatch('addClubData', result.awayClubData);
+      this.$store.dispatch('addFighterData', result.fighterData);
     },
 
     //seeding

@@ -3,42 +3,14 @@ class Person {
     grappler: 50,
     striker: 50,
   };
-  // legs = [
-  //   {
-  //     power: null,
-  //     reach: null,
-  //     durability: null,
-  //   },
-  //   {
-  //     power: null,
-  //     reach: null,
-  //     durability: null,
-  //   },
-  // ];
-  // arms = [
-  //   {
-  //     power: null,
-  //     reach: null,
-  //     durability: null,
-  //   },
-  //   {
-  //     power: null,
-  //     reach: null,
-  //     durability: null,
-  //   },
-  // ];
-  body = [
-    {
-      power: null,
-      durability: null,
-    },
-  ];
-  head = [
-    {
-      durability: null,
-      chin: null,
-    },
-  ];
+  body = {
+    power: null,
+    durability: null,
+  };
+  head = {
+    durability: null,
+    chin: null,
+  };
   judging = {
     concentration: null,
     judgement: null,

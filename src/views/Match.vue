@@ -623,6 +623,7 @@ export default {
         this.judges,
         this.rounds
       );
+      console.log(judgesCard);
 
       // const fightersForm = {
       //   home: {
@@ -636,8 +637,6 @@ export default {
       //     right: [],
       //   },
       // };
-
-      console.log(judgesCard);
 
       const fighterData = [
         {
@@ -935,6 +934,8 @@ export default {
         }
 
         this.isDecision = true; // opens Judges' Cards !
+        // countscore happens
+        // this.commitFighterForm(homeId, awayId);
         this.tabs.push({ name: 'judges card', value: false });
         this.selectTab(3);
       }
@@ -966,11 +967,11 @@ export default {
         this.isScored = true;
       }
     },
-    commitFighterForm(result, home, away) {
+    commitFighterForm(home, away) {
       let homeCount = 0;
       let awayCount = 0;
 
-      result.forEach((judge) => {
+      this.cards.forEach((judge) => {
         if (judge.home == true && judge.away == false) {
           homeCount += 1;
         } else if (judge.home == false && judge.away == true) {
