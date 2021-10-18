@@ -196,6 +196,34 @@ export default {
     this.$store.dispatch('setNames', { home: '', away: '' });
   },
 
+  watch: {
+    cards() {
+      console.log('card');
+      if (this.isDecision) {
+        console.log('card and isdecis');
+        this.commitFighterForm(
+          this.homeTactic.selection.center,
+          this.awayTactic.selection.center,
+          this.cards.center
+        );
+        if (!this.ringFinishedLeft) {
+          this.commitFighterForm(
+            this.homeTactic.selection.left,
+            this.awayTactic.selection.left,
+            this.cards.left
+          );
+        }
+        if (!this.ringFinishedRight) {
+          this.commitFighterForm(
+            this.homeTactic.selection.right,
+            this.awayTactic.selection.right,
+            this.cards.right
+          );
+        }
+      }
+    },
+  },
+
   data: () => ({
     //bools
     isFullTime: false,
@@ -945,26 +973,7 @@ export default {
 
         this.isDecision = true; // opens Judges' Cards !
         // countscore happens
-
-        // this.commitFighterForm(
-        //   this.homeTactic.selection.center,
-        //   this.awayTactic.selection.center,
-        //   this.cards.center
-        // );
-        // if (!this.ringFinishedLeft) {
-        //   this.commitFighterForm(
-        //     this.homeTactic.selection.left,
-        //     this.awayTactic.selection.left,
-        //     this.cards.left
-        //   );
-        // }
-        // if (!this.ringFinishedRight) {
-        //   this.commitFighterForm(
-        //     this.homeTactic.selection.right,
-        //     this.awayTactic.selection.right,
-        //     this.cards.right
-        //   );
-        // }
+        console.log(this.cards);
 
         this.tabs.push({ name: 'judges card', value: false });
         this.selectTab(3);
@@ -992,6 +1001,7 @@ export default {
         score.home += result[1].home;
         score.away += result[1].away;
         this.cards = result[0];
+        //watcher reacts to cards changing, commits fighter form
 
         this.$store.dispatch('setScore', score);
 

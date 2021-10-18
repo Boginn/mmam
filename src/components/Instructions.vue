@@ -1,8 +1,8 @@
 <template>
   <v-col class="font-shadow">
     <v-row class="white--text pl-2 mb-1 mt-1 grey darken-2">
-      <span class="warning--text">
-        Mentality:
+      <span class=" white--text">
+        Mentality
       </span>
       <v-spacer></v-spacer>
       <v-btn
@@ -28,8 +28,8 @@
       </v-btn>
     </v-row>
     <v-row class="white--text pl-2 mb-1 mt-1 grey darken-2">
-      <span class="error--text">
-        Risk:
+      <span class=" white--text">
+        Risk
       </span>
       <v-spacer></v-spacer>
       <v-btn
@@ -55,8 +55,8 @@
       </v-btn>
     </v-row>
     <v-row class="white--text pl-2 mb-1 mt-1 grey darken-2">
-      <span class="balance--text">
-        Gamesmanship:
+      <span class=" white--text">
+        Gamesmanship
       </span>
       <v-spacer></v-spacer>
       <v-btn

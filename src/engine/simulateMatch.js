@@ -1,23 +1,18 @@
 import matchEngine from './matchEngine';
+import decisionEngine from './decisionEngine';
 import matchBrain from './matchBrain';
-// import decisionEngine from './decisionEngine';
 
 export default {
   //data
 
   simulateMatch(match, clubs, fighters, judges) {
-    console.log(match);
-    console.log(clubs);
-    console.log(fighters);
-    console.log(judges);
-
     // returned at the end, gotten from archiveMatch()
     let result;
 
     //bools
     let isFullTime = false;
     let isHomeAttack = true;
-    let isDecision = false;
+    let pendingSub = false;
 
     let rounds = [1, 2, 3];
     let round = 0;
@@ -31,15 +26,14 @@ export default {
     let awayTactic = { ...clubs[1].tactic };
     let homeSubs = [];
     let awaySubs = [];
-
     let fighterForms = [];
-
     let score = {
       home: 0,
       away: 0,
     };
-    let substitutionMade = false;
-    let pendingSub = false;
+    let finishes = { home: 0, away: 0 };
+    let cards = {};
+
     let ringActivity = [
       {
         home: 0,
@@ -81,49 +75,18 @@ export default {
       ringTruePointsRight: [],
     };
 
-    let cards = {};
-    let finishes = { home: 0, away: 0 };
+    // let judgesCards = [];
 
-    let judgesCards = [];
-
-    isDecision;
-    substitutionMade;
+    // isDecision;
 
     let attackTactic = isHomeAttack ? homeTactic : awayTactic;
     let defendTactic = isHomeAttack ? awayTactic : awayTactic;
 
-    //init
-
-    // function seedRoundsToPointCounters() {
-    //   const {
-    //     ringTruePointsLeft,
-    //     ringTruePointsCenter,
-    //     ringTruePointsRight,
-    //   } = ringTruePoints;
-    //   rounds.forEach((element) => {
-    //     ringTruePointsLeft.push({
-    //       round: element,
-    //       home: 0,
-    //       away: 0,
-    //       homeSignificant: 0,
-    //       awaySignificant: 0,
-    //     });
-    //     ringTruePointsCenter.push({
-    //       round: element,
-    //       home: 0,
-    //       away: 0,
-    //       homeSignificant: 0,
-    //       awaySignificant: 0,
-    //     });
-    //     ringTruePointsRight.push({
-    //       round: element,
-    //       home: 0,
-    //       away: 0,
-    //       homeSignificant: 0,
-    //       awaySignificant: 0,
-    //     });
-    //   });
-    // }
+    //run
+    matchBrain.seedRoundsToPointCounters(ringTruePoints, rounds);
+    resetFighterMatchStats();
+    startRound();
+    // getOn();
 
     function resetFighterMatchStats() {
       // function reset(item) {
@@ -146,13 +109,6 @@ export default {
       matchBrain.reset(fighters.right.away);
     }
 
-    //run
-    matchBrain.seedRoundsToPointCounters(ringTruePoints, rounds);
-    resetFighterMatchStats();
-    startRound();
-    getOn();
-
-    //same some
     function archiveMatch() {
       if (score.home > 3) {
         score.home = 3;
@@ -186,8 +142,6 @@ export default {
           finish: ringFinishedRight,
         },
       };
-
-      console.log(matchToArchive);
 
       let clubForm = matchEngine.getClubForm(score);
 
@@ -264,13 +218,6 @@ export default {
           condition: fighters.right.away.match.condition,
         },
       ];
-
-      // console.log(decisions);
-      //   const judgesCard = decisionEngine.getJudgesCards(
-      //     decisions,
-      //     judges,
-      //  );
-      //   console.log(judgesCard);
 
       return {
         matchToArchive,
@@ -412,7 +359,6 @@ export default {
 
         //SUBSTITUTION
         if (ringFinishedCenter && substitutionAvailable && !isFullTime) {
-          substitutionMade = true;
           pendingSub = true; //triggers makeSubstitution at the beginning of getOn()
         }
 
@@ -425,7 +371,6 @@ export default {
       }
     }
 
-    //same exact
     function makeSubstitution() {
       console.log('making a sub');
       if (isHomeAttack) {
@@ -452,70 +397,6 @@ export default {
       pendingSub = false;
     }
 
-    // function pickRing() {
-    //   if (ringFinishedLeft && ringFinishedRight) {
-    //     return 2;
-    //   } else if (ringFinishedLeft) {
-    //     return matchEngine.roll(2) + 1;
-    //   } else if (ringFinishedRight) {
-    //     return matchEngine.roll(2);
-    //   } else {
-    //     return matchEngine.roll(3);
-    //   }
-    // }
-
-    // function countActivity(ring, outcome) {
-    //   if (isHomeAttack) {
-    //     ringActivity[ring - 1].home += 1;
-    //     if (outcome.significant) {
-    //       ringActivity[ring - 1].homeSignificant += 1;
-    //     }
-    //   } else {
-    //     ringActivity[ring - 1].away += 1;
-    //     if (outcome.significant) {
-    //       ringActivity[ring - 1].awaySignificant += 1;
-    //     }
-    //   }
-    // }
-    //same exact
-    // function updateFighterMatchStats(attacker, defender, outcome) {
-    //   const { att, def } = outcome;
-
-    //   attacker.match.condition -= att.damage;
-    //   attacker.match.exposed += att.exposed;
-    //   attacker.match.learned += att.learned;
-    //   attacker.match.momentum = att.momentum;
-    //   attacker.match.save = att.save;
-    //   attacker.match.dc = att.dc;
-
-    //   attacker.match.exposed = matchEngine.stayPercentage(
-    //     attacker.match.exposed
-    //   );
-    //   attacker.match.learned = matchEngine.stayPercentage(
-    //     attacker.match.learned
-    //   );
-    //   attacker.match.condition = matchEngine.stayPercentage(
-    //     attacker.match.condition
-    //   );
-
-    //   defender.match.condition -= def.damage;
-    //   defender.match.exposed += def.exposed;
-    //   defender.match.learned += def.learned;
-    //   defender.match.momentum = def.momentum;
-    //   defender.match.save = def.save;
-    //   defender.match.dc = def.dc;
-
-    //   defender.match.exposed = matchEngine.stayPercentage(
-    //     defender.match.exposed
-    //   );
-    //   defender.match.learned = matchEngine.stayPercentage(
-    //     defender.match.learned
-    //   );
-    //   defender.match.condition = matchEngine.stayPercentage(
-    //     defender.match.condition
-    //   );
-    // }
-    // same sorta
     function checkForFinish(fighter, ring, isHomeAttacking, winner) {
       let fighterResult = matchEngine.checkCondition(fighter);
       console.log(fighter);
@@ -600,6 +481,114 @@ export default {
       }
     }
 
+    function decision() {
+      matchBrain.scoreRounds(ringTruePoints, ringJudges, decisions);
+      // for center ring, the club with more fighters standing takes it
+      if (homeStillStanding > awayStillStanding) {
+        console.log('home?');
+        score.home += 2;
+      } else if (homeStillStanding < awayStillStanding) {
+        console.log('away?');
+        score.away += 2;
+      } else {
+        // we go to a decision
+        console.log('tis decisish');
+
+        cards = { ...cards, ...decisionEngine.getJudgesCards() };
+
+        let scoreResults = decisionEngine.countScore(
+          cards,
+          ringFinishedLeft,
+          ringFinishedRight
+        );
+        score.home = scoreResults[1].home;
+        score.away = scoreResults[1].away;
+
+        console.log(cards);
+      }
+      result = archiveMatch();
+    }
+
+    function homeStillStanding() {
+      let count = 0;
+
+      fighters.left.home.match.finished ? count : (count += 1);
+      fighters.center.home.match.finished ? count : (count += 1);
+      fighters.right.home.match.finished ? count : (count += 1);
+
+      return count;
+    }
+    function awayStillStanding() {
+      let count = 0;
+      fighters.left.away.match.finished ? count : (count += 1);
+      fighters.center.away.match.finished ? count : (count += 1);
+      fighters.right.away.match.finished ? count : (count += 1);
+      return count;
+    }
+
+    // function pickRing() {
+    //   if (ringFinishedLeft && ringFinishedRight) {
+    //     return 2;
+    //   } else if (ringFinishedLeft) {
+    //     return matchEngine.roll(2) + 1;
+    //   } else if (ringFinishedRight) {
+    //     return matchEngine.roll(2);
+    //   } else {
+    //     return matchEngine.roll(3);
+    //   }
+    // }
+
+    // function countActivity(ring, outcome) {
+    //   if (isHomeAttack) {
+    //     ringActivity[ring - 1].home += 1;
+    //     if (outcome.significant) {
+    //       ringActivity[ring - 1].homeSignificant += 1;
+    //     }
+    //   } else {
+    //     ringActivity[ring - 1].away += 1;
+    //     if (outcome.significant) {
+    //       ringActivity[ring - 1].awaySignificant += 1;
+    //     }
+    //   }
+    // }
+    //same exact
+    // function updateFighterMatchStats(attacker, defender, outcome) {
+    //   const { att, def } = outcome;
+
+    //   attacker.match.condition -= att.damage;
+    //   attacker.match.exposed += att.exposed;
+    //   attacker.match.learned += att.learned;
+    //   attacker.match.momentum = att.momentum;
+    //   attacker.match.save = att.save;
+    //   attacker.match.dc = att.dc;
+
+    //   attacker.match.exposed = matchEngine.stayPercentage(
+    //     attacker.match.exposed
+    //   );
+    //   attacker.match.learned = matchEngine.stayPercentage(
+    //     attacker.match.learned
+    //   );
+    //   attacker.match.condition = matchEngine.stayPercentage(
+    //     attacker.match.condition
+    //   );
+
+    //   defender.match.condition -= def.damage;
+    //   defender.match.exposed += def.exposed;
+    //   defender.match.learned += def.learned;
+    //   defender.match.momentum = def.momentum;
+    //   defender.match.save = def.save;
+    //   defender.match.dc = def.dc;
+
+    //   defender.match.exposed = matchEngine.stayPercentage(
+    //     defender.match.exposed
+    //   );
+    //   defender.match.learned = matchEngine.stayPercentage(
+    //     defender.match.learned
+    //   );
+    //   defender.match.condition = matchEngine.stayPercentage(
+    //     defender.match.condition
+    //   );
+    // }
     // function tallyPoints(ring, outcome) {
     //   const {
     //     ringTruePointsLeft,
@@ -675,164 +664,128 @@ export default {
     //   );
     // }
 
-    function decision() {
-      matchBrain.scoreRounds(ringTruePoints, ringJudges, decisions);
-      // for center ring, the club with more fighters standing takes it
-      if (homeStillStanding > awayStillStanding) {
-        console.log('home?');
-        score.home += 2;
-      } else if (homeStillStanding < awayStillStanding) {
-        console.log('away?');
-        score.away += 2;
-      } else {
-        // we go to a decision
-        console.log('tis decisish');
-
-        cards = { ...cards, ...getJudgesCards() };
-
-        countScore();
-        console.log(cards);
-      }
-      result = archiveMatch();
-    }
     //same most as in decisionEngine
-    function countScore() {
-      let homeCount = 0;
-      let awayCount = 0;
+    // function countScore() {
+    //   let homeCount = 0;
+    //   let awayCount = 0;
 
-      if (!ringFinishedLeft) {
-        cards.left.forEach((score) => {
-          if (score.home == true && score.away == false) {
-            homeCount += 1;
-          } else if (score.home == false && score.away == true) {
-            awayCount += 1;
-          }
-        });
+    //   if (!ringFinishedLeft) {
+    //     cards.left.forEach((score) => {
+    //       if (score.home == true && score.away == false) {
+    //         homeCount += 1;
+    //       } else if (score.home == false && score.away == true) {
+    //         awayCount += 1;
+    //       }
+    //     });
 
-        if (homeCount != awayCount) {
-          if (homeCount > awayCount) {
-            matchEngine.score.home += 1;
-          } else {
-            matchEngine.score.away += 1;
-          }
-        }
+    //     if (homeCount != awayCount) {
+    //       if (homeCount > awayCount) {
+    //         matchEngine.score.home += 1;
+    //       } else {
+    //         matchEngine.score.away += 1;
+    //       }
+    //     }
 
-        homeCount = 0;
-        awayCount = 0;
-      }
+    //     homeCount = 0;
+    //     awayCount = 0;
+    //   }
 
-      if (!ringFinishedRight) {
-        cards.right.forEach((score) => {
-          if (score.home == true && score.away == false) {
-            homeCount += 1;
-          } else if (score.home == false && score.away == true) {
-            awayCount += 1;
-          }
-        });
+    //   if (!ringFinishedRight) {
+    //     cards.right.forEach((score) => {
+    //       if (score.home == true && score.away == false) {
+    //         homeCount += 1;
+    //       } else if (score.home == false && score.away == true) {
+    //         awayCount += 1;
+    //       }
+    //     });
 
-        if (homeCount != awayCount) {
-          if (homeCount > awayCount) {
-            matchEngine.score.home += 1;
-          } else {
-            matchEngine.score.away += 1;
-          }
-        }
+    //     if (homeCount != awayCount) {
+    //       if (homeCount > awayCount) {
+    //         matchEngine.score.home += 1;
+    //       } else {
+    //         matchEngine.score.away += 1;
+    //       }
+    //     }
 
-        homeCount = 0;
-        awayCount = 0;
-      }
+    //     homeCount = 0;
+    //     awayCount = 0;
+    //   }
 
-      cards.center.forEach((score) => {
-        if (score.home == true && score.away == false) {
-          homeCount += 1;
-        } else if (score.home == false && score.away == true) {
-          awayCount += 1;
-        }
-      });
+    //   cards.center.forEach((score) => {
+    //     if (score.home == true && score.away == false) {
+    //       homeCount += 1;
+    //     } else if (score.home == false && score.away == true) {
+    //       awayCount += 1;
+    //     }
+    //   });
 
-      console.log(homeCount);
-      console.log(awayCount);
+    //   console.log(homeCount);
+    //   console.log(awayCount);
 
-      if (homeCount == awayCount) {
-        score.home += 1;
-        score.away += 1;
-      } else {
-        if (homeCount > awayCount) {
-          score.home += 2;
-        } else {
-          score.away += 2;
-        }
-      }
-    }
+    //   if (homeCount == awayCount) {
+    //     score.home += 1;
+    //     score.away += 1;
+    //   } else {
+    //     if (homeCount > awayCount) {
+    //       score.home += 2;
+    //     } else {
+    //       score.away += 2;
+    //     }
+    //   }
+    // }
 
-    function homeStillStanding() {
-      let count = 0;
-
-      fighters.left.home.match.finished ? count : (count += 1);
-      fighters.center.home.match.finished ? count : (count += 1);
-      fighters.right.home.match.finished ? count : (count += 1);
-
-      return count;
-    }
-    function awayStillStanding() {
-      let count = 0;
-      fighters.left.away.match.finished ? count : (count += 1);
-      fighters.center.away.match.finished ? count : (count += 1);
-      fighters.right.away.match.finished ? count : (count += 1);
-      return count;
-    }
     // from judgescard.js probably
-    function getJudgesCards() {
-      for (let i = 0; i < decisions.length; i++) {
-        const decision = decisions[i];
+    // function getJudgesCards() {
+    //   for (let i = 0; i < decisions.length; i++) {
+    //     const decision = decisions[i];
 
-        for (let j = 0; j < this.judges[i].length; j++) {
-          const judge = this.judges[i][j];
-          judge;
+    //     for (let j = 0; j < this.judges[i].length; j++) {
+    //       const judge = this.judges[i][j];
+    //       judge;
 
-          if (finalPoints(decision[j]).home == finalPoints(decision[j]).away) {
-            judgesCards.push({ home: true, away: true });
-          } else {
-            finalPoints(decision[j]).home > finalPoints(decision[j]).away
-              ? judgesCards.push({ home: true, away: false })
-              : judgesCards.push({ home: false, away: true });
-          }
-        }
-      }
+    //       if (finalPoints(decision[j]).home == finalPoints(decision[j]).away) {
+    //         judgesCards.push({ home: true, away: true });
+    //       } else {
+    //         finalPoints(decision[j]).home > finalPoints(decision[j]).away
+    //           ? judgesCards.push({ home: true, away: false })
+    //           : judgesCards.push({ home: false, away: true });
+    //       }
+    //     }
+    //   }
 
-      let result = {
-        left: [],
-        center: [],
-        right: [],
-        leftMsg: '',
-        centerMsg: '',
-        rightMsg: '',
-      };
+    //   let result = {
+    //     left: [],
+    //     center: [],
+    //     right: [],
+    //     leftMsg: '',
+    //     centerMsg: '',
+    //     rightMsg: '',
+    //   };
 
-      sortCards(result.left);
-      sortCards(result.center);
-      sortCards(result.right);
+    //   sortCards(result.left);
+    //   sortCards(result.center);
+    //   sortCards(result.right);
 
-      console.log(result);
+    //   console.log(result);
 
-      return result;
-    }
+    //   return result;
+    // }
 
-    function sortCards(card) {
-      for (let i = 0; i < rounds.length; i++) {
-        card.push(judgesCards[i]);
-      }
-      judgesCards.splice(0, rounds.length);
-    }
+    // function sortCards(card) {
+    //   for (let i = 0; i < rounds.length; i++) {
+    //     card.push(judgesCards[i]);
+    //   }
+    //   judgesCards.splice(0, rounds.length);
+    // }
 
-    function finalPoints(rounds) {
-      var result = { home: 0, away: 0 };
-      rounds.forEach((round) => {
-        result.home = result.home + round.home;
-        result.away += round.away;
-      });
-      return result;
-    }
+    // function finalPoints(rounds) {
+    //   var result = { home: 0, away: 0 };
+    //   rounds.forEach((round) => {
+    //     result.home = result.home + round.home;
+    //     result.away += round.away;
+    //   });
+    //   return result;
+    // }
 
     // returns result {homedata, awaydata, result, fighterdata, fighterforms}
     return result;

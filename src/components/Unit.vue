@@ -54,19 +54,7 @@
               </v-col>
               <v-col class="pb-0 pt-0 d-flex text-center">
                 <v-card-text class="sixth ma-2" style="width: 75%">
-                  <span v-for="(entry, index) in form.slice(-4)" :key="index">
-                    <v-chip
-                      class="code"
-                      v-bind:class="{
-                        'success success--text': entry == 'W',
-                        'success warning--text': entry == 'F',
-                        'red red--text': entry == 'L',
-                      }"
-                      outlined
-                    >
-                      {{ entry }}
-                    </v-chip>
-                  </span>
+                  <FormChips :form="fighter.form" />
                 </v-card-text>
               </v-col>
               <v-col>
@@ -153,6 +141,10 @@ import data from '@/data/data.js';
 export default {
   name: 'Unit',
 
+  components: {
+    FormChips: () => import('@/components/FormChips.vue'),
+  },
+
   props: {
     fighterId: Number,
   },
@@ -177,18 +169,6 @@ export default {
     },
     lastName() {
       return engine.lastName(this.fighter);
-    },
-
-    form() {
-      // if (this.fighter.form.length > 5) {
-      //   const arr = [];
-      //   for (let i = 0; i < 5; i++) {
-      //     arr.push(this.fighter.form[i]);
-      //   }
-      //   return arr;
-      // } else {
-      return this.fighter.form;
-      // }
     },
     mental() {
       let mental = [];

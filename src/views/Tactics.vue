@@ -13,57 +13,73 @@
           <!-- eslint-disable-next-line -->
           <template v-slot:item.personal.name="{ item }">
             <router-link :to="`/roster/${item.id}`" class="white--text">
-              <div class="grey darken-3 pa-2 d-flex justify-space-between ">
-                <div style="flex: 2;">
-                  <div>
-                    {{ item.personal.name }}
+              <div class="grey darken-3 pa-2">
+                <div class=" d-flex justify-space-between ">
+                  <div style="flex: 2;">
+                    <div>
+                      {{ item.personal.name }}
+                    </div>
+                    <div class="yellow--text justify-space-between d-flex">
+                      <span>
+                        {{ typeOfFighter(item) }}
+                      </span>
+                    </div>
                   </div>
-                  <div class="yellow--text">
-                    {{ typeOfFighter(item) }}
-                  </div>
-                </div>
 
-                <div class="text-end mr-3 ">
-                  <div class="grey--text">
-                    APP
-                    <b class=" yellow--text font-shadow">
-                      {{ item.appearances.season.league }}
-                    </b>
+                  <div class="text-end mr-3 ">
+                    <div class="grey--text">
+                      APP
+                      <b class=" yellow--text font-shadow">
+                        {{ item.appearances.season.league }}
+                      </b>
+                    </div>
+                    <div class="grey--text">
+                      FIN
+                      <b class=" blue--text font-shadow">
+                        {{ item.appearances.season.finishes }}
+                      </b>
+                    </div>
                   </div>
-                  <div class="grey--text">
-                    FIN
-                    <b class=" blue--text font-shadow">
-                      {{ item.appearances.season.finishes }}
-                    </b>
+                  <div class="text-end">
+                    <div class="grey--text">
+                      FIT
+                      <b
+                        class="font-shadow "
+                        v-bind:class="{
+                          'red--text': item.fitness < 50,
+                          'yellow--text':
+                            item.fitness < 75 && item.fitness >= 50,
+                          'green--text': item.fitness >= 75,
+                        }"
+                      >
+                        {{ item.fitness }}
+                      </b>
+                    </div>
+                    <div class="grey--text">
+                      CON
+                      <b
+                        class="font-shadow "
+                        v-bind:class="{
+                          'red--text': item.condition < 50,
+                          'yellow--text':
+                            item.condition < 75 && item.condition >= 50,
+                          'green--text': item.condition >= 75,
+                        }"
+                      >
+                        {{ item.condition }}
+                      </b>
+                    </div>
                   </div>
+                  <div class="text-end"></div>
                 </div>
-                <div class="text-end">
-                  <div class="grey--text">
-                    FIT
-                    <b
-                      class="font-shadow "
-                      v-bind:class="{
-                        'red--text': item.fitness < 50,
-                        'yellow--text': item.fitness < 75 && item.fitness >= 50,
-                        'green--text': item.fitness >= 75,
-                      }"
-                    >
-                      {{ item.fitness }}
-                    </b>
-                  </div>
-                  <div class="grey--text">
-                    CON
-                    <b
-                      class="font-shadow "
-                      v-bind:class="{
-                        'red--text': item.condition < 50,
-                        'yellow--text':
-                          item.condition < 75 && item.condition >= 50,
-                        'green--text': item.condition >= 75,
-                      }"
-                    >
-                      {{ item.condition }}
-                    </b>
+                <div>
+                  <div class="grey--text justify-space-between d-flex mt-1">
+                    <span>
+                      .morale
+                    </span>
+                    <span>
+                      <FormChips :form="item.form" :small="true" />
+                    </span>
                   </div>
                 </div>
               </div>
@@ -83,16 +99,16 @@
               <v-btn
                 x-small
                 class="ma-1"
-                @click="setCenter(item.id)"
-                v-bind:class="{ green: item.id == tactic.selection.center }"
-                >c
+                @click="setRight(item.id)"
+                v-bind:class="{ green: item.id == tactic.selection.right }"
+                >r
               </v-btn>
               <v-btn
                 x-small
                 class="ma-1"
-                @click="setRight(item.id)"
-                v-bind:class="{ green: item.id == tactic.selection.right }"
-                >r
+                @click="setCenter(item.id)"
+                v-bind:class="{ green: item.id == tactic.selection.center }"
+                >c
               </v-btn>
             </v-row>
           </template>
@@ -105,15 +121,15 @@
           </template>
 
           <!-- eslint-disable-next-line -->
-          <template v-slot:header.selection="{}">
-            <span @click="clearSelection()" class="clear-selection"
-              >Clear Selection</span
-            >
+          <template v-slot:header.selection="{ header }">
+            <div @click="clearSelection()" class="pa-0  clear-selection">
+              {{ header.text }}
+            </div>
           </template>
 
           <!-- eslint-disable-next-line -->
           <template v-slot:footer>
-            <v-container class="grey darken-1">
+            <v-container class="grey darken-1 mt-2">
               <div class="d-flex">
                 <span class="flex2">
                   <v-btn
@@ -184,6 +200,27 @@
                     >
                       <div>
                         {{ getFighter(selection[0]).personal.name }}
+                      </div>
+                      <div class="justify-center">
+                        <!-- <span
+                          class=""
+                          v-for="(entry, index) in getFighter(
+                            selection[0]
+                          ).form.slice(-4)"
+                          :key="index"
+                        >
+                          <v-chip
+                            class="code form"
+                            v-bind:class="{
+                              'success success--text': entry == 'W',
+                              'success warning--text': entry == 'F',
+                              'red red--text': entry == 'L',
+                            }"
+                            outlined
+                          >
+                            {{ entry }}
+                          </v-chip>
+                        </span> -->
                       </div>
 
                       <div>
@@ -333,20 +370,13 @@ import classes from '@/data/classes.js';
 export default {
   name: 'Tactics',
 
-  created() {
-    // if (!this.$route.params.id) {
-    //   this.id = this.playerClubId;
-    //   this.club = this.getClub(this.playerClubId);
-    // } else {
-    //   this.id = this.$route.params.id;
-    //   this.club = this.getClub(this.id);
-    // }
-
-    this.tactic = this.club.tactic ? this.club.tactic : new classes.Tactic();
-  },
-
   components: {
     Instructions: () => import('@/components/Instructions.vue'),
+    FormChips: () => import('@/components/FormChips.vue'),
+  },
+
+  created() {
+    this.tactic = this.club.tactic ? this.club.tactic : new classes.Tactic();
   },
 
   computed: {
@@ -675,25 +705,15 @@ export default {
 </script>
 
 <style>
-.confirm {
-  width: 100%;
-}
-.tactics {
-  margin: 25px;
-  background-color: rgb(80, 76, 21);
-  border-radius: 100px;
-}
 .instructions {
   width: 75px;
   margin: 1px;
 }
-.toggles {
-  width: 60px;
-  margin: 1px;
-}
+
 .shown-instructions {
   width: 33%;
 }
+
 .positions {
   width: 170px;
   height: 170px;

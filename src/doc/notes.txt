@@ -15,10 +15,7 @@
         => fix, switch from v-model to :value. 
 
 
-    commitFighterForm is wtf
-    was a bug where this.cards.foreach fd up
-    hard to reproduce when my team is so much better
-    this means the only form updates are when there's a finish(works in simMatch too)
+  
 
 
 
@@ -61,7 +58,12 @@ implement:
 last time:
     
 
+    we had lots of refactors, grapples and strikes ready to be made
+    should probably customize the rest of the fighters
+    get the AI choosing based on form
+    introduce morale
 
+    lots of talk bout morale+form+momentum being boosters
 
 
 

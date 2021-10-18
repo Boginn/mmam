@@ -95,18 +95,19 @@
 
           <template v-slot:item.competitions.league.form="{ item }">
             <div class="">
-              <v-chip
+              <!-- <v-chip
                 class="code"
                 v-bind:class="{
                   'success success--text': f == 'W',
                   'red red--text': f == 'L',
                 }"
                 outlined
-                v-for="(f, index) in item.competitions.league.form.slice(-5)"
-                :key="(f, index)"
+                v-for="(f) in item.competitions.league.form.slice(-5)"
+                :key="(f)"
               >
                 {{ f }}
-              </v-chip>
+              </v-chip> -->
+              <FormChips :form="item.competitions.league.form" :small="false" />
             </div>
           </template>
 
@@ -123,13 +124,13 @@
 </template>
 
 <script>
-import ButtonsSmall from '@/components/ButtonsSmall.vue';
 import data from '@/data/data.js';
 
 export default {
   name: 'League',
   components: {
-    ButtonsSmall,
+    ButtonsSmall: () => import('@/components/ButtonsSmall.vue'),
+    FormChips: () => import('@/components/FormChips.vue'),
   },
 
   computed: {

@@ -78,7 +78,7 @@ export default {
     fieldable = true;
     fitness = 100;
     condition = 100;
-    form = [];
+    form = ['L', 'W', 'D', 'F', 'W'];
     appearances = {
       overall: {
         international: 0,

@@ -37,9 +37,9 @@ const headers = {
   tactics: [
     { text: 'Name', value: 'personal.name' },
     {
-      text: 'Selection',
+      text: 'Clear Selection',
       value: 'selection',
-      width: '30%',
+      width: '20%',
       align: 'center',
       sortable: false,
     },

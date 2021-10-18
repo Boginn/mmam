@@ -70,7 +70,8 @@ export default {
   },
 
   created() {
-    // this.cards = this.getJudgesCards();
+    // gets called everytime the user opens the tab
+    // emits countScore to Match.vue which will only do it once
     this.cards = decisionEngine.getJudgesCards(
       this.decisions,
       this.judges,
@@ -112,7 +113,7 @@ export default {
 
       //save
       // this.$parent.cards = result[0];
-      console.log(result[0]);
+
       this.$emit('countScore', result);
     },
   },
