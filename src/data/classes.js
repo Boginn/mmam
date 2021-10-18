@@ -95,7 +95,6 @@ export default {
     };
 
     match = {
-      // control: false,
       save: false,
       dc: null,
       momentum: undefined,
