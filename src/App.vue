@@ -65,6 +65,22 @@
     <v-main class="bgcolor">
       <router-view />
     </v-main>
+    <v-bottom-navigation app style="width: 100%">
+      <!-- TODO Make this button also function as geton in match and a confirm to go to match -->
+      <span
+        :disabled="isMatchday || isAdvancingDate"
+        @click="this.continue"
+        class=" d-flex align-center justify-center"
+        v-bind:class="{
+          'grey darken-3 grey--text': isMatchday,
+          'green darken-3': !isMatchday,
+        }"
+        style="width: 100%; height: 56px; cursor: pointer;"
+      >
+        <h2 class="font-shadow" v-if="isMatchday">Match Day</h2>
+        <h2 class="font-shadow" v-else>Continue</h2>
+      </span>
+    </v-bottom-navigation>
   </v-app>
 </template>
 

@@ -88,29 +88,43 @@
 
           <!-- eslint-disable-next-line -->
           <template v-slot:item.selection="{ item }">
-            <v-row class="justify-center">
-              <v-btn
-                x-small
-                class="ma-1"
-                @click="setLeft(item.id)"
-                v-bind:class="{ green: item.id == tactic.selection.left }"
-                >l
-              </v-btn>
-              <v-btn
-                x-small
-                class="ma-1"
-                @click="setRight(item.id)"
-                v-bind:class="{ green: item.id == tactic.selection.right }"
-                >r
-              </v-btn>
-              <v-btn
-                x-small
-                class="ma-1"
-                @click="setCenter(item.id)"
-                v-bind:class="{ green: item.id == tactic.selection.center }"
-                >c
-              </v-btn>
-            </v-row>
+            <v-container class="ma-0 pa-0">
+              <v-row class="justify-center ">
+                <v-btn
+                  x-small
+                  class="ml-1 mr-1 "
+                  @click="setLeft(item.id)"
+                  v-bind:class="{
+                    'green black--text': item.id == tactic.selection.left,
+                    'grey darken-3': item.id != tactic.selection.left,
+                  }"
+                  >l
+                </v-btn>
+                <v-btn
+                  x-small
+                  class="ml-1 mr-1 "
+                  @click="setRight(item.id)"
+                  v-bind:class="{
+                    'green black--text': item.id == tactic.selection.right,
+                    'grey darken-3': item.id != tactic.selection.right,
+                  }"
+                  >r
+                </v-btn>
+              </v-row>
+
+              <v-row class="justify-center mt-4 ">
+                <v-btn
+                  x-small
+                  class=""
+                  @click="setCenter(item.id)"
+                  v-bind:class="{
+                    'green black--text': item.id == tactic.selection.center,
+                    'grey darken-3': item.id != tactic.selection.center,
+                  }"
+                  >c
+                </v-btn>
+              </v-row>
+            </v-container>
           </template>
 
           <!-- eslint-disable-next-line -->
@@ -129,27 +143,27 @@
 
           <!-- eslint-disable-next-line -->
           <template v-slot:footer>
-            <v-container class="grey darken-1 mt-2">
-              <div class="d-flex">
-                <span class="flex2">
+            <v-container class="grey darken-2 mt-2">
+              <div class="d-flex  ">
+                <span class="flex2 ma-1">
                   <v-btn
                     x-small
                     outlined
                     @click="selectTab(0)"
                     v-bind:class="{
-                      black: tabs[0].value,
+                      'grey darken-3': tabs[0].value,
                     }"
                     >{{ tabs[0].name }}</v-btn
                   >
                 </span>
-                <span v-for="(tab, index) in tabs" :key="index">
+                <span class="ma-1" v-for="(tab, index) in tabs" :key="index">
                   <v-btn
                     v-if="!index == 0"
                     x-small
                     outlined
                     @click="selectTab(index)"
                     v-bind:class="{
-                      black: tabs[index].value,
+                      'grey darken-3': tabs[index].value,
                     }"
                     >{{ tab.name }}</v-btn
                   >

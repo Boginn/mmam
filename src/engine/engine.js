@@ -181,6 +181,7 @@ export default {
     date += 6;
     schedule.push(new classes.Match([league[0].id, league[5].id], date));
     schedule.push(new classes.Match([league[1].id, league[6].id], date));
+    schedule.push(new classes.Match([league[7].id, league[8].id], date));
     date += 1;
     schedule.push(new classes.Match([league[2].id, league[9].id], date));
     schedule.push(new classes.Match([league[3].id, league[4].id], date));
@@ -242,10 +243,9 @@ export default {
     date += 6;
     schedule.push(new classes.Match([league[3].id, league[0].id], date));
     schedule.push(new classes.Match([league[1].id, league[5].id], date));
-    schedule.push(new classes.Match([league[4].id, league[9].id], date));
     date += 1;
+    schedule.push(new classes.Match([league[4].id, league[9].id], date));
     schedule.push(new classes.Match([league[2].id, league[6].id], date));
-    schedule.push(new classes.Match([league[7].id, league[8].id], date));
     // week 10
     date += 6;
     schedule.push(new classes.Match([league[0].id, league[4].id], date));
