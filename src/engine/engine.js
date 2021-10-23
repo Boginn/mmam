@@ -13,8 +13,29 @@ export default {
     return playerClub;
   }, // not used i think
 
-  //formatting
+  //services
+  checkTactic: (tactic) => {
+    console.log(tactic);
+    if (tactic == undefined) {
+      return false;
+    }
+    if (
+      tactic.instructions.general.mentality &&
+      tactic.instructions.general.risk &&
+      tactic.instructions.general.gamesmanship &&
+      tactic.selection.left &&
+      tactic.selection.center &&
+      tactic.selection.right
+    ) {
+      console.log('true on checkTacit');
+      return true;
+    } else {
+      console.log('false on checkTacit');
+      return false;
+    }
+  },
 
+  //formatting
   firstName(fighter) {
     return fighter.personal.name.split(' ')[0];
   },
@@ -339,7 +360,7 @@ export default {
 
     return schedule;
   },
-
+  /*
   oldSeedSchedule: (league) => {
     // To get proper schedling it only works with 4 teams using a // fix below
     // It's still deeply flawed though, some teams get more away and less home games
@@ -422,7 +443,7 @@ export default {
     console.log('engine.seedSchedule');
     console.log(schedule);
   },
-
+*/
   //indeces
   findPlayerClub: (array) => {
     var playerClub;

@@ -2,6 +2,9 @@
 
 
 // TODOS
+    readme could use more sections, transform to manual
+   
+    
   I should go through and leave notes
   
     make fighters chins take permanent daamge after knockouts

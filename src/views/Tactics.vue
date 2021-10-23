@@ -354,25 +354,24 @@
           </v-card>
         </v-col>
         <v-col>
-          <v-btn
+          <!-- <v-btn
             class="confirm primary"
-            :disabled="!this.checkTactic"
+            :disabled="!checkTactic()"
             v-if="this.isMatchday"
             @click="goToMatch()"
             >confirm and proceed</v-btn
+          > -->
+          <v-btn
+            x-large
+            @click="defaultSelection()"
+            class="secondary"
+            style="width: 100%;"
+            >Default</v-btn
           >
         </v-col>
       </v-col>
     </v-row>
-    <v-row class="mt-5 justify-center">
-      <v-btn
-        x-large
-        @click="defaultSelection()"
-        class="secondary"
-        style="width: 100%;"
-        >Default</v-btn
-      >
-    </v-row>
+    <v-row class="mt-5 justify-center"> </v-row>
   </v-container>
 </template>
 
@@ -486,23 +485,6 @@ export default {
         string = 'Dirty';
       }
       return string;
-    },
-    checkTactic() {
-      const { instructions } = this.tactic;
-      const { general, left, center, right } = instructions;
-      general, left, center, right;
-      if (
-        instructions.general.mentality &&
-        instructions.general.risk &&
-        instructions.general.gamesmanship &&
-        this.tactic.selection.left &&
-        this.tactic.selection.center &&
-        this.tactic.selection.right
-      ) {
-        return true;
-      } else {
-        return false;
-      }
     },
   },
   data: () => ({
@@ -710,10 +692,13 @@ export default {
       this.setSelected(this.tactic);
     },
 
-    goToMatch() {
-      // !
-      this.$router.push(`/match/${this.currentMatch}`);
-    },
+    // goToMatch() {
+    //   // !
+    //   this.$router.push(`/match/${this.currentMatch}`);
+    // },
+    // checkTactic() {
+    //   return engine.checkTactic(this.tactic);
+    // },
   },
 };
 </script>

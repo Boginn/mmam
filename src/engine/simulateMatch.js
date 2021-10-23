@@ -83,7 +83,7 @@ export default {
     let defendTactic = isHomeAttack ? awayTactic : awayTactic;
 
     //run
-    matchBrain.seedRoundsToPointCounters(ringTruePoints, rounds);
+    ringTruePoints = matchBrain.seedRoundsToPointCounters(rounds);
     resetFighterMatchStats();
     startRound();
     // getOn();
@@ -343,7 +343,7 @@ export default {
 
         if (outcome.point) {
           // TODO
-          matchBrain.tallyPoints(
+          ringTruePoints = matchBrain.tallyPoints(
             ring,
             outcome,
             isHomeAttack,
@@ -482,7 +482,7 @@ export default {
     }
 
     function decision() {
-      matchBrain.scoreRounds(ringTruePoints, ringJudges, decisions);
+      decisions = matchBrain.scoreRounds(ringTruePoints, ringJudges);
       // for center ring, the club with more fighters standing takes it
       if (homeStillStanding > awayStillStanding) {
         console.log('home?');

@@ -117,7 +117,7 @@ export default {
           cards.rightMsg = messager(homeCount, awayCount);
         } else {
           result.away += 1;
-          cards.rightMsg = 'Finish';
+          cards.rightMsg = messager(awayCount, homeCount);
         }
       } else {
         cards.rightMsg = 'Draw';
@@ -129,7 +129,7 @@ export default {
       homeCount = 0;
       awayCount = 0;
     } else {
-      cards.rightMsg = messager(awayCount, homeCount);
+      cards.rightMsg = 'Finish';
     }
 
     cards.center.forEach((score) => {

@@ -137,6 +137,7 @@
           :ringFinishedCenter="ringFinishedCenter"
           :ringFinishedRight="ringFinishedRight"
         />
+        <League v-if="isTabMatchLeague" />
 
         <JudgesCard
           v-if="isTabJudgesCard"
@@ -180,27 +181,36 @@ export default {
     Details: () => import('@/components/Match/Details.vue'),
     Bench: () => import('@/components/Match/Bench.vue'),
     MatchTactics: () => import('@/components/Match/MatchTactics.vue'),
+    League: () => import('@/views/League.vue'),
+  },
+
+  mounted() {
+    window.onpopstate = (event) => {
+      if (this.isMatchDay) {
+        console.log(event);
+        // this.$router.push("/"); // redirect to home, for example
+      }
+    };
   },
 
   created() {
-    matchBrain.seedRoundsToPointCounters(this.ringTruePoints, this.rounds);
-    this.resetFighterMatchStats();
-    this.assignJudges();
-    this.setTactics();
-    this.$store.dispatch('setNames', this.names);
-    this.$store.dispatch('setIsLive', true);
+    if (!this.isLive) {
+      this.ringTruePoints = matchBrain.seedRoundsToPointCounters(this.rounds);
+      this.resetFighterMatchStats();
+      this.assignJudges();
+      this.setTactics();
+      this.$store.dispatch('setNames', this.names);
+      this.$store.dispatch('setIsLive', true);
+    }
   },
 
   beforeDestroy() {
-    this.$store.dispatch('setScore', { home: 0, away: 0 });
-    this.$store.dispatch('setNames', { home: '', away: '' });
+    console.log('destroying');
   },
 
   watch: {
     cards() {
-      console.log('card');
       if (this.isDecision) {
-        console.log('card and isdecis');
         this.commitFighterForm(
           this.homeTactic.selection.center,
           this.awayTactic.selection.center,
@@ -311,19 +321,41 @@ export default {
     selectedClubId() {
       return this.$store.getters.selectedClubId;
     },
-    coaches() {
-      //player's coaches
-      return this.getClub(this.selectedClubId).staff;
+    //match
+
+    substitutionAvailable() {
+      return this.homeSubs.length || this.awaySubs.length ? true : false;
     },
-    coachesSorted() {
-      const coachesSorted = [];
-      this.coaches.forEach((coach) => {
-        coachesSorted.push(this.getCoach(coach));
+    match() {
+      let match;
+      this.schedule.forEach((element) => {
+        if (element.id == this.$route.params.id) {
+          match = element;
+        }
       });
-      return coachesSorted;
+      console.log(match);
+      return match;
+    },
+    homeClub() {
+      return this.getClub(this.match.clubs[0]);
+    },
+    awayClub() {
+      return this.getClub(this.match.clubs[1]);
+    },
+    isFast() {
+      return this.$timeoutInterval > 500 ? true : false;
+    },
+    timeoutInterval() {
+      return this.$store.getters.timeoutInterval;
     },
     isDeveloper() {
       return this.$store.getters.isDeveloper;
+    },
+    isMatchDay() {
+      return this.$store.getters.isMatchDay;
+    },
+    isLive() {
+      return this.$store.getters.isLive;
     },
 
     //ui
@@ -336,9 +368,12 @@ export default {
     isTabMatchTactics() {
       return this.tabs[2].value;
     },
+    isTabMatchLeague() {
+      return this.tabs[3].value;
+    },
     isTabJudgesCard() {
       if (this.isDecision) {
-        return this.tabs[3].value;
+        return this.tabs[4].value;
       } else {
         return false;
       }
@@ -385,6 +420,19 @@ export default {
     commission() {
       return this.$store.getters.commission;
     },
+    coaches() {
+      //player's coaches
+      return this.getClub(this.selectedClubId).staff;
+    },
+    coachesSorted() {
+      const coachesSorted = [];
+      this.coaches.forEach((coach) => {
+        coachesSorted.push(this.getCoach(coach));
+      });
+      return coachesSorted;
+    },
+
+    //matchData
 
     //judgeing/score
     score() {
@@ -398,9 +446,11 @@ export default {
         ringTruePointsRight,
       } = this.ringTruePoints;
       const rings = [];
+
       rings.push(ringTruePointsLeft);
       rings.push(ringTruePointsCenter);
       rings.push(ringTruePointsRight);
+      console.log(rings);
       return rings;
     },
     judges() {
@@ -409,8 +459,8 @@ export default {
         ringJudgesCenter,
         ringJudgesRight,
       } = this.ringJudges;
-
       const judges = [];
+
       judges.push(ringJudgesLeft);
       judges.push(ringJudgesCenter);
       judges.push(ringJudgesRight);
@@ -422,8 +472,8 @@ export default {
         ringDecisionCenter,
         ringDecisionRight,
       } = this.ringDecisions;
-
       const decisions = [];
+
       decisions.push(ringDecisionLeft);
       decisions.push(ringDecisionCenter);
       decisions.push(ringDecisionRight);
@@ -456,36 +506,6 @@ export default {
         ? count
         : (count += 1);
       return count;
-    },
-
-    //match
-    isFast() {
-      return this.$store.getters.timeoutInterval > 500 ? true : false;
-    },
-    match() {
-      let match;
-      this.schedule.forEach((element) => {
-        if (element.id == this.$route.params.id) {
-          match = element;
-        }
-      });
-      console.log(match);
-      return match;
-    },
-    homeClub() {
-      return this.getClub(this.match.clubs[0]);
-    },
-    awayClub() {
-      return this.getClub(this.match.clubs[1]);
-    },
-
-    substitutionAvailable() {
-      return this.homeSubs.length || this.awaySubs.length ? true : false;
-    },
-
-    //other
-    timeoutInterval() {
-      return this.$store.getters.timeoutInterval;
     },
   },
 
@@ -781,63 +801,8 @@ export default {
 
     //basics
     testEnd() {
-      this.isDecision = true;
+      // this.isDecision = true;
       this.isFullTime = true;
-
-      const {
-        ringTruePointsLeft,
-        ringTruePointsCenter,
-        ringTruePointsRight,
-      } = this.ringTruePoints;
-
-      ringTruePointsLeft[0].round = 1;
-      ringTruePointsLeft[0].home = 2;
-      ringTruePointsLeft[0].away = 2;
-      ringTruePointsLeft[0].homeSignificant = 3;
-      ringTruePointsLeft[0].awaySignificant = 1;
-      ringTruePointsLeft[1].round = 2;
-      ringTruePointsLeft[1].home = 2;
-      ringTruePointsLeft[1].away = 2;
-      ringTruePointsLeft[1].homeSignificant = 3;
-      ringTruePointsLeft[1].awaySignificant = 1;
-      ringTruePointsLeft[2].round = 3;
-      ringTruePointsLeft[2].home = 2;
-      ringTruePointsLeft[2].away = 2;
-      ringTruePointsLeft[2].homeSignificant = 3;
-      ringTruePointsLeft[2].awaySignificant = 1;
-
-      ringTruePointsCenter[0].round = 1;
-      ringTruePointsCenter[0].home = 4;
-      ringTruePointsCenter[0].away = 4;
-      ringTruePointsCenter[0].homeSignificant = 2;
-      ringTruePointsCenter[0].awaySignificant = 4;
-      ringTruePointsCenter[1].round = 2;
-      ringTruePointsCenter[1].home = 4;
-      ringTruePointsCenter[1].away = 4;
-      ringTruePointsCenter[1].homeSignificant = 2;
-      ringTruePointsCenter[1].awaySignificant = 4;
-      ringTruePointsCenter[2].round = 3;
-      ringTruePointsCenter[2].home = 4;
-      ringTruePointsCenter[2].away = 4;
-      ringTruePointsCenter[2].homeSignificant = 2;
-      ringTruePointsCenter[2].awaySignificant = 4;
-
-      ringTruePointsRight[0].round = 1;
-      ringTruePointsRight[0].home = 7;
-      ringTruePointsRight[0].away = 7;
-      ringTruePointsRight[0].homeSignificant = 6;
-      ringTruePointsRight[0].awaySignificant = 8;
-      ringTruePointsRight[1].round = 2;
-      ringTruePointsRight[1].home = 7;
-      ringTruePointsRight[1].away = 7;
-      ringTruePointsRight[1].homeSignificant = 6;
-      ringTruePointsRight[1].awaySignificant = 8;
-      ringTruePointsRight[2].round = 3;
-      ringTruePointsRight[2].home = 7;
-      ringTruePointsRight[2].away = 7;
-      ringTruePointsRight[2].homeSignificant = 6;
-      ringTruePointsRight[2].awaySignificant = 8;
-
       this.decision();
     },
     endMatch() {
@@ -850,6 +815,10 @@ export default {
       this.$store.dispatch('setIsMatchday', false);
       this.$store.dispatch('setIsPostMatch', true);
       this.$router.push('/fixtures');
+
+      //reset scorebanner
+      this.$store.dispatch('setScore', { home: 0, away: 0 });
+      this.$store.dispatch('setNames', { home: '', away: '' });
     },
 
     endRound() {
@@ -951,10 +920,9 @@ export default {
     //   );
     // },
     decision() {
-      matchBrain.scoreRounds(
+      this.ringDecisions = matchBrain.scoreRounds(
         this.ringTruePoints,
-        this.ringJudges,
-        this.ringDecisions
+        this.ringJudges
       );
       let score = { home: this.score.home, away: this.score.away };
       // for center ring, the club with more fighters standing takes it
@@ -1195,7 +1163,7 @@ export default {
         this.$store.dispatch('setScore', this.score);
 
         if (outcome.point) {
-          matchBrain.tallyPoints(
+          this.ringTruePoints = matchBrain.tallyPoints(
             ring,
             outcome,
             this.isHomeAttack,
@@ -1292,10 +1260,9 @@ export default {
               this.isFullTime = true;
 
               // sets this.decisions
-              matchBrain.scoreRounds(
+              this.ringDecisions = matchBrain.scoreRounds(
                 this.ringTruePoints,
-                this.ringJudges,
-                this.ringDecisions
+                this.ringJudges
               );
 
               setTimeout(() => {
@@ -1315,10 +1282,9 @@ export default {
               this.isFullTime = true;
 
               // sets this.decisions
-              matchBrain.scoreRounds(
+              this.ringDecisions = matchBrain.scoreRounds(
                 this.ringTruePoints,
-                this.ringJudges,
-                this.ringDecisions
+                this.ringJudges
               );
 
               setTimeout(() => {

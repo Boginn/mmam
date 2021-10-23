@@ -39,6 +39,86 @@ export default new Vuex.Store({
     matchData: {
       score: { home: 0, away: 0 },
       names: { home: '', away: '' },
+      //bools
+      isFullTime: false,
+      isBetweenRounds: true,
+      isHomeAttack: true,
+      isDisabled: false,
+      isPaused: false,
+      isDecision: false,
+      isScored: false,
+
+      //x, y minute rounds
+      rounds: [1, 2, 3],
+      minutes: 5,
+      //current round, minute, second
+      minute: 0,
+      second: 0,
+      round: 0,
+
+      happenChance: 11,
+
+      //ui
+      tabs: data.tabs.match,
+      showJudgesCard: true,
+
+      //match data
+      homeTactic: {},
+      awayTactic: {},
+      homeSubs: [],
+      awaySubs: [],
+
+      // score: {
+      //   home: 0,
+      //   away: 0,
+      // },
+
+      substitutionMade: false,
+      pendingSub: false,
+      ringActivity: [
+        {
+          home: 0,
+          away: 0,
+          homeSignificant: 0,
+          awaySignificant: 0,
+        },
+        {
+          home: 0,
+          away: 0,
+          homeSignificant: 0,
+          awaySignificant: 0,
+        },
+        {
+          home: 0,
+          away: 0,
+          homeSignificant: 0,
+          awaySignificant: 0,
+        },
+      ],
+
+      ringFinishedLeft: false,
+      ringFinishedCenter: false,
+      ringFinishedRight: false,
+
+      ringDecisions: {
+        ringDecisionLeft: undefined,
+        ringDecisionCenter: undefined,
+        ringDecisionRight: undefined,
+      },
+
+      ringJudges: {
+        ringJudgesLeft: [],
+        ringJudgesCenter: [],
+        ringJudgesRight: [],
+      },
+      ringTruePoints: {
+        ringTruePointsLeft: [],
+        ringTruePointsCenter: [],
+        ringTruePointsRight: [],
+      },
+
+      cards: {},
+      finishes: { home: 0, away: 0 },
     },
 
     //user
@@ -51,7 +131,6 @@ export default new Vuex.Store({
     staffId: null,
     clubId: null,
     matchId: null,
-
     archivedMatchId: data.idCodes.archivedMatch,
   },
   getters: {
@@ -200,26 +279,26 @@ export default new Vuex.Store({
     selectClub(context, payload) {
       context.commit('SEL_CLUB', payload);
     },
-    setLeague(context, payload) {
-      context.commit('SET_LEAGUE', payload);
+    seedLeague(context, payload) {
+      context.commit('SEED_LEAGUE', payload);
     },
-    setRoster(context, payload) {
-      context.commit('SET_ROSTER', payload);
+    seedRoster(context, payload) {
+      context.commit('SEED_ROSTER', payload);
     },
-    setCommission(context, payload) {
-      context.commit('SET_COMMISSION', payload);
+    seedCommission(context, payload) {
+      context.commit('SEED_COMMISSION', payload);
     },
-    setStaff(context, payload) {
-      context.commit('SET_STAFF', payload);
+    seedStaff(context, payload) {
+      context.commit('SEED_STAFF', payload);
     },
-    setSchedule(context, payload) {
-      context.commit('SET_SCHEDULE', payload);
+    seedSchedule(context, payload) {
+      context.commit('SEED_SCHEDULE', payload);
     },
-    setTactics(context, payload) {
-      context.commit('SET_TACTICS', payload);
+    seedTactics(context, payload) {
+      context.commit('SEED_TACTICS', payload);
     },
-    setTrainingSchedules(context, payload) {
-      context.commit('SET_TRAINING_SCHEDULES', payload);
+    seedTrainingSchedules(context, payload) {
+      context.commit('SEED_TRAINING_SCHEDULES', payload);
     },
     setLive(context, payload) {
       context.commit('SET_LIVE', payload);
@@ -269,6 +348,103 @@ export default new Vuex.Store({
     },
     setNames(context, payload) {
       context.commit('SET_NAMES', payload);
+    },
+
+    //bools
+    setIsFullTime(context, payload) {
+      context.commit('SET_IS_FULL_TIME', payload);
+    },
+    setIsBetweenRounds(context, payload) {
+      context.commit('SET_IS_BETWEEN_ROUNDS', payload);
+    },
+    setIsHomeAttack(context, payload) {
+      context.commit('SET_IS_HOME_ATTACK', payload);
+    },
+    setIsDisabled(context, payload) {
+      context.commit('SET_IS_DISABLED', payload);
+    },
+    setIsPaused(context, payload) {
+      context.commit('SET_IS_PAUSED', payload);
+    },
+    setIsDecision(context, payload) {
+      context.commit('SET_IS_DECISION', payload);
+    },
+    setIsScored(context, payload) {
+      context.commit('SET_IS_SCORED', payload);
+    },
+
+    // rounds, minutes
+    setRounds(context, payload) {
+      context.commit('SET_ROUNDS', payload);
+    },
+    setMinutes(context, payload) {
+      context.commit('SET_MINUTES', payload);
+    },
+    // current round, minute, second
+    setRound(context, payload) {
+      context.commit('SET_ROUND', payload);
+    },
+    setMinute(context, payload) {
+      context.commit('SET_MINUTE', payload);
+    },
+    setSecond(context, payload) {
+      context.commit('SET_SECOND', payload);
+    },
+
+    setHappenChance(context, payload) {
+      context.commit('SET_HAPPEN_CHANCE', payload);
+    },
+
+    setTactics(context, payload) {
+      context.commit('SET_TACTICS', payload);
+    },
+    setHomeTactic(context, payload) {
+      context.commit('SET_HOME_TACTIC', payload);
+    },
+    setAwayTactic(context, payload) {
+      context.commit('SET_AWAY_TACTIC', payload);
+    },
+
+    setomeSubs(context, payload) {
+      context.commit('SET_RING_JUDGES', payload);
+    },
+    setAwaySubs(context, payload) {
+      context.commit('SET_RING_JUDGES', payload);
+    },
+
+    setSubstitutionMade(context, payload) {
+      context.commit('SET_SUBSTITUTION_MADE', payload);
+    },
+    setPendingSub(context, payload) {
+      context.commit('SET_PENDING_SUB', payload);
+    },
+    setRingActivity(context, payload) {
+      context.commit('SET_RING_ACTIVITY', payload);
+    },
+    setRingFinishedLeft(context, payload) {
+      context.commit('SET_RING_FINISHED_LEFT', payload);
+    },
+    setRingFinishedCenter(context, payload) {
+      context.commit('SET_RING_FINISHED_CENTER', payload);
+    },
+    setRingFinishedRight(context, payload) {
+      context.commit('SET_RING_FINISHED_RIGHT', payload);
+    },
+    setRingDecisions(context, payload) {
+      context.commit('SET_RING_DECISIONS', payload);
+    },
+    setRingJudges(context, payload) {
+      context.commit('SET_RING_JUDGES', payload);
+    },
+    setRingTruePoints(context, payload) {
+      context.commit('SET_RING_TRUE_POINTS', payload);
+    },
+
+    setCards(context, payload) {
+      context.commit('SET_CARDS', payload);
+    },
+    setFinishes(context, payload) {
+      context.commit('SET_FINISHES', payload);
     },
 
     //archive
@@ -333,20 +509,20 @@ export default new Vuex.Store({
       });
       state.selectedClubId = payload;
     },
-    SET_LEAGUE(state, payload) {
+    SEED_LEAGUE(state, payload) {
       state.league = payload;
     },
-    SET_ROSTER(state, payload) {
+    SEED_ROSTER(state, payload) {
       state.roster = payload;
     },
-    SET_COMMISSION(state, payload) {
+    SEED_COMMISSION(state, payload) {
       state.commission = payload;
     },
-    SET_STAFF(state, payload) {
+    SEED_STAFF(state, payload) {
       console.log(payload);
       state.staff = payload;
     },
-    SET_SCHEDULE(state, payload) {
+    SEED_SCHEDULE(state, payload) {
       payload.forEach((match) => {
         match.clubs.forEach((id) => {
           if (id == state.selectedClubId) {
@@ -356,14 +532,14 @@ export default new Vuex.Store({
       });
       state.schedule = payload;
     },
-    SET_TACTICS(state, payload) {
+    SEED_TACTICS(state, payload) {
       state.league.forEach((club) => {
         if (club.id == payload.clubId) {
           club.tactic = payload;
         }
       });
     },
-    SET_TRAINING_SCHEDULES(state, payload) {
+    SEED_TRAINING_SCHEDULES(state, payload) {
       state.league.forEach((club) => {
         club.training.schedule = payload;
       });
@@ -440,6 +616,104 @@ export default new Vuex.Store({
     },
     SET_NAMES(state, payload) {
       state.matchData.names = payload;
+    },
+
+    SET_IS_FULL_TIME(state, payload) {
+      state.matchData.isFullTime = payload;
+    },
+    SET_IS_BETWEEN_ROUNDS(state, payload) {
+      state.matchData.isBetweenRounds = payload;
+    },
+    SET_IS_HOME_ATTACK(state, payload) {
+      state.matchData.isHomeAttack = payload;
+    },
+    SET_IS_DISABLED(state, payload) {
+      state.matchData.isDisabled = payload;
+    },
+    SET_IS_PAUSED(state, payload) {
+      state.matchData.isPaused = payload;
+    },
+    SET_IS_DECISION(state, payload) {
+      state.matchData.isDecision = payload;
+    },
+    SET_IS_SCORED(state, payload) {
+      state.matchData.isScored = payload;
+    },
+
+    // rounds, minutes
+    SET_ROUNDS(state, payload) {
+      state.matchData.rounds = payload;
+    },
+    SET_MINUTES(state, payload) {
+      state.matchData.minutes = payload;
+    },
+    // current round, minute, second
+    SET_ROUND(state, payload) {
+      state.matchData.round = payload;
+    },
+    SET_MINUTE(state, payload) {
+      state.matchData.minute = payload;
+    },
+    SET_SECOND(state, payload) {
+      state.matchData.second = payload;
+    },
+
+    SET_HAPPEN_CHANCE(state, payload) {
+      state.matchData.happenChance = payload;
+    },
+
+    SET_TACTICS(state, payload) {
+      state.matchData.homeTactic = payload.home;
+      state.matchData.awayTactc = payload.away;
+    },
+
+    SET_HOME_TACTIC(state, payload) {
+      state.matchData.homeTactic = payload;
+    },
+    SET_AWAY_TACTIC(state, payload) {
+      state.matchData.awayTactc = payload;
+    },
+
+    SET_HOME_SUBS(state, payload) {
+      state.matchData.homeSubs = payload;
+    },
+    SET_AWAY_SUBS(state, payload) {
+      state.matchData.awaySubs = payload;
+    },
+
+    SET_SUBSTITUTION_MADE(state, payload) {
+      state.matchData.substitutionMade = payload;
+    },
+    SET_PENDING_SUB(state, payload) {
+      state.matchData.pendingSub = payload;
+    },
+    SET_RING_ACTIVITY(state, payload) {
+      state.matchData.ringActivity = payload;
+    },
+    SET_RING_FINISHED_LEFT(state, payload) {
+      state.matchData.ringFinishedLeft = payload;
+    },
+    SET_RING_FINISHED_CENTER(state, payload) {
+      state.matchData.ringFinishedCenter = payload;
+    },
+    SET_RING_FINISHED_RIGHT(state, payload) {
+      state.matchData.ringFinishedRight = payload;
+    },
+    SET_RING_DECISIONS(state, payload) {
+      state.matchData.ringDecisions = payload;
+    },
+    SET_RING_JUDGES(state, payload) {
+      state.matchData.ringJudges = payload;
+    },
+    SET_RING_TRUE_POINTS(state, payload) {
+      state.matchData.ringTruePoints = payload;
+    },
+
+    SET_CARDS(state, payload) {
+      state.matchData.cards = payload;
+    },
+    SET_FINISHES(state, payload) {
+      state.matchData.finishes = payload;
     },
 
     //archive

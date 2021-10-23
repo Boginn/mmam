@@ -3,6 +3,7 @@ const tabs = {
     { name: 'overview', value: true },
     { name: 'bench', value: false },
     { name: 'tactics', value: false },
+    { name: 'league', value: false },
   ],
   schedule: [
     { name: 'club', value: true },

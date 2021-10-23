@@ -13,28 +13,28 @@ export default {
     item.match.finished = false;
     item.match.substituted = false;
   },
-  seedRoundsToPointCounters(ringTruePoints, rounds) {
-    const {
-      ringTruePointsLeft,
-      ringTruePointsCenter,
-      ringTruePointsRight,
-    } = ringTruePoints;
+  seedRoundsToPointCounters(rounds) {
+    const ringTruePoints = {
+      ringTruePointsLeft: [],
+      ringTruePointsCenter: [],
+      ringTruePointsRight: [],
+    };
     rounds.forEach((element) => {
-      ringTruePointsLeft.push({
+      ringTruePoints.ringTruePointsLeft.push({
         round: element,
         home: 0,
         away: 0,
         homeSignificant: 0,
         awaySignificant: 0,
       });
-      ringTruePointsCenter.push({
+      ringTruePoints.ringTruePointsCenter.push({
         round: element,
         home: 0,
         away: 0,
         homeSignificant: 0,
         awaySignificant: 0,
       });
-      ringTruePointsRight.push({
+      ringTruePoints.ringTruePointsRight.push({
         round: element,
         home: 0,
         away: 0,
@@ -42,34 +42,37 @@ export default {
         awaySignificant: 0,
       });
     });
+    return ringTruePoints;
   },
-  scoreRounds(ringTruePoints, ringJudges, ringDecisions) {
+  scoreRounds(ringTruePoints, ringJudges) {
     const {
       ringTruePointsLeft,
       ringTruePointsCenter,
       ringTruePointsRight,
     } = ringTruePoints;
     const { ringJudgesLeft, ringJudgesCenter, ringJudgesRight } = ringJudges;
-
-    ringDecisions.ringDecisionLeft = decisionEngine.scoreRounds(
-      ringJudgesLeft,
-      ringTruePointsLeft
-    );
-    ringDecisions.ringDecisionCenter = decisionEngine.scoreRounds(
-      ringJudgesCenter,
-      ringTruePointsCenter
-    );
-    ringDecisions.ringDecisionRight = decisionEngine.scoreRounds(
-      ringJudgesRight,
-      ringTruePointsRight
-    );
+    return {
+      ringDecisionLeft: decisionEngine.scoreRounds(
+        ringJudgesLeft,
+        ringTruePointsLeft
+      ),
+      ringDecisionCenter: decisionEngine.scoreRounds(
+        ringJudgesCenter,
+        ringTruePointsCenter
+      ),
+      ringDecisionRight: decisionEngine.scoreRounds(
+        ringJudgesRight,
+        ringTruePointsRight
+      ),
+    };
   },
   tallyPoints(ring, outcome, isHomeAttack, ringTruePoints, round) {
+    const truePoints = ringTruePoints;
     const {
       ringTruePointsLeft,
       ringTruePointsCenter,
       ringTruePointsRight,
-    } = ringTruePoints;
+    } = truePoints;
     if (ring == 1) {
       // LEFT
       if (isHomeAttack) {
@@ -110,6 +113,7 @@ export default {
         }
       }
     }
+    return truePoints;
   },
   countActivity(ring, outcome, isHomeAttack, ringActivity) {
     if (isHomeAttack) {

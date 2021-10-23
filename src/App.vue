@@ -44,13 +44,14 @@
           @click="$router.go(1)"
           ><span> &rarr;</span>
         </v-btn>
-        <v-btn
+
+        <!-- <v-btn
           class="green darken-3"
           :disabled="isMatchday || isAdvancingDate"
           @click="this.continue"
           ><span v-if="isMatchday"> Match Day</span>
           <span v-else>Continue</span></v-btn
-        >
+        > -->
         <span class="text-center ml-5 title font-shadow " v-if="isDeveloper">
           <span class="grey--text"> Date:</span> <b> {{ day }}</b
           ><span class="grey--text"> displayDate:</span>
@@ -68,17 +69,29 @@
     <v-bottom-navigation app style="width: 100%">
       <!-- TODO Make this button also function as geton in match and a confirm to go to match -->
       <span
-        :disabled="isMatchday || isAdvancingDate"
+        v-if="!isMatchday"
         @click="this.continue"
-        class=" d-flex align-center justify-center"
+        class=" d-flex align-center justify-center green darken-3 font-shadow"
         v-bind:class="{
-          'grey darken-3 grey--text': isMatchday,
-          'green darken-3': !isMatchday,
+          'grey darken-3 grey--text': isAdvancingDate,
         }"
         style="width: 100%; height: 56px; cursor: pointer;"
       >
-        <h2 class="font-shadow" v-if="isMatchday">Match Day</h2>
-        <h2 class="font-shadow" v-else>Continue</h2>
+        <h2 class="font-shadow">Continue</h2>
+      </span>
+
+      <span
+        v-if="isMatchday"
+        @click="this.continue"
+        class=" d-flex align-center justify-center font-shadow"
+        v-bind:class="{
+          'cyan darken-3 yellow--text': !checkTactic(),
+          'green darken-3 white--text': checkTactic(),
+        }"
+        style="width: 100%; height: 56px; cursor: pointer;"
+      >
+        <h2 class="font-shadow" v-if="!checkTactic()">Match Day</h2>
+        <h2 class="font-shadow" v-else>Proceed to Match</h2>
       </span>
     </v-bottom-navigation>
   </v-app>
@@ -99,7 +112,10 @@ export default {
     ButtonsSmall,
     ScoreBanner,
   },
+
   created() {
+    window.addEventListener('keydown', (e) => this.keyPress(e));
+
     if (!this.live) {
       engine.initialize(
         this.idCodes.fighter,
@@ -110,40 +126,37 @@ export default {
       this.date = this.getDate;
       this.displayDate = engine.arrangeDate(this.splitDate);
 
-      this.setRoster(this.selectedRoster);
-      this.setLeague(this.selectedLeague);
-      this.setCommission();
-      this.setStaff();
+      this.seedRoster(this.selectedRoster);
+      this.seedLeague(this.selectedLeague);
+      this.seedCommission();
+      this.seedStaff();
 
       //user input, select name, select club
       this.$store.dispatch('setManagerName', this.selectedName);
       this.selectClub();
 
-      //seeds players to clubs linearly
-      //later will add players to squads permanently
-      // engine.seedRosterToClubs(this.league, this.roster); // temp
       engine.checkContract(this.league, this.roster);
       console.log(this.roster);
       //and the coaches
       engine.seedStaffToClubs(this.league, this.staff);
       console.log(this.staff);
       //generate a tactic for all the clubs
-      this.setTactics();
+      this.seedTactics();
 
       //schedule the league, it's currently handmade
       const schedule = engine.seedSchedule(this.league, this.idCodes.match);
 
-      this.setSchedule(schedule);
+      this.seedSchedule(schedule);
 
       //generate and set training schedule
-      this.setTrainingSchedules();
+      this.seedTrainingSchedules();
 
       this.$store.dispatch('setLive', true);
     }
   },
 
   data: () => ({
-    selectedClubId: 1001,
+    selectedClubId: 1004,
     selectedName: 'Finnbogi Jökull Pétursson',
     selectedLeague: data.clubs.england,
     selectedRoster: data.fighters.roster,
@@ -156,6 +169,9 @@ export default {
     isPostMatch: function() {
       this.updateDisplayDate();
     },
+    // selectedClub: function() {
+    //   console.log(this.isContinueDisabled);
+    // },
   },
 
   computed: {
@@ -261,6 +277,15 @@ export default {
   },
 
   methods: {
+    //ui
+    keyPress(e) {
+      e.preventDefault();
+      if (e.code == 'Space') {
+        console.log(e);
+        this.continue();
+      }
+    },
+
     //services
     getClub(id) {
       return this.$store.getters.getClubById(id);
@@ -268,6 +293,27 @@ export default {
     getFighter(id) {
       return this.$store.getters.getFighterById(id);
     },
+    checkTactic() {
+      console.log(this.selectedClub);
+      if (this.selectedClub.tactic == undefined) {
+        return false;
+      }
+      if (
+        this.selectedClub.tactic.instructions.general.mentality &&
+        this.selectedClub.tactic.instructions.general.risk &&
+        this.selectedClub.tactic.instructions.general.gamesmanship &&
+        this.selectedClub.tactic.selection.left &&
+        this.selectedClub.tactic.selection.center &&
+        this.selectedClub.tactic.selection.right
+      ) {
+        console.log('true');
+        return true;
+      } else {
+        console.log('false');
+        return false;
+      }
+    },
+
     selectClub() {
       const newsItem = data.news.manager.hired[0];
       let { title, content } = newsItem;
@@ -296,6 +342,14 @@ export default {
 
     // game loop
     continue() {
+      if (this.checkTactic() && this.$router.currentRoute.path == '/tactics') {
+        console.log('hp');
+        this.$router.push(`/match/${this.currentMatch}`);
+        return;
+      }
+      if (this.isMatchday || this.isAdvancingDate) {
+        return;
+      }
       this.$store.dispatch('continue');
       this.$store.dispatch('setIsPostMatch', false);
 
@@ -321,7 +375,7 @@ export default {
       });
 
       //fighters recover
-      this.$store.dispatch('setRoster', engine.recoverFighters(this.roster));
+      this.$store.dispatch('seedRoster', engine.recoverFighters(this.roster));
 
       // there is a rest day before and after each matchday
       // on any training day, check for injuries
@@ -342,17 +396,12 @@ export default {
       }
 
       // ux
-      let interval;
-      if (this.isDeveloper) {
-        interval = 50;
-      } else {
-        interval = this.matchData.timeoutInterval / 2;
-      }
-
       this.$store.dispatch('setIsAdvancingDate', true);
+
       setTimeout(() => {
+        console.log(this.isAdvancingDate);
         this.$store.dispatch('setIsAdvancingDate', false);
-      }, interval);
+      }, 250);
 
       //end day
     },
@@ -514,55 +563,55 @@ export default {
       return tactic;
     },
 
-    setTactics() {
+    seedTactics() {
       this.league.forEach((club) => {
         if (club.npc == true) {
-          this.$store.dispatch('setTactics', this.generateTactic(club.id));
+          this.$store.dispatch('seedTactics', this.generateTactic(club.id));
         }
       });
       console.log(this.league);
     },
 
-    setTrainingSchedules() {
+    seedTrainingSchedules() {
       this.$store.dispatch(
-        'setTrainingSchedules',
+        'seedTrainingSchedules',
         this.generateTrainingSchedule(this.schedule)
       );
     },
 
-    setLeague(league) {
-      this.$store.dispatch('setLeague', league);
+    seedLeague(league) {
+      this.$store.dispatch('seedLeague', league);
       this.$store.dispatch('setClubId', this.idCodes.club + this.league.length);
 
       // console.log(this.$store.getters.nextClubId);
     },
 
-    setRoster() {
-      this.$store.dispatch('setRoster', this.selectedRoster);
+    seedRoster() {
+      this.$store.dispatch('seedRoster', this.selectedRoster);
       this.$store.dispatch(
         'setFighterId',
         this.idCodes.fighter + this.roster.length
       );
     },
 
-    setCommission() {
-      this.$store.dispatch('setCommission', data.commission.judges);
+    seedCommission() {
+      this.$store.dispatch('seedCommission', data.commission.judges);
       this.$store.dispatch(
         'setCommissionId',
         this.idCodes.commission + this.commission.length
       );
     },
 
-    setStaff() {
-      this.$store.dispatch('setStaff', data.staff.coaches);
+    seedStaff() {
+      this.$store.dispatch('seedStaff', data.staff.coaches);
       this.$store.dispatch(
         'setStaffId',
         this.idCodes.staff + this.staff.length
       );
     },
 
-    setSchedule(schedule) {
-      this.$store.dispatch('setSchedule', schedule);
+    seedSchedule(schedule) {
+      this.$store.dispatch('seedSchedule', schedule);
       this.$store.dispatch(
         'setMatchId',
         this.idCodes.match + this.schedule.length
