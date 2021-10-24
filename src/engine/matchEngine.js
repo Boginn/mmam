@@ -9,31 +9,32 @@ export default {
   //   return new matchData.ArchivedMatch(parseInt(id) + 100000);
   // },
   rollEvent(currentSecond, happenChance) {
-    var chance;
+    let chance;
+    let cSec = currentSecond;
 
-    for (let i = currentSecond; i < 59; i = i + 2) {
+    for (let i = cSec; i < 59; i = i + 2) {
       // // console.log(i + " i");
-      currentSecond = currentSecond + 2;
+      cSec = cSec + 2;
 
       chance = this.roll(happenChance);
 
       if (chance == happenChance) {
         // console.log('action:');
-        return currentSecond;
+        return cSec;
       }
     }
 
-    return currentSecond;
+    return cSec;
   },
   roll(number) {
     return Math.floor(Math.random() * number) + 1;
   },
   rollTwenty() {
-    var result = Math.floor(Math.random() * 20) + 1;
+    let result = Math.floor(Math.random() * 20) + 1;
     return result;
   },
   rollHundred() {
-    var result = Math.floor(Math.random() * 100) + 1;
+    let result = Math.floor(Math.random() * 100) + 1;
     return result;
   },
   getDifficultyCheck(modifier) {
@@ -587,7 +588,9 @@ export default {
     // and some condition back
     if (this.getRollWithMod(attacker.mental.adaptability) >= 10) {
       att.exposed -= this.roll(10) + 5;
-      att.damage -= 5;
+      if (attacker.match.condition <= 20) {
+        att.damage -= 5;
+      }
       if (this.getRollWithMod(defender.mental.adaptability) <= 10) {
         def.learned -= this.roll(10) + 5;
       }
@@ -596,7 +599,9 @@ export default {
     }
     if (this.getRollWithMod(attacker.physical.stamina) >= 10) {
       att.exposed -= this.roll(10) + 5;
-      att.damage -= 5;
+      if (attacker.match.condition <= 20) {
+        att.damage -= 5;
+      }
       if (this.getRollWithMod(defender.physical.stamina) <= 10) {
         def.learned -= this.roll(10) + 5;
       }
@@ -605,7 +610,9 @@ export default {
     }
     if (this.getRollWithMod(attacker.physical.workRate) >= 10) {
       att.exposed -= this.roll(10) + 5;
-      att.damage -= 5;
+      if (attacker.match.condition <= 20) {
+        att.damage -= 5;
+      }
       if (this.getRollWithMod(defender.physical.workRate) <= 10) {
         def.learned -= this.roll(10) + 5;
       }

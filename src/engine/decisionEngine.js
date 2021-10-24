@@ -264,7 +264,7 @@ export default {
   },
 
   calculateTally(tally, index, significantModifier, scaleModifier) {
-    var round = { home: 0, away: 0 };
+    let round = { home: 0, away: 0 };
     round.home =
       tally[index].home + tally[index].homeSignificant * significantModifier;
     round.home *= scaleModifier;

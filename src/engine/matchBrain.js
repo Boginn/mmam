@@ -74,6 +74,7 @@ export default {
       ringTruePointsCenter,
       ringTruePointsRight,
     } = truePoints;
+    console.log(ringTruePointsCenter);
     if (ring == 1) {
       // LEFT
       if (isHomeAttack) {
@@ -114,20 +115,25 @@ export default {
         }
       }
     }
+    console.log(ringTruePointsCenter);
+    console.log(ringTruePoints);
+
     return truePoints;
   },
   countActivity(ring, outcome, isHomeAttack, ringActivity) {
+    let activity = ringActivity;
     if (isHomeAttack) {
-      ringActivity[ring - 1].home += 1;
+      activity[ring - 1].home += 1;
       if (outcome.significant) {
-        ringActivity[ring - 1].homeSignificant += 1;
+        activity[ring - 1].homeSignificant += 1;
       }
     } else {
-      ringActivity[ring - 1].away += 1;
+      activity[ring - 1].away += 1;
       if (outcome.significant) {
-        ringActivity[ring - 1].awaySignificant += 1;
+        activity[ring - 1].awaySignificant += 1;
       }
     }
+    return activity;
   },
   pickRing(ringFinishedLeft, ringFinishedRight) {
     // implement something to make less random and more based on:

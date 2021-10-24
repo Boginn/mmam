@@ -216,6 +216,16 @@ export default {
     point = false;
     significant = false;
   },
+  // TruePoints: class {
+
+  //   ringTruePointsLeft [
+  //     {away: 0, home: 0, awaySignificant: 0, homeSignificant: 0, round: 0},
+  //     {away: 0, home: 0, awaySignificant: 0, homeSignificant: 0, round: 0},
+  //     {away: 0, home: 0, awaySignificant: 0, homeSignificant: 0, round: 0},
+  //   ],
+  //   ringTruePointsCenter: [],
+  //   ringTruePointsRight: [],
+  // },
   Tactic: class {
     clubId;
     instructions = {

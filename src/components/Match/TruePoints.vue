@@ -1,5 +1,5 @@
 <template>
-  <v-container style="position: absolute; bottom: 0%; left: 82%;">
+  <v-container style="position: absolute; bottom: 0%; left: 73%;">
     <v-card width="25%">
       <v-card-title class="text-center">
         True Points

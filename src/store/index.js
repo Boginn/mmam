@@ -46,12 +46,14 @@ export default new Vuex.Store({
       score: { home: 0, away: 0 },
       names: { home: '', away: '' },
       //bools
+      isCommentary: true,
       isFullTime: false,
       isBetweenRounds: true,
       isHomeAttack: true,
       isDisabled: false,
       isPaused: false,
       isDecision: false,
+      isBusy: false,
       isScored: false,
 
       //x, y minute rounds
@@ -66,7 +68,6 @@ export default new Vuex.Store({
 
       //ui
       tabs: data.tabs.match,
-      showJudgesCard: true,
 
       //match data
       homeTactic: {},
@@ -79,7 +80,7 @@ export default new Vuex.Store({
       //   away: 0,
       // },
 
-      substitutionMade: false,
+      // substitutionMade: false,
       pendingSub: false,
       ringActivity: [
         {
@@ -375,6 +376,9 @@ export default new Vuex.Store({
     },
 
     //bools
+    setIsCommentary(context) {
+      context.commit('SET_IS_COMMENTARY');
+    },
     setIsFullTime(context, payload) {
       context.commit('SET_IS_FULL_TIME', payload);
     },
@@ -392,6 +396,9 @@ export default new Vuex.Store({
     },
     setIsDecision(context, payload) {
       context.commit('SET_IS_DECISION', payload);
+    },
+    setIsBusy(context, payload) {
+      context.commit('SET_IS_BUSY', payload);
     },
     setIsScored(context, payload) {
       context.commit('SET_IS_SCORED', payload);
@@ -429,6 +436,19 @@ export default new Vuex.Store({
       context.commit('SET_AWAY_TACTIC', payload);
     },
 
+    addHomeSub(context, payload) {
+      context.commit('ADD_HOME_SUB', payload);
+    },
+    removeHomeSub(context) {
+      context.commit('REMOVE_HOME_SUB');
+    },
+    addAwaySub(context, payload) {
+      context.commit('ADD_AWAY_SUB', payload);
+    },
+    removeAwaySub(context) {
+      context.commit('REMOVE_AWAY_SUB');
+    },
+
     setomeSubs(context, payload) {
       context.commit('SET_RING_JUDGES', payload);
     },
@@ -436,9 +456,9 @@ export default new Vuex.Store({
       context.commit('SET_RING_JUDGES', payload);
     },
 
-    setSubstitutionMade(context, payload) {
-      context.commit('SET_SUBSTITUTION_MADE', payload);
-    },
+    // setSubstitutionMade(context, payload) {
+    //   context.commit('SET_SUBSTITUTION_MADE', payload);
+    // },
     setPendingSub(context, payload) {
       context.commit('SET_PENDING_SUB', payload);
     },
@@ -639,7 +659,8 @@ export default new Vuex.Store({
 
     //matchData
     SET_SCORE(state, payload) {
-      console.log(`setting score in state: ${payload}`);
+      console.log(payload.home + 'home');
+      console.log(payload.away + 'away');
       let { home, away } = payload;
       if (home > 3) {
         home = 3;
@@ -654,6 +675,9 @@ export default new Vuex.Store({
       state.matchData.names = payload;
     },
 
+    SET_IS_COMMENTARY(state) {
+      state.matchData.isCommentary = !state.matchData.isCommentary;
+    },
     SET_IS_FULL_TIME(state, payload) {
       state.matchData.isFullTime = payload;
     },
@@ -671,6 +695,9 @@ export default new Vuex.Store({
     },
     SET_IS_DECISION(state, payload) {
       state.matchData.isDecision = payload;
+    },
+    SET_IS_BUSY(state, payload) {
+      state.matchData.isBusy = payload;
     },
     SET_IS_SCORED(state, payload) {
       state.matchData.isScored = payload;
@@ -700,26 +727,32 @@ export default new Vuex.Store({
 
     SET_TACTICS(state, payload) {
       state.matchData.homeTactic = payload.home;
-      state.matchData.awayTactc = payload.away;
+      state.matchData.awayTactic = payload.away;
     },
 
     SET_HOME_TACTIC(state, payload) {
       state.matchData.homeTactic = payload;
     },
     SET_AWAY_TACTIC(state, payload) {
-      state.matchData.awayTactc = payload;
+      state.matchData.awayTactic = payload;
     },
 
-    SET_HOME_SUBS(state, payload) {
-      state.matchData.homeSubs = payload;
+    ADD_HOME_SUB(state, payload) {
+      state.matchData.homeSubs.push(payload);
     },
-    SET_AWAY_SUBS(state, payload) {
-      state.matchData.awaySubs = payload;
+    REMOVE_HOME_SUB(state) {
+      state.matchData.homeSubs.splice(0, 1);
+    },
+    ADD_AWAY_SUB(state, payload) {
+      state.matchData.awaySubs.push(payload);
+    },
+    REMOVE_AWAY_SUB(state) {
+      state.matchData.awaySubs.splice(0, 1);
     },
 
-    SET_SUBSTITUTION_MADE(state, payload) {
-      state.matchData.substitutionMade = payload;
-    },
+    // SET_SUBSTITUTION_MADE(state, payload) {
+    //   state.matchData.substitutionMade = payload;
+    // },
     SET_PENDING_SUB(state, payload) {
       state.matchData.pendingSub = payload;
     },
@@ -739,9 +772,11 @@ export default new Vuex.Store({
       state.matchData.ringDecisions = payload;
     },
     SET_RING_JUDGES(state, payload) {
+      console.log(payload);
       state.matchData.ringJudges = payload;
     },
     SET_RING_TRUE_POINTS(state, payload) {
+      console.log(payload);
       state.matchData.ringTruePoints = payload;
     },
 

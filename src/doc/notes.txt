@@ -17,19 +17,16 @@
     (handy to have atm for debugging)
         => fix, switch from v-model to :value. 
 
+    when in any squad, the link squad does nothing but should go to selected club's squad
 
-  
 
 
 
 // SPECIFIC
 functionality:
     pressing back things
-        delete the match from the schedule? already done maybe
-        if you go to a match that's been played you go to '/'
-        to look at that match, see it in the archives
-
-        you're in a match an press back....
+        partially dealt with by keeping everything necessary for Match.vue in the state,
+        it still has bugs
 tweaks:
    
    
@@ -67,6 +64,15 @@ last time:
     introduce morale
 
     lots of talk bout morale+form+momentum being boosters
+
+    loads of stuff added in state to start saving more to be able to
+    tackle the problem of pressing back/navigation
+
+    bottombar getting there
+    need to set up timeout disablers for everytring (like isAdvancingDate)
+
+    TALLYPOINTS GETTING undefined
+   
 
 
 

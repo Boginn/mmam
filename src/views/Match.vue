@@ -2,166 +2,114 @@
   <v-container>
     <!-- floating -->
 
-    <v-container
+    <!-- <v-container
       style="position: absolute; top: 10%; right: 5%"
       class="pa-0 ma-0 d-flex justify-end"
     >
       <v-btn class="" v-if="isDeveloper" @click="testEnd()"
         >end with a decision</v-btn
       >
-    </v-container>
+    </v-container> -->
 
     <TruePoints :truePoints="truePoints" v-if="isDeveloper" />
     <!-- /floating -->
 
     <!-- COMMENTARY -->
     <v-row class="mt-0">
-      <Commentary :messages="messages" />
+      <v-col>
+        <v-row class="text-center pt-1 mb-1">
+          <v-col>
+            <v-card>
+              <Clock :timestamp="timestamp" :rounds="rounds" :round="round" />
+            </v-card>
+          </v-col>
+          <v-col>
+            <v-card class="commentary">
+              <Control
+                :isFullTime="isFullTime"
+                :isDisabled="isDisabled"
+                :isPaused="isPaused"
+                :isFast="isFast"
+                :isBetweenRounds="isBetweenRounds"
+                :isCommentary="isCommentary"
+                @startRound="startRound()"
+                @getOn="getOn()"
+                @endMatch="endMatch()"
+                @togglePause="togglePause()"
+                @setIntervalFast="setIntervalFast()"
+                @setIntervalSlow="setIntervalSlow()"
+                @setCommentary="setCommentary()"
+              />
+            </v-card>
+          </v-col>
+        </v-row>
 
-      <v-col class="text-center pt-1">
-        <v-col>
-          <v-card class="commentary">
-            <v-col>
-              <v-row>
-                <v-col
-                  align="center"
-                  v-for="(element, index) in rounds"
-                  :key="index"
-                >
-                  <div
-                    class="rounds title font-shadow pt-1"
-                    v-bind:class="{
-                      activeRound: round > index,
-                      'accent--text': round > index,
-                    }"
-                  >
-                    {{ index + 1 }}
-                  </div>
-                </v-col>
-              </v-row>
-            </v-col>
-            <v-col>
-              <v-btn class="primary timestampbtn">
-                {{ timestamp }}
-              </v-btn>
+        <v-divider></v-divider>
 
-              <!-- start round / get on -->
-              <v-btn
-                class="controlbtn"
-                :disabled="isFullTime"
-                @click="startRound()"
-                v-if="isBetweenRounds"
-              >
-                Start Round
-              </v-btn>
-              <v-btn
-                class="controlbtn success"
-                :disabled="isDisabled || isFullTime"
-                @click="getOn()"
-                v-else
-              >
-                Get on
-              </v-btn>
-              <!-- end match / pause -->
-              <v-btn
-                class="controlbtn rightmostbtn secondary"
-                v-if="isFullTime"
-                @click="endMatch()"
-              >
-                End Match
-              </v-btn>
-              <v-btn
-                class="controlbtn rightmostbtn fifth"
-                v-if="!isFullTime"
-                :disabled="isPaused"
-                @click="togglePause()"
-              >
-                Pause
-              </v-btn>
-              <span class="ml-5"></span>
+        <!-- MATCH  -->
+        <v-col class="mt-1 ">
+          <v-row class="bgcolor pa-0 pl-5">
+            <v-tab
+              v-for="(tab, index) in tabs"
+              :key="index"
+              class="ml-1 mt-3 pa-2 pb-4"
+              @click="selectTab(index)"
+              v-bind:class="{
+                tertiary: tabs[index].value,
+                sixth: !tabs[index].value,
+              }"
+              >{{ tab.name }}</v-tab
+            >
+          </v-row>
+          <v-card elevation="10">
+            <Overview
+              v-if="isTabOverview"
+              :awayTactic="awayTactic"
+              :homeTactic="homeTactic"
+              :messages="messagesForRings"
+            />
+            <Bench
+              v-if="isTabBench"
+              :awayTactic="awayTactic"
+              :homeTactic="homeTactic"
+              :awaySubs="awaySubs"
+              :homeSubs="homeSubs"
+              :substitutionAvailable="substitutionAvailable"
+            />
+            <MatchTactics
+              v-if="isTabMatchTactics"
+              :tactic="getClub(selectedClubId).tactic"
+              :ringFinishedLeft="ringFinishedLeft"
+              :ringFinishedCenter="ringFinishedCenter"
+              :ringFinishedRight="ringFinishedRight"
+            />
+            <League v-if="isTabMatchLeague" :isReadOnly="true" />
 
-              <v-btn
-                small
-                class="seventh"
-                :disabled="!isFast"
-                @click="setIntervalFast()"
-                >+</v-btn
-              >
-
-              <v-btn
-                small
-                class="seventh"
-                :disabled="isFast"
-                @click="setIntervalSlow()"
-                >-</v-btn
-              >
-            </v-col>
+            <JudgesCard
+              v-if="isTabJudgesCard"
+              :decisions="decisions"
+              :judges="judges"
+              :rounds="rounds"
+              :ringFinishedLeft="ringFinishedLeft"
+              :ringFinishedRight="ringFinishedRight"
+              @countScore="countScore"
+            />
           </v-card>
         </v-col>
-      </v-col>
-    </v-row>
 
-    <v-divider></v-divider>
-
-    <!-- MATCH  -->
-    <v-col class="mt-1 ">
-      <v-row class="bgcolor pa-0 pl-5">
-        <v-tab
-          v-for="(tab, index) in tabs"
-          :key="index"
-          class="ml-1 mt-3 pa-2 pb-4"
-          @click="selectTab(index)"
-          v-bind:class="{
-            tertiary: tabs[index].value,
-            sixth: !tabs[index].value,
-          }"
-          >{{ tab.name }}</v-tab
-        >
-      </v-row>
-      <v-card elevation="10">
-        <Overview
-          v-if="isTabOverview"
-          :awayTactic="awayTactic"
-          :homeTactic="homeTactic"
-          :messages="messagesForRings"
-        />
-        <Bench
-          v-if="isTabBench"
-          :awayTactic="awayTactic"
-          :homeTactic="homeTactic"
-          :awaySubs="awaySubs"
-          :homeSubs="homeSubs"
-          :substitutionAvailable="substitutionAvailable"
-        />
-        <MatchTactics
-          v-if="isTabMatchTactics"
-          :tactic="getClub(selectedClubId).tactic"
-          :ringFinishedLeft="ringFinishedLeft"
-          :ringFinishedCenter="ringFinishedCenter"
-          :ringFinishedRight="ringFinishedRight"
-        />
-        <League v-if="isTabMatchLeague" />
-
-        <JudgesCard
-          v-if="isTabJudgesCard"
+        <!-- DETAILS -->
+        <Details
+          :activity="ringActivity"
+          :coaches="coaches"
+          :rounds="rounds"
           :decisions="decisions"
           :judges="judges"
-          :rounds="rounds"
-          :ringFinishedLeft="ringFinishedLeft"
-          :ringFinishedRight="ringFinishedRight"
-          @countScore="countScore"
         />
-      </v-card>
-    </v-col>
-
-    <!-- DETAILS -->
-    <Details
-      :activity="ringActivity"
-      :coaches="coaches"
-      :rounds="rounds"
-      :decisions="decisions"
-      :judges="judges"
-    />
+      </v-col>
+      <v-col cols="3" v-if="isCommentary">
+        <Commentary :messages="messages" />
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -184,6 +132,8 @@ export default {
     Details: () => import('@/components/Match/Details.vue'),
     Bench: () => import('@/components/Match/Bench.vue'),
     MatchTactics: () => import('@/components/Match/MatchTactics.vue'),
+    Clock: () => import('@/components/Match/Clock.vue'),
+    Control: () => import('@/components/Match/Control.vue'),
     League: () => import('@/views/League.vue'),
   },
 
@@ -198,7 +148,11 @@ export default {
 
   created() {
     if (!this.isLive) {
-      this.ringTruePoints = matchBrain.seedRoundsToPointCounters(this.rounds);
+      // this.ringTruePoints = matchBrain.seedRoundsToPointCounters(this.rounds);
+      this.$store.dispatch(
+        'setRingTruePoints',
+        matchBrain.seedRoundsToPointCounters(this.rounds)
+      );
       console.log(this.ringTruePoints);
       this.resetFighterMatchStats();
       this.setJudges();
@@ -213,6 +167,7 @@ export default {
   },
 
   watch: {
+    // watching keyPress, space
     controlStartRound() {
       this.startRound();
     },
@@ -227,6 +182,7 @@ export default {
     },
     cards() {
       if (this.isDecision) {
+        console.log('Match watch: commitFighterForm');
         this.commitFighterForm(
           this.homeTactic.selection.center,
           this.awayTactic.selection.center,
@@ -251,89 +207,72 @@ export default {
   },
 
   data: () => ({
-    //bools
-    // isFullTime: false,
-    // isBetweenRounds: true,
-    // isHomeAttack: true,
-    // isDisabled: false,
-    // isPaused: false,
-    // isDecision: false,
-    // isScored: false,
-
-    //x, y minute rounds
-    rounds: [1, 2, 3],
-    minutes: 5,
-    //current round, minute, second
-    minute: 0,
-    second: 0,
-    round: 0,
-
-    happenChance: 11,
-
     //ui
     tabs: data.tabs.match,
-    showJudgesCard: true,
 
-    //match data
-    homeTactic: {},
-    awayTactic: {},
-    homeSubs: [],
-    awaySubs: [],
+    // happenChance: 11,
+
+    // //match data
+    // homeTactic: {},
+    // awayTactic: {},
+    // homeSubs: [],
+    // awaySubs: [],
 
     // score: {
     //   home: 0,
     //   away: 0,
     // },
 
-    substitutionMade: false,
-    pendingSub: false,
-    ringActivity: [
-      {
-        home: 0,
-        away: 0,
-        homeSignificant: 0,
-        awaySignificant: 0,
-      },
-      {
-        home: 0,
-        away: 0,
-        homeSignificant: 0,
-        awaySignificant: 0,
-      },
-      {
-        home: 0,
-        away: 0,
-        homeSignificant: 0,
-        awaySignificant: 0,
-      },
-    ],
+    // substitutionMade: false,
+    // pendingSub: false,
+    // ringActivity: [
+    //   {
+    //     home: 0,
+    //     away: 0,
+    //     homeSignificant: 0,
+    //     awaySignificant: 0,
+    //   },
+    //   {
+    //     home: 0,
+    //     away: 0,
+    //     homeSignificant: 0,
+    //     awaySignificant: 0,
+    //   },
+    //   {
+    //     home: 0,
+    //     away: 0,
+    //     homeSignificant: 0,
+    //     awaySignificant: 0,
+    //   },
+    // ],
 
-    ringFinishedLeft: false,
-    ringFinishedCenter: false,
-    ringFinishedRight: false,
+    // ringFinishedLeft: false,
+    // ringFinishedCenter: false,
+    // ringFinishedRight: false,
 
-    ringDecisions: {
-      ringDecisionLeft: undefined,
-      ringDecisionCenter: undefined,
-      ringDecisionRight: undefined,
-    },
+    // ringDecisions: {
+    //   ringDecisionLeft: undefined,
+    //   ringDecisionCenter: undefined,
+    //   ringDecisionRight: undefined,
+    // },
 
-    ringJudges: {
-      ringJudgesLeft: [],
-      ringJudgesCenter: [],
-      ringJudgesRight: [],
-    },
-    ringTruePoints: {
-      ringTruePointsLeft: [],
-      ringTruePointsCenter: [],
-      ringTruePointsRight: [],
-    },
+    // ringJudges: {
+    //   ringJudgesLeft: [],
+    //   ringJudgesCenter: [],
+    //   ringJudgesRight: [],
+    // },
+    // ringTruePoints: {
+    //   ringTruePointsLeft: [],
+    //   ringTruePointsCenter: [],
+    //   ringTruePointsRight: [],
+    // },
 
-    cards: {},
-    finishes: { home: 0, away: 0 },
+    // cards: {},
+    // finishes: { home: 0, away: 0 },
   }),
 
   computed: {
+    // keyPress, space
     controlStartRound() {
       return this.$store.getters.control.startRound;
     },
@@ -347,11 +286,17 @@ export default {
       return this.$store.getters.control.togglePause;
     },
 
+    //
     selectedClubId() {
       return this.$store.getters.selectedClubId;
     },
 
+    /************************************/
     //matchdata
+
+    isCommentary() {
+      return this.$store.getters.matchData.isCommentary;
+    },
     isFullTime() {
       return this.$store.getters.matchData.isFullTime;
     },
@@ -373,6 +318,78 @@ export default {
     isScored() {
       return this.$store.getters.matchData.isScored;
     },
+
+    //x, y minute rounds
+    rounds() {
+      return this.$store.getters.matchData.rounds;
+    },
+    minutes() {
+      return this.$store.getters.matchData.minutes;
+    },
+    //current round, minute, second
+    minute() {
+      return this.$store.getters.matchData.minute;
+    },
+    second() {
+      return this.$store.getters.matchData.second;
+    },
+    round() {
+      return this.$store.getters.matchData.round;
+    },
+
+    happenChance() {
+      return this.$store.getters.matchData.happenChance;
+    },
+
+    //
+    homeTactic() {
+      return this.$store.getters.matchData.homeTactic;
+    },
+    awayTactic() {
+      return this.$store.getters.matchData.awayTactic;
+    },
+    homeSubs() {
+      return this.$store.getters.matchData.homeSubs;
+    },
+    awaySubs() {
+      return this.$store.getters.matchData.awaySubs;
+    },
+
+    //
+    pendingSub() {
+      return this.$store.getters.matchData.pendingSub;
+    },
+
+    //
+    ringActivity() {
+      return this.$store.getters.matchData.ringActivity;
+    },
+    ringFinishedLeft() {
+      return this.$store.getters.matchData.ringFinishedLeft;
+    },
+    ringFinishedCenter() {
+      return this.$store.getters.matchData.ringFinishedCenter;
+    },
+    ringFinishedRight() {
+      return this.$store.getters.matchData.ringFinishedRight;
+    },
+    ringDecisions() {
+      return this.$store.getters.matchData.ringDecisions;
+    },
+    ringJudges() {
+      return this.$store.getters.matchData.ringJudges;
+    },
+    ringTruePoints() {
+      return this.$store.getters.matchData.ringTruePoints;
+    },
+
+    cards() {
+      return this.$store.getters.matchData.cards;
+    },
+    finishes() {
+      return this.$store.getters.matchData.finishes;
+    },
+    /************************************/
 
     //match
 
@@ -396,7 +413,7 @@ export default {
       return this.getClub(this.match.clubs[1]);
     },
     isFast() {
-      return this.$timeoutInterval > 500 ? true : false;
+      return this.timeoutInterval > 500 ? true : false;
     },
     timeoutInterval() {
       return this.$store.getters.timeoutInterval;
@@ -440,13 +457,10 @@ export default {
 
       return routes;
     },
-    showZero() {
-      return this.second < 10 ? true : false;
-    },
     timestamp() {
       return this.isFullTime
-        ? 'full time'
-        : this.showZero
+        ? 'Full Time'
+        : this.second < 10
         ? `${this.minute}:0${this.second}`
         : `${this.minute}:${this.second}`;
     },
@@ -498,6 +512,7 @@ export default {
         ringTruePointsCenter,
         ringTruePointsRight,
       } = this.ringTruePoints;
+      console.log(this.ringTruePoints);
       const rings = [];
 
       rings.push(ringTruePointsLeft);
@@ -615,11 +630,8 @@ export default {
     //   });
     // },
     setJudges() {
-      const {
-        ringJudgesLeft,
-        ringJudgesCenter,
-        ringJudgesRight,
-      } = this.ringJudges;
+      let judges = this.ringJudges;
+      const { ringJudgesLeft, ringJudgesCenter, ringJudgesRight } = judges;
       for (let i = 0; i < 3; i++) {
         ringJudgesLeft.push(this.commission[i]);
       }
@@ -629,10 +641,19 @@ export default {
       for (let i = 6; i < 9; i++) {
         ringJudgesRight.push(this.commission[i]);
       }
+      this.$store.dispatch('setRingJudges', judges);
     },
     setTactics() {
-      this.homeTactic = { ...this.homeTactic, ...this.homeClub.tactic };
-      this.awayTactic = { ...this.awayTactic, ...this.awayClub.tactic };
+      // this.homeTactic = { ...this.homeTactic, ...this.homeClub.tactic };
+      // this.awayTactic = { ...this.awayTactic, ...this.awayClub.tactic };
+      this.$store.dispatch('setHomeTactic', {
+        ...this.homeTactic,
+        ...this.homeClub.tactic,
+      });
+      this.$store.dispatch('setAwayTactic', {
+        ...this.awayTactic,
+        ...this.awayClub.tactic,
+      });
     },
 
     //ui
@@ -649,6 +670,9 @@ export default {
     },
     setIntervalSlow() {
       this.$store.dispatch('setTimeoutInterval', 750);
+    },
+    setCommentary() {
+      this.$store.dispatch('setIsCommentary');
     },
     getClub(id) {
       return this.$store.getters.getClubById(id);
@@ -864,25 +888,32 @@ export default {
     endMatch() {
       // this.resetFighterMatchStats();
 
-      this.tabs.splice(3, 4);
+      this.tabs.splice(4, 5);
       this.selectTab(0);
       this.archiveMatch();
 
+      // setTimeout(() => {
       // clean up
-      this.$store.dispatch('setIsLive', false);
-      this.$store.dispatch('setIsMatchday', false);
-      this.$store.dispatch('setIsPostMatch', true);
+      this.$store.dispatch(
+        'setRingTruePoints',
+        matchBrain.seedRoundsToPointCounters(this.rounds)
+      );
       this.$store.dispatch('setIsFullTime', false);
       this.$store.dispatch('setIsDisabled', false);
       this.$store.dispatch('setIsPaused', false);
       this.$store.dispatch('setIsDecision', false);
-      this.$store.dispatch('setIsScored', false);
 
       //reset scorebanner
       this.$store.dispatch('setScore', { home: 0, away: 0 });
       this.$store.dispatch('setNames', { home: '', away: '' });
 
+      this.$store.dispatch('setIsScored', false);
+      this.$store.dispatch('setIsLive', false);
+      this.$store.dispatch('setIsMatchday', false);
+      this.$store.dispatch('setIsPostMatch', true);
+
       this.$router.push('/fixtures');
+      // }, 500);
     },
 
     endRound() {
@@ -898,14 +929,15 @@ export default {
       );
     },
     startRound() {
-      this.round++;
+      // this.round++;
+      this.$store.dispatch('setRound', this.round + 1);
       this.$store.dispatch('setIsBetweenRounds', false);
       this.$store.dispatch('addMatchMessage', `Round ${this.round} Fight!`);
       setTimeout(() => {
         if (!this.isFullTime) {
           this.getOn();
         }
-      }, 1000);
+      }, 750);
     },
     // pickRing() {
     //   // implement something to make less random and more based on:
@@ -922,30 +954,39 @@ export default {
     // },
     makeSubstitution() {
       let msg;
+
+      let home = this.homeTactic;
+      let away = this.awayTactic;
+
       if (this.isHomeAttack) {
         if (this.awaySubs[0] == this.awayTactic.selection.left) {
           console.log(this.awaySubs[0]);
-          this.awayTactic.selection.left = this.awayTactic.selection.center;
+          away.selection.left = this.awayTactic.selection.center;
         } else if (this.awaySubs[0] == this.awayTactic.selection.right) {
           console.log(this.awaySubs[0]);
-          this.awayTactic.selection.right = this.awayTactic.selection.center;
+          away.selection.right = this.awayTactic.selection.center;
         }
 
-        this.awayTactic.selection.center = this.awaySubs[0];
-        this.awaySubs.splice(0, 1);
+        away.selection.center = this.awaySubs[0];
+        this.$store.dispatch('setAwayTactic', away);
+        // this.awaySubs.splice(0, 1);
+        this.$store.dispatch('removeAwaySub');
+
         msg = `${
           this.getFighter(this.awayTactic.selection.center).personal.name
         } comes on!`;
         this.$store.dispatch('addMatchMessage', msg);
       } else {
         if (this.homeSubs[0] == this.homeTactic.selection.left) {
-          this.homeTactic.selection.left = this.homeTactic.selection.center;
+          home.selection.left = this.homeTactic.selection.center;
         } else if (this.homeSubs[0] == this.homeTactic.selection.right) {
-          this.homeTactic.selection.right = this.homeTactic.selection.center;
+          home.selection.right = this.homeTactic.selection.center;
         }
 
-        this.homeTactic.selection.center = this.homeSubs[0];
-        this.homeSubs.splice(0, 1);
+        home.selection.center = this.homeSubs[0];
+        this.$store.dispatch('setHomeTactic', home);
+        // this.homeSubs.splice(0, 1);
+        this.$store.dispatch('removeHomeSub');
         msg = `${
           this.getFighter(this.homeTactic.selection.center).personal.name
         } comes on!`;
@@ -953,7 +994,9 @@ export default {
       }
 
       this.ringFinishedCenter = false;
-      this.pendingSub = false;
+      this.$store.dispatch('setRingFinishedCenter', false);
+      // this.pendingSub = false;
+      this.$store.dispatch('setPendingSub', false);
     },
 
     //scoring/points/counting
@@ -984,16 +1027,22 @@ export default {
     //   );
     // },
     decision() {
-      this.ringDecisions = matchBrain.scoreRounds(
-        this.ringTruePoints,
-        this.ringJudges
+      // this.ringDecisions = matchBrain.scoreRounds(
+      //   this.ringTruePoints,
+      //   this.ringJudges
+      // );
+      this.$store.dispatch(
+        'setRingDecisions',
+        matchBrain.scoreRounds(this.ringTruePoints, this.ringJudges)
       );
       let score = { home: this.score.home, away: this.score.away };
       // for center ring, the club with more fighters standing takes it
       if (this.homeStillStanding > this.awayStillStanding) {
         score.home += 2;
+        console.log('Home + 2, stillstanding');
       } else if (this.homeStillStanding < this.awayStillStanding) {
         score.away += 2;
+        console.log('Away + 2, stillstanding');
       } else {
         // we go to a decision
         if (this.ringFinishedLeft) {
@@ -1003,12 +1052,12 @@ export default {
           this.cards.rightMsg = 'Finish';
         }
 
-        this.isDecision = true; // opens Judges' Cards !
+        this.$store.dispatch('setIsDecision', true); // opens Judges' Cards !
         // countscore happens
         console.log(this.cards);
 
         this.tabs.push({ name: 'judges card', value: false });
-        this.selectTab(3);
+        this.selectTab(4);
       }
 
       this.$store.dispatch('setScore', score);
@@ -1032,8 +1081,10 @@ export default {
         let score = { home: this.score.home, away: this.score.away };
         score.home += result[1].home;
         score.away += result[1].away;
-        this.cards = result[0];
+
         //watcher reacts to cards changing, commits fighter form
+        // this.cards = result[0];
+        this.$store.dispatch('setCards', result[0]);
 
         this.$store.dispatch('setScore', score);
 
@@ -1090,14 +1141,23 @@ export default {
         this.makeSubstitution();
       }
       this.$store.dispatch('setIsDisabled', true);
-      this.$store.dispatch('setIsPaused', false);
-      this.second = matchEngine.rollEvent(this.second, this.happenChance);
+      this.$store.dispatch('setIsPaused', true);
+      // this.second = matchEngine.rollEvent(this.second, this.happenChance);
+      this.$store.dispatch(
+        'setSecond',
+        matchEngine.rollEvent(this.second, this.happenChance)
+      );
       if (this.second >= 59) {
-        this.minute++;
-        this.second = 0;
+        // this.minute++;
+        this.$store.dispatch('setMinute', this.minute + 1);
+
+        // this.second = 0;
+        this.$store.dispatch('setSecond', 0);
 
         if (this.minute == 5) {
-          this.minute = 0;
+          // this.minute = 0;
+          this.$store.dispatch('setMinute', 0);
+
           this.endRound();
         } else {
           if (!this.isFullTime) {
@@ -1122,6 +1182,7 @@ export default {
         // select fighters in ring
         if (ring == 1) {
           msg = `In the left ring...`;
+
           home = this.getFighter(this.homeTactic.selection.left);
           away = this.getFighter(this.awayTactic.selection.left);
         } else if (ring == 2) {
@@ -1148,7 +1209,7 @@ export default {
           attacker = home;
           defender = away;
         } else {
-          this.$store.dispatch('setIsBetweenRounds', false);
+          this.$store.dispatch('setIsHomeAttack', false);
           attacker = away;
           defender = home;
         }
@@ -1186,11 +1247,20 @@ export default {
         console.log(outcome);
 
         //count activity
-        matchBrain.countActivity(
-          ring,
-          outcome,
-          this.isHomeAttack,
-          this.ringActivity
+        // this.ringActivity = matchBrain.countActivity(
+        //   ring,
+        //   outcome,
+        //   this.isHomeAttack,
+        //   this.ringActivity
+        // );
+        this.$store.dispatch(
+          'setRingActivity',
+          matchBrain.countActivity(
+            ring,
+            outcome,
+            this.isHomeAttack,
+            this.ringActivity
+          )
         );
 
         //OUTCOME
@@ -1227,12 +1297,29 @@ export default {
         this.$store.dispatch('setScore', this.score);
 
         if (outcome.point) {
-          this.ringTruePoints = matchBrain.tallyPoints(
-            ring,
-            outcome,
-            this.isHomeAttack,
-            this.ringTruePoints,
-            this.round
+          console.log(this.ringTruePoints);
+          console.log(ring);
+          console.log(outcome);
+          console.log(this.isHomeAttack);
+          console.log(this.ringTruePoints);
+          console.log(this.round);
+
+          // this.ringTruePoints = matchBrain.tallyPoints(
+          //   ring,
+          //   outcome,
+          //   this.isHomeAttack,
+          //   this.ringTruePoints,
+          //   this.round
+          // );
+          this.$store.dispatch(
+            'setRingTruePoints',
+            matchBrain.tallyPoints(
+              ring,
+              outcome,
+              this.isHomeAttack,
+              this.ringTruePoints,
+              this.round
+            )
           );
           console.log(this.ringTruePoints);
         }
@@ -1253,9 +1340,11 @@ export default {
         }
 
         // enable button / loop
+        this.$store.dispatch('setIsPaused', false);
         setTimeout(() => {
           this.$store.dispatch('setIsDisabled', false);
           if (!this.isFullTime) {
+            console.log(this.isPaused);
             if (!this.isPaused) {
               this.getOn();
             }
@@ -1306,13 +1395,25 @@ export default {
 
           //do depending on which side
           if (isHomeAttacking) {
+            console.log('Home + 1, finish in left');
             score.home += 1;
-            this.homeSubs.push(winner.id);
-            this.finishes.home++;
+            // this.homeSubs.push(winner.id);
+            this.$store.dispatch('addHomeSub', winner.id);
+            // this.finishes.home++;
+            this.$store.dispatch('setFinishes', {
+              ...this.finishes,
+              home: this.finishes.home + 1,
+            });
           } else {
+            console.log('Away + 1, finish in left');
             score.away += 1;
-            this.awaySubs.push(winner.id);
-            this.finishes.away++;
+            // this.awaySubs.push(winner.id);
+            this.$store.dispatch('addAwaySub', winner.id);
+            // this.finishes.away++;
+            this.$store.dispatch('setFinishes', {
+              ...this.finishes,
+              away: this.finishes.away + 1,
+            });
           }
           this.$store.dispatch('setScore', score);
         } else if (ring == 2) {
@@ -1328,9 +1429,13 @@ export default {
               this.$store.dispatch('setIsFullTime', true);
 
               // sets this.decisions
-              this.ringDecisions = matchBrain.scoreRounds(
-                this.ringTruePoints,
-                this.ringJudges
+              // this.ringDecisions = matchBrain.scoreRounds(
+              //   this.ringTruePoints,
+              //   this.ringJudges
+              // );
+              this.$store.dispatch(
+                'setRingDecisions',
+                matchBrain.scoreRounds(this.ringTruePoints, this.ringJudges)
               );
 
               setTimeout(() => {
@@ -1344,15 +1449,22 @@ export default {
             //   this.score.home += 3;
             // }
           } else {
-            this.finishes.away++;
+            // this.finishes.away++;
+            this.$store.dispatch('setFinishes', {
+              ...this.finishes,
+              away: this.finishes.away + 1,
+            });
             if (this.homeSubs.length == 0) {
               score.away += 3;
               this.$store.dispatch('setIsFullTime', true);
 
-              // sets this.decisions
-              this.ringDecisions = matchBrain.scoreRounds(
-                this.ringTruePoints,
-                this.ringJudges
+              // this.ringDecisions = matchBrain.scoreRounds(
+              //   this.ringTruePoints,
+              //   this.ringJudges
+              // );
+              this.$store.dispatch(
+                'setRingDecisions',
+                matchBrain.scoreRounds(this.ringTruePoints, this.ringJudges)
               );
 
               setTimeout(() => {
@@ -1372,60 +1484,92 @@ export default {
 
           //do depending on which side
           if (isHomeAttacking) {
+            console.log('Home + 1, finish in right');
             score.home += 1;
 
-            this.homeSubs.push(winner.id);
-            this.finishes.home++;
+            // this.homeSubs.push(winner.id);
+            this.$store.dispatch('addHomeSub', winner.id);
+            // this.finishes.home++;
+            this.$store.dispatch('setFinishes', {
+              ...this.finishes,
+              home: this.finishes.home + 1,
+            });
           } else {
+            console.log('Away + 1, finish in right');
+
             score.away += 1;
 
-            this.awaySubs.push(winner.id);
-            this.finishes.away++;
+            // this.awaySubs.push(winner.id);
+            this.$store.dispatch('addAwaySub', winner.id);
+            // this.finishes.away++;
+            this.$store.dispatch('setFinishes', {
+              ...this.finishes,
+              away: this.finishes.away + 1,
+            });
           }
           this.$store.dispatch('setScore', score);
         }
       }
     },
     finishInLeft() {
-      this.ringFinishedLeft = true;
+      // this.ringFinishedLeft = true;
+      this.$store.dispatch('setRingFinishedLeft', true);
+
       setTimeout(() => {
-        this.ringFinishedLeft = false;
+        // this.ringFinishedLeft = false;
+        this.$store.dispatch('setRingFinishedLeft', false);
+
         setTimeout(() => {
-          this.ringFinishedLeft = true;
+          // this.ringFinishedLeft = true;
+          this.$store.dispatch('setRingFinishedLeft', true);
+
           setTimeout(() => {
-            this.ringFinishedLeft = false;
+            // this.ringFinishedLeft = false;
+            this.$store.dispatch('setRingFinishedLeft', false);
+
             setTimeout(() => {
-              this.ringFinishedLeft = true;
+              // this.ringFinishedLeft = true;
+              this.$store.dispatch('setRingFinishedLeft', true);
             }, 250);
           }, 250);
         }, 250);
       }, 250);
     },
     finishInCenter() {
-      this.ringFinishedCenter = true;
+      // this.ringFinishedCenter = true;
+      this.$store.dispatch('setRingFinishedCenter', true);
       setTimeout(() => {
-        this.ringFinishedCenter = false;
+        // this.ringFinishedCenter = false;
+        this.$store.dispatch('setRingFinishedCenter', false);
         setTimeout(() => {
-          this.ringFinishedCenter = true;
+          // this.ringFinishedCenter = true;
+          this.$store.dispatch('setRingFinishedCenter', true);
           setTimeout(() => {
-            this.ringFinishedCenter = false;
+            // this.ringFinishedCenter = false;
+            this.$store.dispatch('setRingFinishedCenter', false);
             setTimeout(() => {
-              this.ringFinishedCenter = true;
+              // this.ringFinishedCenter = true;
+              this.$store.dispatch('setRingFinishedCenter', true);
             }, 250);
           }, 250);
         }, 250);
       }, 250);
     },
     finishInRight() {
-      this.ringFinishedRight = true;
+      // this.ringFinishedRight = true;
+      this.$store.dispatch('setRingFinishedRight', true);
       setTimeout(() => {
-        this.ringFinishedRight = false;
+        // this.ringFinishedRight = false;
+        this.$store.dispatch('setRingFinishedRight', false);
         setTimeout(() => {
-          this.ringFinishedRight = true;
+          // this.ringFinishedRight = true;
+          this.$store.dispatch('setRingFinishedRight', true);
           setTimeout(() => {
-            this.ringFinishedRight = false;
+            // this.ringFinishedRight = false;
+            this.$store.dispatch('setRingFinishedRight', false);
             setTimeout(() => {
-              this.ringFinishedRight = true;
+              // this.ringFinishedRight = true;
+              this.$store.dispatch('setRingFinishedRight', true);
             }, 250);
           }, 250);
         }, 250);
@@ -1527,6 +1671,9 @@ export default {
 }
 
 .rounds {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 50px;
   height: 50px;
   border-radius: 100%;

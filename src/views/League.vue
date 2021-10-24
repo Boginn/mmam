@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row class="justify-center">
+    <v-row class="justify-center" v-if="!isReadOnly">
       <div>
         <ButtonsSmall :routes="routes" />
       </div>
@@ -53,8 +53,9 @@
           <template v-slot:item.name="{ item }">
             <div class="title ">
               <router-link
+                :is="isReadOnly ? 'span' : 'router-link'"
                 :to="`/league/${item.id}`"
-                class="white--text"
+                class="white--text "
                 v-bind:class="{
                   'yellow--text': item.id == selectedClubId,
                 }"
@@ -133,6 +134,10 @@ export default {
     FormChips: () => import('@/components/FormChips.vue'),
   },
 
+  props: {
+    isReadOnly: Boolean,
+  },
+
   computed: {
     headers() {
       return data.headers.league;
@@ -152,10 +157,10 @@ export default {
   },
 
   data: () => ({
-    showLeague: false,
-    sortedLeague: undefined,
-    sortBy: undefined,
-    sortDesc: false,
+    // showLeague: false,
+    // sortedLeague: undefined,
+    // sortBy: undefined,
+    // sortDesc: true,
   }),
 
   methods: {

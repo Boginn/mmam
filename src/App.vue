@@ -113,7 +113,7 @@
           class="continue-btn font-shadow"
           v-bind:class="{
             'green darken-3 white--text': isPaused,
-            'orange darken-3 white--text': !isPaused,
+            'fifth darken-3 white--text': !isPaused,
           }"
         >
           <h2 class="font-shadow">Get On</h2>
@@ -127,7 +127,7 @@
           class="continue-btn font-shadow"
           v-bind:class="{
             'green darken-3 white--text': isPaused,
-            'orange darken-3 white--text': !isPaused,
+            'fifth darken-3 white--text': !isPaused,
           }"
         >
           <h2 class="font-shadow">Pause</h2>
@@ -298,6 +298,9 @@ export default {
     isDisabled() {
       return this.$store.getters.matchData.isDisabled;
     },
+    isBusy() {
+      return this.$store.getters.matchData.isBusy;
+    },
     //game
     isAdvancingDate() {
       return this.$store.getters.isAdvancingDate;
@@ -351,24 +354,32 @@ export default {
   methods: {
     //ui
     keyPress(e) {
-      e.preventDefault();
       // timeout here for the islive stuff
       if (e.code == 'Space') {
-        if (this.isLive) {
-          if (this.isBetweenRounds) {
-            this.$store.dispatch('toggleControlStartRound');
+        e.preventDefault();
+        console.log(this.isBusy);
+        if (!this.isBusy) {
+          this.$store.dispatch('setIsBusy', true);
+
+          if (this.isLive) {
+            if (this.isBetweenRounds) {
+              this.$store.dispatch('toggleControlStartRound');
+            }
+            if (!this.isDisabled && !this.isBetweenRounds && !this.isFullTime) {
+              this.$store.dispatch('toggleControlGetOn');
+            }
+            if (this.isDisabled && !this.isBetweenRounds && !this.isFullTime) {
+              this.$store.dispatch('toggleControlTogglePause');
+            }
+            if (this.isFullTime) {
+              this.$store.dispatch('toggleControlEndMatch');
+            }
+          } else {
+            this.continue();
           }
-          if (!this.isDisabled && !this.isBetweenRounds && !this.isFullTime) {
-            this.$store.dispatch('toggleControlGetOn');
-          }
-          if (this.isDisabled && !this.isBetweenRounds && !this.isFullTime) {
-            this.$store.dispatch('toggleControlTogglePause');
-          }
-          if (this.isFullTime) {
-            this.$store.dispatch('toggleControlEndMatch');
-          }
-        } else {
-          this.continue();
+          setTimeout(() => {
+            this.$store.dispatch('setIsBusy', false);
+          }, 250);
         }
       }
     },
@@ -786,5 +797,14 @@ a {
 }
 ::-webkit-scrollbar-corner {
   opacity: 0;
+}
+
+.v-tab {
+  text-transform: none !important;
+  cursor: pointer !important;
+}
+.v-btn {
+  text-transform: none !important;
+  cursor: pointer !important;
 }
 </style>

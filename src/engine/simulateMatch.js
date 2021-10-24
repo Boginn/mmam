@@ -328,7 +328,12 @@ export default {
         let outcome = matchEngine.engage(attackMethod, attacker, defender);
         console.log(outcome);
         //count activity
-        matchBrain.countActivity(ring, outcome, isHomeAttack, ringActivity);
+        ringActivity = matchBrain.countActivity(
+          ring,
+          outcome,
+          isHomeAttack,
+          ringActivity
+        );
 
         //OUTCOME
         //sort out the outcome,
