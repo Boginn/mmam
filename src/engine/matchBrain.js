@@ -67,6 +67,7 @@ export default {
     };
   },
   tallyPoints(ring, outcome, isHomeAttack, ringTruePoints, round) {
+    console.log(ringTruePoints);
     const truePoints = ringTruePoints;
     const {
       ringTruePointsLeft,

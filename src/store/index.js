@@ -16,6 +16,12 @@ export default new Vuex.Store({
     lastSelectedNewsItem: null,
     isAdvancingDate: false,
     isPostMatch: false,
+    control: {
+      startRound: false,
+      getOn: false,
+      endMatch: false,
+      togglePause: false,
+    },
 
     //resources
     league: [],
@@ -151,6 +157,9 @@ export default new Vuex.Store({
     isPostMatch(state) {
       return state.isPostMatch;
     },
+    control(state) {
+      return state.control;
+    },
     //matchData
 
     matchData(state) {
@@ -267,9 +276,24 @@ export default new Vuex.Store({
   },
 
   actions: {
+    //ui
     toggleNextUnread(context, payload) {
       context.commit('TOGGLE_NEXT_UNREAD', payload);
     },
+
+    toggleControlStartRound(context) {
+      context.commit('TOGGLE_CONTROL_START_ROUND');
+    },
+    toggleControlGetOn(context) {
+      context.commit('TOGGLE_CONTROL_GET_ON');
+    },
+    toggleControlEndMatch(context) {
+      context.commit('TOGGLE_CONTROL_END_MATCH');
+    },
+    toggleControlTogglePause(context) {
+      context.commit('TOGGLE_CONTROL_TOGGLE_PAUSE');
+    },
+
     // game
     setIsAdvancingDate(context, payload) {
       context.commit('SET_IS_ADVANCING_DATE', payload);
@@ -495,6 +519,18 @@ export default new Vuex.Store({
     //ui
     TOGGLE_NEXT_UNREAD(state) {
       state.toggleNextUnread = !state.toggleNextUnread;
+    },
+    TOGGLE_CONTROL_START_ROUND(state) {
+      state.control.startRound = !state.control.startRound;
+    },
+    TOGGLE_CONTROL_GET_ON(state) {
+      state.control.getOn = !state.control.getOn;
+    },
+    TOGGLE_CONTROL_END_MATCH(state) {
+      state.control.endMatch = !state.control.endMatch;
+    },
+    TOGGLE_CONTROL_TOGGLE_PAUSE(state) {
+      state.control.togglePause = !state.control.togglePause;
     },
     //game
     SET_IS_ADVANCING_DATE(state, payload) {

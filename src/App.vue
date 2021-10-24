@@ -67,31 +67,79 @@
       <router-view />
     </v-main>
     <v-bottom-navigation app style="width: 100%">
-      <!-- TODO Make this button also function as geton in match and a confirm to go to match -->
+      <!-- Various continue buttons -->
+
       <span
         v-if="!isMatchday"
         @click="this.continue"
-        class=" d-flex align-center justify-center green darken-3 font-shadow"
+        class="continue-btn font-shadow green darken-3"
         v-bind:class="{
           'grey darken-3 grey--text': isAdvancingDate,
         }"
-        style="width: 100%; height: 56px; cursor: pointer;"
       >
         <h2 class="font-shadow">Continue</h2>
       </span>
 
+      <!-- tactics before match -->
       <span
-        v-if="isMatchday"
+        v-if="isMatchday && !isLive"
         @click="this.continue"
-        class=" d-flex align-center justify-center font-shadow"
+        class="continue-btn font-shadow"
         v-bind:class="{
           'cyan darken-3 yellow--text': !checkTactic(),
           'green darken-3 white--text': checkTactic(),
         }"
-        style="width: 100%; height: 56px; cursor: pointer;"
       >
         <h2 class="font-shadow" v-if="!checkTactic()">Match Day</h2>
         <h2 class="font-shadow" v-else>Proceed to Match</h2>
+      </span>
+
+      <!-- match continue buttons -->
+      <span v-if="isLive" class="continue-btn">
+        <!-- Match/startRound() -->
+        <span
+          v-if="isBetweenRounds && !isFullTime"
+          @click="
+            $store.dispatch('toggleControlStartRound', !controlStartRound)
+          "
+          class="continue-btn font-shadow lime darken-3"
+        >
+          <h2 class="font-shadow">Start Round</h2>
+        </span>
+
+        <span
+          v-if="!isDisabled && !isBetweenRounds && !isFullTime"
+          @click="$store.dispatch('toggleControlGetOn', !controlGetOn)"
+          class="continue-btn font-shadow"
+          v-bind:class="{
+            'green darken-3 white--text': isPaused,
+            'orange darken-3 white--text': !isPaused,
+          }"
+        >
+          <h2 class="font-shadow">Get On</h2>
+        </span>
+
+        <span
+          v-if="isDisabled && !isBetweenRounds && !isFullTime"
+          @click="
+            $store.dispatch('toggleControlTogglePause', !controlTogglePause)
+          "
+          class="continue-btn font-shadow"
+          v-bind:class="{
+            'green darken-3 white--text': isPaused,
+            'orange darken-3 white--text': !isPaused,
+          }"
+        >
+          <h2 class="font-shadow">Pause</h2>
+        </span>
+
+        <span
+          v-if="isFullTime"
+          @click="$store.dispatch('toggleControlEndMatch', !controlEndMatch)"
+          class="continue-btn font-shadow teal darken-3"
+        >
+          <h2 class="font-shadow">End Match</h2>
+        </span>
       </span>
     </v-bottom-navigation>
   </v-app>
@@ -226,6 +274,30 @@ export default {
         return `${place}th`;
       }
     },
+    controlStartRound() {
+      return this.$store.getters.control.startRound;
+    },
+    controlGetOn() {
+      return this.$store.getters.control.getOn;
+    },
+    controlEndMatch() {
+      return this.$store.getters.control.endMatch;
+    },
+    controlTogglePause() {
+      return this.$store.getters.control.togglePause;
+    },
+    isBetweenRounds() {
+      return this.$store.getters.matchData.isBetweenRounds;
+    },
+    isFullTime() {
+      return this.$store.getters.matchData.isFullTime;
+    },
+    isPaused() {
+      return this.$store.getters.matchData.isPaused;
+    },
+    isDisabled() {
+      return this.$store.getters.matchData.isDisabled;
+    },
     //game
     isAdvancingDate() {
       return this.$store.getters.isAdvancingDate;
@@ -280,9 +352,24 @@ export default {
     //ui
     keyPress(e) {
       e.preventDefault();
+      // timeout here for the islive stuff
       if (e.code == 'Space') {
-        console.log(e);
-        this.continue();
+        if (this.isLive) {
+          if (this.isBetweenRounds) {
+            this.$store.dispatch('toggleControlStartRound');
+          }
+          if (!this.isDisabled && !this.isBetweenRounds && !this.isFullTime) {
+            this.$store.dispatch('toggleControlGetOn');
+          }
+          if (this.isDisabled && !this.isBetweenRounds && !this.isFullTime) {
+            this.$store.dispatch('toggleControlTogglePause');
+          }
+          if (this.isFullTime) {
+            this.$store.dispatch('toggleControlEndMatch');
+          }
+        } else {
+          this.continue();
+        }
       }
     },
 
@@ -342,8 +429,11 @@ export default {
 
     // game loop
     continue() {
-      if (this.checkTactic() && this.$router.currentRoute.path == '/tactics') {
-        console.log('hp');
+      if (
+        this.checkTactic() &&
+        this.$router.currentRoute.path == '/tactics' &&
+        this.isMatchday
+      ) {
         this.$router.push(`/match/${this.currentMatch}`);
         return;
       }
@@ -659,6 +749,14 @@ export default {
 </script>
 
 <style>
+.continue-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 56px;
+  cursor: pointer;
+}
 .code {
   font-family: 'Courier New', Courier, monospace;
 }

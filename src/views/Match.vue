@@ -44,6 +44,8 @@
               <v-btn class="primary timestampbtn">
                 {{ timestamp }}
               </v-btn>
+
+              <!-- start round / get on -->
               <v-btn
                 class="controlbtn"
                 :disabled="isFullTime"
@@ -60,6 +62,7 @@
               >
                 Get on
               </v-btn>
+              <!-- end match / pause -->
               <v-btn
                 class="controlbtn rightmostbtn secondary"
                 v-if="isFullTime"
@@ -71,7 +74,7 @@
                 class="controlbtn rightmostbtn fifth"
                 v-if="!isFullTime"
                 :disabled="isPaused"
-                @click="isPaused = !isPaused"
+                @click="togglePause()"
               >
                 Pause
               </v-btn>
@@ -196,8 +199,9 @@ export default {
   created() {
     if (!this.isLive) {
       this.ringTruePoints = matchBrain.seedRoundsToPointCounters(this.rounds);
+      console.log(this.ringTruePoints);
       this.resetFighterMatchStats();
-      this.assignJudges();
+      this.setJudges();
       this.setTactics();
       this.$store.dispatch('setNames', this.names);
       this.$store.dispatch('setIsLive', true);
@@ -209,6 +213,18 @@ export default {
   },
 
   watch: {
+    controlStartRound() {
+      this.startRound();
+    },
+    controlGetOn() {
+      this.getOn();
+    },
+    controlEndMatch() {
+      this.endMatch();
+    },
+    controlTogglePause() {
+      this.togglePause();
+    },
     cards() {
       if (this.isDecision) {
         this.commitFighterForm(
@@ -236,13 +252,13 @@ export default {
 
   data: () => ({
     //bools
-    isFullTime: false,
-    isBetweenRounds: true,
-    isHomeAttack: true,
-    isDisabled: false,
-    isPaused: false,
-    isDecision: false,
-    isScored: false,
+    // isFullTime: false,
+    // isBetweenRounds: true,
+    // isHomeAttack: true,
+    // isDisabled: false,
+    // isPaused: false,
+    // isDecision: false,
+    // isScored: false,
 
     //x, y minute rounds
     rounds: [1, 2, 3],
@@ -318,9 +334,46 @@ export default {
   }),
 
   computed: {
+    controlStartRound() {
+      return this.$store.getters.control.startRound;
+    },
+    controlGetOn() {
+      return this.$store.getters.control.getOn;
+    },
+    controlEndMatch() {
+      return this.$store.getters.control.endMatch;
+    },
+    controlTogglePause() {
+      return this.$store.getters.control.togglePause;
+    },
+
     selectedClubId() {
       return this.$store.getters.selectedClubId;
     },
+
+    //matchdata
+    isFullTime() {
+      return this.$store.getters.matchData.isFullTime;
+    },
+    isBetweenRounds() {
+      return this.$store.getters.matchData.isBetweenRounds;
+    },
+    isHomeAttack() {
+      return this.$store.getters.matchData.isHomeAttack;
+    },
+    isDisabled() {
+      return this.$store.getters.matchData.isDisabled;
+    },
+    isPaused() {
+      return this.$store.getters.matchData.isPaused;
+    },
+    isDecision() {
+      return this.$store.getters.matchData.isDecision;
+    },
+    isScored() {
+      return this.$store.getters.matchData.isScored;
+    },
+
     //match
 
     substitutionAvailable() {
@@ -561,7 +614,7 @@ export default {
     //     });
     //   });
     // },
-    assignJudges() {
+    setJudges() {
       const {
         ringJudgesLeft,
         ringJudgesCenter,
@@ -605,6 +658,9 @@ export default {
     },
     getFighter(id) {
       return this.$store.getters.getFighterById(id);
+    },
+    togglePause() {
+      this.$store.dispatch('setIsPaused', !this.isPaused);
     },
 
     archiveMatch() {
@@ -802,7 +858,7 @@ export default {
     //basics
     testEnd() {
       // this.isDecision = true;
-      this.isFullTime = true;
+      this.$store.dispatch('setIsFullTime', true);
       this.decision();
     },
     endMatch() {
@@ -811,21 +867,29 @@ export default {
       this.tabs.splice(3, 4);
       this.selectTab(0);
       this.archiveMatch();
+
+      // clean up
       this.$store.dispatch('setIsLive', false);
       this.$store.dispatch('setIsMatchday', false);
       this.$store.dispatch('setIsPostMatch', true);
-      this.$router.push('/fixtures');
+      this.$store.dispatch('setIsFullTime', false);
+      this.$store.dispatch('setIsDisabled', false);
+      this.$store.dispatch('setIsPaused', false);
+      this.$store.dispatch('setIsDecision', false);
+      this.$store.dispatch('setIsScored', false);
 
       //reset scorebanner
       this.$store.dispatch('setScore', { home: 0, away: 0 });
       this.$store.dispatch('setNames', { home: '', away: '' });
+
+      this.$router.push('/fixtures');
     },
 
     endRound() {
-      this.isBetweenRounds = true;
+      this.$store.dispatch('setIsBetweenRounds', true);
       if (this.round == this.rounds.length) {
         //decision
-        this.isFullTime = true;
+        this.$store.dispatch('setIsFullTime', true);
         this.decision();
       }
       this.$store.dispatch(
@@ -835,7 +899,7 @@ export default {
     },
     startRound() {
       this.round++;
-      this.isBetweenRounds = false;
+      this.$store.dispatch('setIsBetweenRounds', false);
       this.$store.dispatch('addMatchMessage', `Round ${this.round} Fight!`);
       setTimeout(() => {
         if (!this.isFullTime) {
@@ -973,7 +1037,7 @@ export default {
 
         this.$store.dispatch('setScore', score);
 
-        this.isScored = true;
+        this.$store.dispatch('setIsScored', true);
       }
     },
     commitFighterForm(home, away, cards) {
@@ -1025,8 +1089,8 @@ export default {
       if (this.pendingSub) {
         this.makeSubstitution();
       }
-      this.isDisabled = true;
-      this.isPaused = false;
+      this.$store.dispatch('setIsDisabled', true);
+      this.$store.dispatch('setIsPaused', false);
       this.second = matchEngine.rollEvent(this.second, this.happenChance);
       if (this.second >= 59) {
         this.minute++;
@@ -1080,11 +1144,11 @@ export default {
 
         if (homeInitiative >= awayInitiative) {
           //tiniest home advantage
-          this.isHomeAttack = true;
+          this.$store.dispatch('setIsHomeAttack', true);
           attacker = home;
           defender = away;
         } else {
-          this.isHomeAttack = false;
+          this.$store.dispatch('setIsBetweenRounds', false);
           attacker = away;
           defender = home;
         }
@@ -1170,6 +1234,7 @@ export default {
             this.ringTruePoints,
             this.round
           );
+          console.log(this.ringTruePoints);
         }
 
         //SUBSTITUTION
@@ -1178,15 +1243,18 @@ export default {
           this.substitutionAvailable &&
           !this.isFullTime
         ) {
-          this.substitutionMade = true;
-          this.pendingSub = true; //triggers makeSubstitution at the beginning of getOn()
-          this.isPaused = true;
-          this.isDisabled = false;
+          this.$store.dispatch('setSubstitutionMade', true);
+
+          this.$store.dispatch('setPendingSub', true); //triggers makeSubstitution at the beginning of getOn()
+          this.$store.dispatch('setIsPaused', true);
+          this.$store.dispatch('setIsDisabled', false);
+          // this.$store.dispatch('setIsPaused', true);
+          // this.$store.dispatch('setIsDisabled', false);
         }
 
         // enable button / loop
         setTimeout(() => {
-          this.isDisabled = false;
+          this.$store.dispatch('setIsDisabled', false);
           if (!this.isFullTime) {
             if (!this.isPaused) {
               this.getOn();
@@ -1223,7 +1291,7 @@ export default {
       timeoutIntervalMultiplier += 0.1;
 
       if (fighterResult.finished) {
-        this.isPaused = true;
+        this.$store.dispatch('setIsPaused', true);
         fighter.match.finished = true;
         this.getFighter(winner.id).match.finishes++;
         setTimeout(() => {
@@ -1257,7 +1325,7 @@ export default {
             this.finishes.home++;
             if (this.awaySubs.length == 0) {
               score.home += 3;
-              this.isFullTime = true;
+              this.$store.dispatch('setIsFullTime', true);
 
               // sets this.decisions
               this.ringDecisions = matchBrain.scoreRounds(
@@ -1267,7 +1335,7 @@ export default {
 
               setTimeout(() => {
                 this.$store.dispatch('addMatchMessage', msg);
-                this.isDisabled = false;
+                this.$store.dispatch('setIsDisabled', false);
               }, this.timeoutInterval * timeoutIntervalMultiplier);
             }
 
@@ -1279,7 +1347,7 @@ export default {
             this.finishes.away++;
             if (this.homeSubs.length == 0) {
               score.away += 3;
-              this.isFullTime = true;
+              this.$store.dispatch('setIsFullTime', true);
 
               // sets this.decisions
               this.ringDecisions = matchBrain.scoreRounds(
@@ -1289,7 +1357,7 @@ export default {
 
               setTimeout(() => {
                 this.$store.dispatch('addMatchMessage', msg);
-                this.isDisabled = false;
+                this.$store.dispatch('setIsDisabled', false);
               }, this.timeoutInterval * timeoutIntervalMultiplier);
             }
             // if (!this.homeSubs.length) {
