@@ -109,7 +109,7 @@ export const singleLeg = (action, attacker, defender) => {
     //success
 
     //grappling:
-    def.save = true;
+    def.grappled = true;
 
     // degree of success
     if (eng.getDifference(finalAttack, finalDefend) >= 15) {

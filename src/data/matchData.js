@@ -114,6 +114,10 @@ export default {
 
   compose: { text: 'Compose', value: 'compose' },
 
+  hold: { text: 'Hold', value: 'hold' },
+
+  submission: { text: 'Submission', value: 'submission' },
+
   grapple: {
     takedown: [
       { text: 'Single Leg', value: 'singleLeg' },
@@ -128,6 +132,10 @@ export default {
       { text: 'Knee', value: 'knee' },
       { text: 'Elbow', value: 'elbow' },
     ],
+    // submissions: [
+    //   { text: '', value: '' },
+    //   { text: '', value: '' },
+    // ],
   },
 
   strike: {

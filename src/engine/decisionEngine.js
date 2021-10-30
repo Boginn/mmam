@@ -58,15 +58,15 @@ export default {
     return result;
   },
 
-  countScore(cards, ringFinishedLeft, ringFinishedRight) {
+  countScore(cards, ringFinishedLeft, ringFinishedRight, clubNames) {
     let result = { home: 0, away: 0 };
-    let messager = function(winner, loser) {
+    let messager = function(winner, loser, name) {
       if (loser == 0 && winner == 3) {
-        return 'Unanimous Decision';
+        return `Unanimous Decision for ${name}`;
       } else if (loser == 0 || winner == 1) {
-        return 'Majority Decision';
+        return `Majority Decision for ${name}`;
       } else {
-        return 'Split Decision';
+        return `Split Decision for ${name}`;
       }
     };
 
@@ -85,10 +85,10 @@ export default {
       if (homeCount != awayCount) {
         if (homeCount > awayCount) {
           result.home += 1;
-          cards.leftMsg = messager(homeCount, awayCount);
+          cards.leftMsg = messager(homeCount, awayCount, clubNames.home);
         } else {
           result.away += 1;
-          cards.leftMsg = messager(awayCount, homeCount);
+          cards.leftMsg = messager(awayCount, homeCount, clubNames.away);
         }
       } else {
         cards.leftMsg = 'Draw';
@@ -114,10 +114,10 @@ export default {
       if (homeCount != awayCount) {
         if (homeCount > awayCount) {
           result.home += 1;
-          cards.rightMsg = messager(homeCount, awayCount);
+          cards.rightMsg = messager(homeCount, awayCount, clubNames.home);
         } else {
           result.away += 1;
-          cards.rightMsg = messager(awayCount, homeCount);
+          cards.rightMsg = messager(awayCount, homeCount, clubNames.away);
         }
       } else {
         cards.rightMsg = 'Draw';
@@ -150,10 +150,10 @@ export default {
     } else {
       if (homeCount > awayCount) {
         result.home += 2;
-        cards.centerMsg = messager(homeCount, awayCount);
+        cards.centerMsg = messager(homeCount, awayCount, clubNames.home);
       } else {
         result.away += 2;
-        cards.centerMsg = messager(awayCount, homeCount);
+        cards.centerMsg = messager(awayCount, homeCount, clubNames.away);
       }
     }
     //save

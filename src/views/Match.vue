@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <div class="ma-10">
     <!-- floating -->
 
     <!-- <v-container
@@ -87,6 +87,7 @@
 
             <JudgesCard
               v-if="isTabJudgesCard"
+              :clubNames="names"
               :decisions="decisions"
               :judges="judges"
               :rounds="rounds"
@@ -110,7 +111,7 @@
         <Commentary :messages="messages" />
       </v-col>
     </v-row>
-  </v-container>
+  </div>
 </template>
 
 <script>
@@ -164,6 +165,34 @@ export default {
 
   beforeDestroy() {
     console.log('destroying');
+
+    if (this.isFullTime) {
+      // clean up
+      this.$store.dispatch(
+        'setRingTruePoints',
+        matchBrain.seedRoundsToPointCounters(this.rounds)
+      );
+      this.$store.dispatch('setIsFullTime', false);
+      this.$store.dispatch('setIsDisabled', false);
+      this.$store.dispatch('setIsPaused', false);
+      this.$store.dispatch('setIsDecision', false);
+
+      this.$store.dispatch('setRound', 0);
+      this.$store.dispatch('setRingJudges', {
+        ringJudgesLeft: [],
+        ringJudgesCenter: [],
+        ringJudgesRight: [],
+      });
+
+      //reset scorebanner
+      this.$store.dispatch('setScore', { home: 0, away: 0 });
+      this.$store.dispatch('setNames', { home: '', away: '' });
+
+      this.$store.dispatch('setIsScored', false);
+      this.$store.dispatch('setIsLive', false);
+      this.$store.dispatch('setIsMatchday', false);
+      this.$store.dispatch('setIsPostMatch', true);
+    }
   },
 
   watch: {
@@ -209,66 +238,6 @@ export default {
   data: () => ({
     //ui
     tabs: data.tabs.match,
-
-    // happenChance: 11,
-
-    // //match data
-    // homeTactic: {},
-    // awayTactic: {},
-    // homeSubs: [],
-    // awaySubs: [],
-
-    // score: {
-    //   home: 0,
-    //   away: 0,
-    // },
-
-    // substitutionMade: false,
-    // pendingSub: false,
-    // ringActivity: [
-    //   {
-    //     home: 0,
-    //     away: 0,
-    //     homeSignificant: 0,
-    //     awaySignificant: 0,
-    //   },
-    //   {
-    //     home: 0,
-    //     away: 0,
-    //     homeSignificant: 0,
-    //     awaySignificant: 0,
-    //   },
-    //   {
-    //     home: 0,
-    //     away: 0,
-    //     homeSignificant: 0,
-    //     awaySignificant: 0,
-    //   },
-    // ],
-
-    // ringFinishedLeft: false,
-    // ringFinishedCenter: false,
-    // ringFinishedRight: false,
-
-    // ringDecisions: {
-    //   ringDecisionLeft: undefined,
-    //   ringDecisionCenter: undefined,
-    //   ringDecisionRight: undefined,
-    // },
-
-    // ringJudges: {
-    //   ringJudgesLeft: [],
-    //   ringJudgesCenter: [],
-    //   ringJudgesRight: [],
-    // },
-    // ringTruePoints: {
-    //   ringTruePointsLeft: [],
-    //   ringTruePointsCenter: [],
-    //   ringTruePointsRight: [],
-    // },
-
-    // cards: {},
-    // finishes: { home: 0, away: 0 },
   }),
 
   computed: {
@@ -666,7 +635,7 @@ export default {
 
     //services
     setIntervalFast() {
-      this.$store.dispatch('setTimeoutInterval', 200);
+      this.$store.dispatch('setTimeoutInterval', 350);
     },
     setIntervalSlow() {
       this.$store.dispatch('setTimeoutInterval', 750);
@@ -893,24 +862,6 @@ export default {
       this.archiveMatch();
 
       // setTimeout(() => {
-      // clean up
-      this.$store.dispatch(
-        'setRingTruePoints',
-        matchBrain.seedRoundsToPointCounters(this.rounds)
-      );
-      this.$store.dispatch('setIsFullTime', false);
-      this.$store.dispatch('setIsDisabled', false);
-      this.$store.dispatch('setIsPaused', false);
-      this.$store.dispatch('setIsDecision', false);
-
-      //reset scorebanner
-      this.$store.dispatch('setScore', { home: 0, away: 0 });
-      this.$store.dispatch('setNames', { home: '', away: '' });
-
-      this.$store.dispatch('setIsScored', false);
-      this.$store.dispatch('setIsLive', false);
-      this.$store.dispatch('setIsMatchday', false);
-      this.$store.dispatch('setIsPostMatch', true);
 
       this.$router.push('/fixtures');
       // }, 500);
@@ -999,38 +950,7 @@ export default {
       this.$store.dispatch('setPendingSub', false);
     },
 
-    //scoring/points/counting
-    // scoreRounds(ringTruePoints, ringJudges, ringDecisions) {
-    //   const {
-    //     ringTruePointsLeft,
-    //     ringTruePointsCenter,
-    //     ringTruePointsRight,
-    //   } = this.ringTruePoints;
-    //   const {
-    //     ringJudgesLeft,
-    //     ringJudgesCenter,
-    //     ringJudgesRight,
-    //   } = this.ringJudges;
-
-    //   // sets this.decisions
-    //   this.ringDecisions.ringDecisionLeft = decisionEngine.scoreRounds(
-    //     ringJudgesLeft,
-    //     ringTruePointsLeft
-    //   );
-    //   this.ringDecisions.ringDecisionCenter = decisionEngine.scoreRounds(
-    //     ringJudgesCenter,
-    //     ringTruePointsCenter
-    //   );
-    //   this.ringDecisions.ringDecisionRight = decisionEngine.scoreRounds(
-    //     ringJudgesRight,
-    //     ringTruePointsRight
-    //   );
-    // },
     decision() {
-      // this.ringDecisions = matchBrain.scoreRounds(
-      //   this.ringTruePoints,
-      //   this.ringJudges
-      // );
       this.$store.dispatch(
         'setRingDecisions',
         matchBrain.scoreRounds(this.ringTruePoints, this.ringJudges)
@@ -1242,7 +1162,7 @@ export default {
         }, this.timeoutInterval); // INTERVAL
 
         //pick method of attack
-        let attackMethod = matchEngine.pickMethodAttack(attacker);
+        let attackMethod = matchEngine.pickMethodAttack(attacker, defender);
         let outcome = matchEngine.engage(attackMethod, attacker, defender);
         console.log(outcome);
 
@@ -1575,91 +1495,6 @@ export default {
         }, 250);
       }, 250);
     },
-
-    // updateFighterMatchStats(attacker, defender, outcome) {
-    //   const { att, def } = outcome;
-    //   attacker.match.condition -= att.damage;
-    //   attacker.match.exposed += att.exposed;
-    //   attacker.match.learned += att.learned;
-    //   attacker.match.momentum = att.momentum;
-    //   attacker.match.save = att.save;
-    //   attacker.match.dc = att.dc;
-
-    //   attacker.match.exposed = matchEngine.stayPercentage(
-    //     attacker.match.exposed
-    //   );
-    //   attacker.match.learned = matchEngine.stayPercentage(
-    //     attacker.match.learned
-    //   );
-    //   attacker.match.condition = matchEngine.stayPercentage(
-    //     attacker.match.condition
-    //   );
-
-    //   defender.match.condition -= def.damage;
-    //   defender.match.exposed += def.exposed;
-    //   defender.match.learned += def.learned;
-    //   defender.match.momentum = def.momentum;
-    //   defender.match.save = def.save;
-    //   defender.match.dc = def.dc;
-
-    //   defender.match.exposed = matchEngine.stayPercentage(
-    //     defender.match.exposed
-    //   );
-    //   defender.match.learned = matchEngine.stayPercentage(
-    //     defender.match.learned
-    //   );
-    //   defender.match.condition = matchEngine.stayPercentage(
-    //     defender.match.condition
-    //   );
-    // },
-
-    // tallyPoints(ring, outcome, isHomeAttack, ringTruePoints) {
-    //   const {
-    //     ringTruePointsLeft,
-    //     ringTruePointsCenter,
-    //     ringTruePointsRight,
-    //   } = this.ringTruePoints;
-    //   if (ring == 1) {
-    //     // LEFT
-    //     if (this.isHomeAttack) {
-    //       ringTruePointsLeft[this.round - 1].home += 1;
-    //       if (outcome.significant) {
-    //         ringTruePointsLeft[this.round - 1].homeSignificant += 1;
-    //       }
-    //     } else {
-    //       ringTruePointsLeft[this.round - 1].away += 1;
-    //       if (outcome.significant) {
-    //         ringTruePointsLeft[this.round - 1].awaySignificant += 1;
-    //       }
-    //     }
-    //   } else if (ring == 2) {
-    //     // CENTER
-    //     if (this.isHomeAttack) {
-    //       ringTruePointsCenter[this.round - 1].home += 1;
-    //       if (outcome.significant) {
-    //         ringTruePointsCenter[this.round - 1].homeSignificant += 1;
-    //       }
-    //     } else {
-    //       ringTruePointsCenter[this.round - 1].away += 1;
-    //       if (outcome.significant) {
-    //         ringTruePointsCenter[this.round - 1].awaySignificant += 1;
-    //       }
-    //     }
-    //   } else if (ring == 3) {
-    //     // RIGHT
-    //     if (this.isHomeAttack) {
-    //       ringTruePointsRight[this.round - 1].home += 1;
-    //       if (outcome.significant) {
-    //         ringTruePointsRight[this.round - 1].homeSignificant += 1;
-    //       }
-    //     } else {
-    //       ringTruePointsRight[this.round - 1].away += 1;
-    //       if (outcome.significant) {
-    //         ringTruePointsRight[this.round - 1].awaySignificant += 1;
-    //       }
-    //     }
-    //   }
-    // },
   },
 };
 </script>

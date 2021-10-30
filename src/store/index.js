@@ -325,9 +325,9 @@ export default new Vuex.Store({
     seedTrainingSchedules(context, payload) {
       context.commit('SEED_TRAINING_SCHEDULES', payload);
     },
-    setLive(context, payload) {
-      context.commit('SET_LIVE', payload);
-    },
+    // setLive(context, payload) {
+    //   context.commit('SET_LIVE', payload);
+    // },
 
     //match
     setIsLive(context, payload) {
@@ -600,9 +600,9 @@ export default new Vuex.Store({
         club.training.schedule = payload;
       });
     },
-    SET_LIVE(state, payload) {
-      state.live = payload;
-    },
+    // SET_LIVE(state, payload) {
+    //   state.live = payload;
+    // },
 
     //match
     SET_IS_LIVE(state, payload) {

@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <div class="ma-10">
     <v-row class="mt-5">
       <v-col>
         <v-data-table
@@ -371,8 +371,7 @@
         </v-col>
       </v-col>
     </v-row>
-    <v-row class="mt-5 justify-center"> </v-row>
-  </v-container>
+  </div>
 </template>
 
 <script>

@@ -45,7 +45,7 @@ For now it rolls against the list of takedowns(singleLeg, doubleLeg, hipToss etc
  ```
 Striking does more damage, and exposes the striker, more than grappling.
 Grappling stalls the fight but can lead to submissions too.
-After a successful grapple action the defender gets flagged for having to save the next time he gets initiative (defender.match.save = true).
+After a successful grapple action the defender gets flagged for having to save the next time he gets initiative (defender.match.grappled = true).
 ```
 
 <hr>

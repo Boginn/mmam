@@ -7,7 +7,14 @@
       class="ma-0"
     />
 
-    <v-app-bar app class="abcolor " dark v-else>
+    <SystemBar
+      :displayDate="displayDate"
+      :selectedClubId="selectedClubId"
+      :match="match"
+      v-else
+    />
+
+    <!-- <v-app-bar app class="abcolor " dark v-else>
       <img alt="logo" src="./assets/logo.png" />
       <router-link :to="`/`" class="ml-5">
         <v-btn :disabled="isMatchday" class="primary">
@@ -45,13 +52,7 @@
           ><span> &rarr;</span>
         </v-btn>
 
-        <!-- <v-btn
-          class="green darken-3"
-          :disabled="isMatchday || isAdvancingDate"
-          @click="this.continue"
-          ><span v-if="isMatchday"> Match Day</span>
-          <span v-else>Continue</span></v-btn
-        > -->
+
         <span class="text-center ml-5 title font-shadow " v-if="isDeveloper">
           <span class="grey--text"> Date:</span> <b> {{ day }}</b
           ><span class="grey--text"> displayDate:</span>
@@ -61,87 +62,13 @@
           <b class="code">{{ displayDate }}</b>
         </span>
       </v-col>
-    </v-app-bar>
+    </v-app-bar> -->
 
     <v-main class="bgcolor">
       <router-view />
     </v-main>
-    <v-bottom-navigation app style="width: 100%">
-      <!-- Various continue buttons -->
 
-      <span
-        v-if="!isMatchday"
-        @click="this.continue"
-        class="continue-btn font-shadow green darken-3"
-        v-bind:class="{
-          'grey darken-3 grey--text': isAdvancingDate,
-        }"
-      >
-        <h2 class="font-shadow">Continue</h2>
-      </span>
-
-      <!-- tactics before match -->
-      <span
-        v-if="isMatchday && !isLive"
-        @click="this.continue"
-        class="continue-btn font-shadow"
-        v-bind:class="{
-          'cyan darken-3 yellow--text': !checkTactic(),
-          'green darken-3 white--text': checkTactic(),
-        }"
-      >
-        <h2 class="font-shadow" v-if="!checkTactic()">Match Day</h2>
-        <h2 class="font-shadow" v-else>Proceed to Match</h2>
-      </span>
-
-      <!-- match continue buttons -->
-      <span v-if="isLive" class="continue-btn">
-        <!-- Match/startRound() -->
-        <span
-          v-if="isBetweenRounds && !isFullTime"
-          @click="
-            $store.dispatch('toggleControlStartRound', !controlStartRound)
-          "
-          class="continue-btn font-shadow lime darken-3"
-        >
-          <h2 class="font-shadow">Start Round</h2>
-        </span>
-
-        <span
-          v-if="!isDisabled && !isBetweenRounds && !isFullTime"
-          @click="$store.dispatch('toggleControlGetOn', !controlGetOn)"
-          class="continue-btn font-shadow"
-          v-bind:class="{
-            'green darken-3 white--text': isPaused,
-            'fifth darken-3 white--text': !isPaused,
-          }"
-        >
-          <h2 class="font-shadow">Get On</h2>
-        </span>
-
-        <span
-          v-if="isDisabled && !isBetweenRounds && !isFullTime"
-          @click="
-            $store.dispatch('toggleControlTogglePause', !controlTogglePause)
-          "
-          class="continue-btn font-shadow"
-          v-bind:class="{
-            'green darken-3 white--text': isPaused,
-            'fifth darken-3 white--text': !isPaused,
-          }"
-        >
-          <h2 class="font-shadow">Pause</h2>
-        </span>
-
-        <span
-          v-if="isFullTime"
-          @click="$store.dispatch('toggleControlEndMatch', !controlEndMatch)"
-          class="continue-btn font-shadow teal darken-3"
-        >
-          <h2 class="font-shadow">End Match</h2>
-        </span>
-      </span>
-    </v-bottom-navigation>
+    <BottomBar @checkTactics="checkTacics()" @continue="this.continue" />
   </v-app>
 </template>
 
@@ -149,58 +76,60 @@
 import classes from '@/data/classes.js';
 import engine from '@/engine/engine.js';
 import data from '@/data/data.js';
-import ButtonsSmall from '@/components/ButtonsSmall.vue';
 import ScoreBanner from '@/components/Match/ScoreBanner.vue';
 import matchData from '@/data/matchData.js';
 import simulateMatch from '@/engine/simulateMatch.js';
+import BottomBar from '@/navbars/BottomBar.vue';
+import SystemBar from '@/navbars/SystemBar.vue';
 
 export default {
   name: 'App',
   components: {
-    ButtonsSmall,
     ScoreBanner,
+    BottomBar,
+    SystemBar,
   },
 
   created() {
     window.addEventListener('keydown', (e) => this.keyPress(e));
 
-    if (!this.live) {
-      engine.initialize(
-        this.idCodes.fighter,
-        this.idCodes.club,
-        this.idCodes.staff
-      );
+    // if (!this.live) {
+    engine.initialize(
+      this.idCodes.fighter,
+      this.idCodes.club,
+      this.idCodes.staff
+    );
 
-      this.date = this.getDate;
-      this.displayDate = engine.arrangeDate(this.splitDate);
+    this.date = this.getDate;
+    this.displayDate = engine.arrangeDate(this.splitDate);
 
-      this.seedRoster(this.selectedRoster);
-      this.seedLeague(this.selectedLeague);
-      this.seedCommission();
-      this.seedStaff();
+    this.seedRoster(this.selectedRoster);
+    this.seedLeague(this.selectedLeague);
+    this.seedCommission();
+    this.seedStaff();
 
-      //user input, select name, select club
-      this.$store.dispatch('setManagerName', this.selectedName);
-      this.selectClub();
+    //user input, select name, select club
+    this.$store.dispatch('setManagerName', this.selectedName);
+    this.selectClub();
 
-      engine.checkContract(this.league, this.roster);
-      console.log(this.roster);
-      //and the coaches
-      engine.seedStaffToClubs(this.league, this.staff);
-      console.log(this.staff);
-      //generate a tactic for all the clubs
-      this.seedTactics();
+    engine.checkContract(this.league, this.roster);
+    console.log(this.roster);
+    //and the coaches
+    engine.seedStaffToClubs(this.league, this.staff);
+    console.log(this.staff);
+    //generate a tactic for all the clubs
+    this.seedTactics();
 
-      //schedule the league, it's currently handmade
-      const schedule = engine.seedSchedule(this.league, this.idCodes.match);
+    //schedule the league, it's currently handmade
+    const schedule = engine.seedSchedule(this.league, this.idCodes.match);
 
-      this.seedSchedule(schedule);
+    this.seedSchedule(schedule);
 
-      //generate and set training schedule
-      this.seedTrainingSchedules();
+    //generate and set training schedule
+    this.seedTrainingSchedules();
 
-      this.$store.dispatch('setLive', true);
-    }
+    // this.$store.dispatch('setLive', true);
+    // }
   },
 
   data: () => ({
@@ -426,6 +355,8 @@ export default {
         content,
         this.getClub(this.selectedClubId).name
       );
+
+      // console.log(this.displayDate);
 
       this.$store.dispatch(
         'addNews',

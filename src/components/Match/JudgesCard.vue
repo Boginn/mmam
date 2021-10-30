@@ -1,6 +1,42 @@
 <template>
   <v-container>
-    <v-card class="">
+    <v-card elevation="0">
+      <v-row>
+        <v-col v-for="(decision, jdex) in decisions" :key="jdex">
+          <v-card-text>
+            <h4 class="text-center seventh pt-1">
+              <div>
+                {{ rings[jdex] }}
+              </div>
+              <div>
+                {{ messages[jdex] }}
+              </div>
+              <v-divider class="mb-1 mt-1"></v-divider>
+            </h4>
+            <div v-for="(judge, index) in judges[jdex]" :key="judge.id">
+              <v-row class="ma-1" v-if="decision">
+                <v-col class=" judges">
+                  {{ firstName(judge).substring(0, 1) }}.
+                  {{ lastName(judge) }}</v-col
+                >
+
+                <v-col class="pl-1 pr-1 justify-space-between text-end">
+                  <span v-for="n in rounds.length" :key="n" class="unispace">
+                    {{ decision[index][n - 1].home }}-{{
+                      decision[index][n - 1].away
+                    }}
+                  </span>
+                  <span
+                    >: {{ finalPoints(decision[index], index).home }}-{{
+                      finalPoints(decision[index], index).away
+                    }}
+                  </span>
+                </v-col>
+              </v-row>
+            </div>
+          </v-card-text>
+        </v-col>
+      </v-row>
       <!-- <v-card-title class="justify-space-between eight">
         <v-icon class="eight--text" large @click="$emit('closed')"
           >mdi-close</v-icon
@@ -9,10 +45,14 @@
 
         <v-icon class="close" large @click="$emit('closed')">mdi-close</v-icon>
       </v-card-title> -->
-      <v-row>
+      <!-- <v-row>
         <v-col>
           <v-card-text>
-            <div v-for="(decision, jdex) in decisions" :key="jdex">
+            <div
+              v-for="(decision, jdex) in decisions"
+              :key="jdex"
+              class="secondary"
+            >
               <h4 class="text-center seventh pt-1">
                 <div>
                   {{ rings[jdex] }}
@@ -42,14 +82,12 @@
                       }}
                     </span>
                   </v-col>
-                  <v-col> </v-col>
                 </v-row>
               </div>
-              <div class="text-end"></div>
             </div>
           </v-card-text>
         </v-col>
-      </v-row>
+      </v-row> -->
     </v-card>
   </v-container>
 </template>
@@ -62,6 +100,7 @@ export default {
   components: {},
 
   props: {
+    clubNames: Object,
     decisions: Array,
     judges: Array,
     rounds: Array,
@@ -108,7 +147,8 @@ export default {
       let result = decisionEngine.countScore(
         this.cards,
         ringFinishedLeft,
-        ringFinishedRight
+        ringFinishedRight,
+        this.clubNames
       );
 
       //save

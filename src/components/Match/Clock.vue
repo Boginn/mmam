@@ -1,6 +1,6 @@
 <template>
   <v-container style="height: 143px;">
-    <v-row class="d-flex justify-space-between">
+    <v-row class="d-flex justify-space-between pl-10 pr-10">
       <span align="center" v-for="(element, index) in rounds" :key="index">
         <div
           class="rounds title font-shadow ma-5"

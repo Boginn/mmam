@@ -95,8 +95,10 @@ export default {
     };
 
     match = {
-      save: false,
-      dc: null,
+      saves: 3,
+      controlled: undefined,
+      grappled: undefined,
+      dc: 0,
       momentum: undefined,
       condition: undefined,
       exposed: undefined,
@@ -199,18 +201,22 @@ export default {
       exposed: 0,
       damage: 0,
       learned: 0,
-      momentum: false,
-      save: false,
-      dc: null,
+      dc: 0,
+      saves: 0,
+      momentum: undefined,
+      grappled: undefined,
+      controlled: undefined,
     };
 
     def = {
       exposed: 0,
       damage: 0,
       learned: 0,
-      momentum: false,
-      save: false,
-      dc: null,
+      dc: 0,
+      saves: 0,
+      momentum: undefined,
+      grappled: undefined,
+      controlled: undefined,
     };
 
     point = false;

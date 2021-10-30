@@ -23,7 +23,7 @@ export default new Vuetify({
         eight: '#161821',
 
         bgcolor: '#32292F',
-        abcolor: '#34292F',
+        abcolor: '#32292F',
         accent: '#7391a3',
 
         vuegrey: '#babbc3',

@@ -324,7 +324,7 @@ export default {
         };
 
         //pick method of attack
-        let attackMethod = matchEngine.pickMethodAttack(attacker);
+        let attackMethod = matchEngine.pickMethodAttack(attacker, defender);
         let outcome = matchEngine.engage(attackMethod, attacker, defender);
         console.log(outcome);
         //count activity

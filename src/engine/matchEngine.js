@@ -194,6 +194,10 @@ export default {
       result.finished = true;
       result.msg = `That's enough for ${fighter.nickname}. He's finished!`;
     }
+    if (fighter.match.saves <= 0) {
+      result.finished = true;
+      result.msg = `That's all over.${fighter.nickname} has been submitted!`;
+    }
     return result;
   },
 
@@ -211,6 +215,14 @@ export default {
     array.push(this.getRollWithMod(fighter.physical.explosiveness));
     array.push(this.getRollWithMod(fighter.physical.acceleration));
     array.push(this.getRollWithMod(fighter.physical.agility));
+    return this.processCheck(array, fighter);
+  },
+  groundedActionPhysicalCheck(fighter) {
+    let array = [];
+    array.push(this.getRollWithMod(fighter.physical.strength));
+    array.push(this.getRollWithMod(fighter.physical.stamina));
+    array.push(this.getRollWithMod(fighter.physical.workRate));
+    array.push(this.getRollWithMod(fighter.physical.explosiveness));
     return this.processCheck(array, fighter);
   },
   flashyActionPhysicalCheck(fighter) {
@@ -371,12 +383,21 @@ export default {
   Action chain:
   */
 
-  pickMethodAttack(fighter) {
+  pickMethodAttack(fighter, opponent) {
     let method; // returned
 
     // if save is true then he needs to disengage
-    if (fighter.match.save) {
+    if (fighter.match.grappled) {
       return matchData.disengage.value; // 'disengage';
+    }
+
+    // if opponent is controlloed, attempt to submit
+    if (opponent.match.controlled) {
+      return matchData.submission.value; // 'submission';
+    }
+
+    if (opponent.match.grappled) {
+      return matchData.hold.value; // 'hold';
     }
 
     //if fighter is exposed or hurt he will do so according to instructions
@@ -443,16 +464,6 @@ export default {
   },
 
   engage(method, attacker, defender) {
-    if (defender.match.save) {
-      /*
-      attacker has defender controlled
-      from here the outcome is that he holds and scores a point
-      then we can add submissions later
-      they will have to depend on where the position was
-      */
-      return this.hold(attacker, defender);
-    }
-
     if (method == 'grapple') {
       return this.grapple(attacker, defender);
     } else if (method == 'strike') {
@@ -461,10 +472,27 @@ export default {
       return this.disengage(attacker, defender);
     } else if (method == 'compose') {
       return this.compose(attacker, defender);
+    } else if (method == 'submission') {
+      return this.submission(attacker, defender);
+    } else if (method == 'hold') {
+      return this.hold(attacker, defender);
     }
   },
 
   /*AFTER .engage*/
+
+  submission(attacker, defender) {
+    let outcome = new classes.Outcome();
+    let { def, att } = outcome;
+
+    // outcome.point = true;
+    outcome.msg = `${attacker.nickname} attempts a submission on ${defender.nickname}`;
+    def.exposed += 5;
+    def.learned += 5;
+    att.exposed += 5;
+    att.learned += 5;
+    return outcome;
+  },
   hold(attacker, defender) {
     let outcome = new classes.Outcome();
     let { def, att } = outcome;
@@ -472,13 +500,13 @@ export default {
 
     // can do a skill check here depending on type of position
     // fluid and versa chosen because  grappling
-    const attackMod = Math.max(
+    let attackMod = Math.max(
       ...[
         this.getRollWithMod(attacker.skill.fluidity),
         this.getRollWithMod(attacker.skill.versatility),
       ]
     );
-    const defendMod = Math.max(
+    let defendMod = Math.max(
       ...[
         this.getRollWithMod(defender.skill.fluidity),
         this.getRollWithMod(defender.skill.versatility),
@@ -486,26 +514,48 @@ export default {
     );
     if (this.getDifference(attackMod, defendMod) >= 10) {
       if (attackMod >= defendMod) {
-        outcome.dc = dc - 4;
+        def.dc = dc - 4;
       } else {
-        outcome.dc = dc + 4;
+        def.dc = dc + 4;
       }
     } else if (this.getDifference(attackMod, defendMod) >= 5) {
       if (attackMod >= defendMod) {
-        outcome.dc = dc - 2;
+        def.dc = dc - 2;
       } else {
-        outcome.dc = dc + 2;
+        def.dc = dc + 2;
       }
     } else {
       if (attackMod >= defendMod) {
-        outcome.dc = dc - 1;
+        def.dc = dc - 1;
       } else {
-        outcome.dc = dc + 1;
+        def.dc = dc + 1;
       }
     }
 
-    outcome.point = true;
-    outcome.msg = `${attacker.nickname} is controlling ${defender.nickname}`;
+    // attempt to control
+    attackMod = Math.max(
+      ...[
+        this.getRollWithMod(attacker.skill.fluidity),
+        this.getRollWithMod(attacker.skill.versatility),
+      ]
+    );
+    defendMod = Math.max(
+      ...[
+        this.getRollWithMod(defender.skill.fluidity),
+        this.getRollWithMod(defender.skill.versatility),
+      ]
+    );
+    attackMod += this.getRollWithMod(attacker.match.learned / 5);
+    defendMod -= this.getRollWithMod(defender.match.exposed / 5);
+    defendMod += this.getRollWithMod(def.dc);
+
+    if (attackMod >= defendMod) {
+      outcome.point = true;
+      def.controlled = true;
+      outcome.msg = `${attacker.nickname} is controlling ${defender.nickname}`;
+    } else {
+      outcome.msg = `${attacker.nickname} is holding ${defender.nickname}`;
+    }
     def.exposed += 5;
     def.learned += 5;
     att.exposed += 5;
@@ -567,10 +617,10 @@ export default {
     }
 
     if (result >= dc) {
-      att.save = false;
+      att.grappled = false;
       outcome.msg = `${attacker.nickname} successfully disengages.`;
     } else {
-      att.save = true;
+      att.grappled = true;
       outcome.msg = `${attacker.nickname} tries to escape but fails.`;
     }
 

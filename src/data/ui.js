@@ -105,8 +105,8 @@ const routes = {
 
   squad: [
     {
-      name: 'Tactics',
-      path: 'tactics',
+      name: 'History',
+      path: 'history',
       icon: 'mdi-file-multiple',
       color: 'primary',
       public: true,
@@ -169,8 +169,8 @@ const routes = {
       public: true,
     },
     {
-      name: 'Squad',
-      path: 'squad',
+      name: 'Tactics',
+      path: 'tactics',
       icon: 'mdi-account-cowboy-hat',
       color: 'primary',
       public: true,

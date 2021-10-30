@@ -51,9 +51,9 @@
               <b class="font-shadow blue--text">
                 {{ getFighter(fighter).match.momentum }}
               </b>
-              - s:
+              - g:
               <b class="font-shadow lime--text">
-                {{ getFighter(fighter).match.save }}</b
+                {{ getFighter(fighter).match.grappled }}</b
               >
             </div>
             <div>
@@ -167,9 +167,9 @@
               <b class="font-shadow blue--text">
                 {{ getFighter(fighter).match.momentum }}</b
               >
-              - s:
+              - g:
               <b class="font-shadow lime--text">
-                {{ getFighter(fighter).match.save }}</b
+                {{ getFighter(fighter).match.grappled }}</b
               >
             </div>
           </div></v-col

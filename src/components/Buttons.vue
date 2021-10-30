@@ -20,13 +20,13 @@
           >
             <v-card-title class="d-flex justify-center">
               {{ route.name }}
+              <v-icon x-large class="ml-2"> {{ route.icon }}</v-icon>
               <span
                 v-if="route.path == 'news' && unreadMessages"
                 class="notification code primary"
               >
                 {{ unreadMessages }}
               </span>
-              <v-icon x-large class="ml-2" v-else> {{ route.icon }}</v-icon>
             </v-card-title>
           </router-link>
         </v-card>

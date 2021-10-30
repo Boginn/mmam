@@ -3,7 +3,9 @@ import decisionEngine from '@/engine/decisionEngine.js';
 
 export default {
   reset(item) {
-    item.match.save = false;
+    item.match.saves = 3;
+    item.match.controlled = false;
+    item.match.grappled = false;
     item.match.dc = null;
     item.match.exposed = 0;
     item.match.condition =
@@ -68,13 +70,15 @@ export default {
   },
   tallyPoints(ring, outcome, isHomeAttack, ringTruePoints, round) {
     console.log(ringTruePoints);
-    const truePoints = ringTruePoints;
-    const {
+    let truePoints = ringTruePoints;
+    let {
       ringTruePointsLeft,
       ringTruePointsCenter,
       ringTruePointsRight,
     } = truePoints;
     console.log(ringTruePointsCenter);
+    console.log((ringTruePointsRight[round - 1].away += 1));
+    console.log((ringTruePointsLeft[round - 1].home += 1));
     if (ring == 1) {
       // LEFT
       if (isHomeAttack) {
@@ -153,9 +157,18 @@ export default {
     attacker.match.condition -= att.damage;
     attacker.match.exposed += att.exposed;
     attacker.match.learned += att.learned;
-    attacker.match.momentum = att.momentum;
-    attacker.match.save = att.save;
-    attacker.match.dc = att.dc;
+    attacker.match.dc += att.dc;
+    attacker.match.saves -= att.saves;
+
+    if (att.momentum != undefined) {
+      attacker.match.momentum = att.momentum;
+    }
+    if (att.grappled != undefined) {
+      attacker.match.grappled = att.grappled;
+    }
+    if (att.controlled != undefined) {
+      attacker.match.controlled = att.controlled;
+    }
 
     attacker.match.exposed = matchEngine.stayPercentage(attacker.match.exposed);
     attacker.match.learned = matchEngine.stayPercentage(attacker.match.learned);
@@ -166,9 +179,18 @@ export default {
     defender.match.condition -= def.damage;
     defender.match.exposed += def.exposed;
     defender.match.learned += def.learned;
-    defender.match.momentum = def.momentum;
-    defender.match.save = def.save;
-    defender.match.dc = def.dc;
+    defender.match.dc += def.dc;
+    defender.match.saves -= def.saves;
+
+    if (def.momentum != undefined) {
+      defender.match.momentum = def.momentum;
+    }
+    if (def.grappled != undefined) {
+      defender.match.grappled = def.grappled;
+    }
+    if (def.controlled != undefined) {
+      defender.match.controlled = def.controlled;
+    }
 
     defender.match.exposed = matchEngine.stayPercentage(defender.match.exposed);
     defender.match.learned = matchEngine.stayPercentage(defender.match.learned);

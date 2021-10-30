@@ -29,8 +29,6 @@
           <!-- eslint-disable-next-line -->
           <template v-slot:item.clubs[0]="{ item }">
             <router-link :to="`/league/${item.clubs[0]}`" class="table">
-              <v-icon class="mb-1" small>mdi-arrow-top-left</v-icon>
-
               {{ getClub(item.clubs[0]).name }}
             </router-link>
           </template>
@@ -38,7 +36,6 @@
           <!-- eslint-disable-next-line -->
           <template v-slot:item.clubs[1]="{ item }">
             <router-link :to="`/league/${item.clubs[1]}`" class="table">
-              <v-icon class="mb-1" small>mdi-arrow-top-left</v-icon>
               {{ getClub(item.clubs[1]).name }}
             </router-link>
           </template>

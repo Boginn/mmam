@@ -5,44 +5,48 @@
     <v-row>
       <v-col>
         <v-btn
-          class="lime darken-3 ma-2"
-          :disabled="isFullTime"
+          class="controlBtn lime darken-3"
           @click="$emit('startRound')"
-          v-if="isBetweenRounds"
+          v-if="isBetweenRounds && !isFullTime"
         >
-          Start Round
+          <div>
+            Start
+          </div>
+          <div>
+            Round
+          </div>
         </v-btn>
         <v-btn
-          class="success"
+          class="controlBtn success"
           :disabled="isDisabled || isFullTime"
           @click="$emit('getOn')"
           v-else
         >
-          Get on
+          <v-icon class="mb-1" small>mdi-play</v-icon>
         </v-btn>
         <!-- end match / pause -->
         <v-btn
-          class="teal darken-3 "
+          class="controlBtn teal darken-3 "
           v-if="isFullTime"
           @click="$emit('endMatch')"
         >
           End Match
         </v-btn>
         <v-btn
-          class="fifth"
+          class="controlBtn fifth "
           v-if="!isFullTime"
           :disabled="isPaused"
           @click="$emit('togglePause')"
         >
-          Pause
+          <v-icon class="mb-1 d-flex align-center" small>mdi-pause</v-icon>
         </v-btn>
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col class="pb-8">
         <v-btn
           small
-          class="seventh"
+          class="seventh pa-5 ma-1 "
           :disabled="!isFast"
           @click="$emit('setIntervalFast')"
           >+</v-btn
@@ -50,18 +54,19 @@
 
         <v-btn
           small
-          class="seventh"
+          class="seventh pa-5 ma-1 "
           :disabled="isFast"
           @click="$emit('setIntervalSlow')"
           >-</v-btn
         >
+        <v-spacer></v-spacer>
 
         <v-btn
+          class="seventh pa-5 ma-1 "
           v-bind:class="{
             'grey--text': !isCommentary,
           }"
           small
-          class="seventh"
           @click="$emit('setCommentary')"
           >commentary</v-btn
         >
@@ -91,5 +96,10 @@ export default {
   height: 650px;
 
   overflow-y: auto;
+}
+.controlBtn {
+  font-size: 12pt;
+  padding: 45px !important;
+  margin: 5px !important;
 }
 </style>
