@@ -157,6 +157,7 @@ export default {
     nickname;
     nationality;
     reputation;
+    color = { primary: undefined, secondary: undefined };
     squad = [];
     staff = [];
     tactic;
@@ -174,9 +175,10 @@ export default {
       cup: {},
     };
 
-    constructor(name, nationality, squad) {
+    constructor(name, nationality, color, squad) {
       this.name = name;
       this.nationality = nationality;
+      this.color = color;
       this.squad = squad;
     }
   },

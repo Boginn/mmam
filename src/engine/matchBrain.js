@@ -158,7 +158,11 @@ export default {
     attacker.match.exposed += att.exposed;
     attacker.match.learned += att.learned;
     attacker.match.dc += att.dc;
-    attacker.match.saves -= att.saves;
+    if (attacker.match.controlled) {
+      attacker.match.saves -= att.saves;
+    } else {
+      attacker.match.saves = 3;
+    }
 
     if (att.momentum != undefined) {
       attacker.match.momentum = att.momentum;
@@ -180,7 +184,11 @@ export default {
     defender.match.exposed += def.exposed;
     defender.match.learned += def.learned;
     defender.match.dc += def.dc;
-    defender.match.saves -= def.saves;
+    if (defender.match.controlled) {
+      defender.match.saves -= def.saves;
+    } else {
+      defender.match.saves = 3;
+    }
 
     if (def.momentum != undefined) {
       defender.match.momentum = def.momentum;

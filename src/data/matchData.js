@@ -1,103 +1,4 @@
 export default {
-  // ArchivedMatch: class {
-  //   id = null;
-  //   date = null;
-  //   clubs = [];
-  //   homeScore = 0;
-  //   awayScore = 0;
-  //   left = {
-  //     finish: undefined,
-  //     judges: [
-  //       {
-  //         homeRound1: undefined,
-  //         homeRound2: undefined,
-  //         homeRound3: undefined,
-  //         awayRound1: undefined,
-  //         awayRound2: undefined,
-  //         awayRound3: undefined,
-  //       },
-  //       {
-  //         homeRound1: undefined,
-  //         homeRound2: undefined,
-  //         homeRound3: undefined,
-  //         awayRound1: undefined,
-  //         awayRound2: undefined,
-  //         awayRound3: undefined,
-  //       },
-  //       {
-  //         homeRound1: undefined,
-  //         homeRound2: undefined,
-  //         homeRound3: undefined,
-  //         awayRound1: undefined,
-  //         awayRound2: undefined,
-  //         awayRound3: undefined,
-  //       },
-  //     ],
-  //   };
-  //   center = {
-  //     finish: undefined,
-  //     judges: [
-  //       {
-  //         homeRound1: undefined,
-  //         homeRound2: undefined,
-  //         homeRound3: undefined,
-  //         awayRound1: undefined,
-  //         awayRound2: undefined,
-  //         awayRound3: undefined,
-  //       },
-  //       {
-  //         homeRound1: undefined,
-  //         homeRound2: undefined,
-  //         homeRound3: undefined,
-  //         awayRound1: undefined,
-  //         awayRound2: undefined,
-  //         awayRound3: undefined,
-  //       },
-  //       {
-  //         homeRound1: undefined,
-  //         homeRound2: undefined,
-  //         homeRound3: undefined,
-  //         awayRound1: undefined,
-  //         awayRound2: undefined,
-  //         awayRound3: undefined,
-  //       },
-  //     ],
-  //   };
-  //   right = {
-  //     finish: undefined,
-  //     judges: [
-  //       {
-  //         homeRound1: undefined,
-  //         homeRound2: undefined,
-  //         homeRound3: undefined,
-  //         awayRound1: undefined,
-  //         awayRound2: undefined,
-  //         awayRound3: undefined,
-  //       },
-  //       {
-  //         homeRound1: undefined,
-  //         homeRound2: undefined,
-  //         homeRound3: undefined,
-  //         awayRound1: undefined,
-  //         awayRound2: undefined,
-  //         awayRound3: undefined,
-  //       },
-  //       {
-  //         homeRound1: undefined,
-  //         homeRound2: undefined,
-  //         homeRound3: undefined,
-  //         awayRound1: undefined,
-  //         awayRound2: undefined,
-  //         awayRound3: undefined,
-  //       },
-  //     ],
-  //   };
-
-  //   constructor(id) {
-  //     this.id = id;
-  //   }
-  // },
-
   //engagements and actions
   engage: {
     closeDistance: [
@@ -115,6 +16,8 @@ export default {
   compose: { text: 'Compose', value: 'compose' },
 
   hold: { text: 'Hold', value: 'hold' },
+
+  defend: { text: 'Defend', value: 'defend' },
 
   submission: { text: 'Submission', value: 'submission' },
 

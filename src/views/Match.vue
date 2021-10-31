@@ -67,6 +67,7 @@
               :awayTactic="awayTactic"
               :homeTactic="homeTactic"
               :messages="messagesForRings"
+              :colors="colors"
             />
             <Bench
               v-if="isTabBench"
@@ -154,11 +155,14 @@ export default {
         'setRingTruePoints',
         matchBrain.seedRoundsToPointCounters(this.rounds)
       );
-      console.log(this.ringTruePoints);
+
+      this.resetMatchData();
+
       this.resetFighterMatchStats();
       this.setJudges();
       this.setTactics();
       this.$store.dispatch('setNames', this.names);
+      this.$store.dispatch('setColors', this.colors);
       this.$store.dispatch('setIsLive', true);
     }
   },
@@ -167,28 +171,13 @@ export default {
     console.log('destroying');
 
     if (this.isFullTime) {
-      // clean up
-      this.$store.dispatch(
-        'setRingTruePoints',
-        matchBrain.seedRoundsToPointCounters(this.rounds)
-      );
-      this.$store.dispatch('setIsFullTime', false);
-      this.$store.dispatch('setIsDisabled', false);
-      this.$store.dispatch('setIsPaused', false);
-      this.$store.dispatch('setIsDecision', false);
+      // this.$store.dispatch(
+      //   'setRingTruePoints',
+      //   matchBrain.seedRoundsToPointCounters(this.rounds)
+      // );
 
-      this.$store.dispatch('setRound', 0);
-      this.$store.dispatch('setRingJudges', {
-        ringJudgesLeft: [],
-        ringJudgesCenter: [],
-        ringJudgesRight: [],
-      });
+      this.resetMatchData();
 
-      //reset scorebanner
-      this.$store.dispatch('setScore', { home: 0, away: 0 });
-      this.$store.dispatch('setNames', { home: '', away: '' });
-
-      this.$store.dispatch('setIsScored', false);
       this.$store.dispatch('setIsLive', false);
       this.$store.dispatch('setIsMatchday', false);
       this.$store.dispatch('setIsPostMatch', true);
@@ -448,6 +437,18 @@ export default {
         away: this.getClub(this.match.clubs[1]).name,
       };
     },
+    colors() {
+      return {
+        home: {
+          primary: this.getClub(this.match.clubs[0]).color.primary,
+          secondary: this.getClub(this.match.clubs[0]).color.secondary,
+        },
+        away: {
+          primary: this.getClub(this.match.clubs[1]).color.primary,
+          secondary: this.getClub(this.match.clubs[1]).color.secondary,
+        },
+      };
+    },
 
     //data
     schedule() {
@@ -549,18 +550,6 @@ export default {
   methods: {
     //init
     resetFighterMatchStats() {
-      // function reset(item) {
-      //   item.match.save = false;
-      //   item.match.dc = null;
-      //   item.match.exposed = 0;
-      //   item.match.condition =
-      //     item.fitness > item.condition ? item.fitness : item.condition;
-      //   item.match.learned = 0;
-      //   item.match.momentum = false;
-      //   item.match.finished = false;
-      //   item.match.substituted = false;
-      // }
-
       matchBrain.reset(this.getFighter(this.homeClub.tactic.selection.center));
       matchBrain.reset(this.getFighter(this.homeClub.tactic.selection.left));
       matchBrain.reset(this.getFighter(this.homeClub.tactic.selection.right));
@@ -568,36 +557,67 @@ export default {
       matchBrain.reset(this.getFighter(this.awayClub.tactic.selection.left));
       matchBrain.reset(this.getFighter(this.awayClub.tactic.selection.right));
     },
-    // seedRoundsToPointCounters() {
-    //   const {
-    //     ringTruePointsLeft,
-    //     ringTruePointsCenter,
-    //     ringTruePointsRight,
-    //   } = this.ringTruePoints;
-    //   this.rounds.forEach((element) => {
-    //     ringTruePointsLeft.push({
-    //       round: element,
-    //       home: 0,
-    //       away: 0,
-    //       homeSignificant: 0,
-    //       awaySignificant: 0,
-    //     });
-    //     ringTruePointsCenter.push({
-    //       round: element,
-    //       home: 0,
-    //       away: 0,
-    //       homeSignificant: 0,
-    //       awaySignificant: 0,
-    //     });
-    //     ringTruePointsRight.push({
-    //       round: element,
-    //       home: 0,
-    //       away: 0,
-    //       homeSignificant: 0,
-    //       awaySignificant: 0,
-    //     });
-    //   });
-    // },
+    resetMatchData() {
+      //minute, second, happenchance, tabs and rounds isnt here
+
+      this.$store.dispatch('setMatchMessages', []);
+      this.$store.dispatch('setMatchMessagesForRings', [[], [], []]);
+
+      //reset scorebanner
+      this.$store.dispatch('setScore', { home: 0, away: 0 });
+      this.$store.dispatch('setNames', { home: '', away: '' });
+
+      //bools
+      this.$store.dispatch('setIsFullTime', false);
+      this.$store.dispatch('setIsDisabled', false);
+      this.$store.dispatch('setIsPaused', false);
+      this.$store.dispatch('setIsDecision', false);
+      this.$store.dispatch('setIsBetweenRounds', true);
+      this.$store.dispatch('setIsDecision', false);
+      this.$store.dispatch('setIsBusy', false);
+      this.$store.dispatch('setIsScored', false);
+
+      this.$store.dispatch('setRound', 0);
+      this.$store.dispatch('setHomeTactic', {});
+      this.$store.dispatch('setAwayTactic', {});
+      this.$store.dispatch('setHomeSubs', []);
+      this.$store.dispatch('setAwaySubs', []);
+      this.$store.dispatch('setPendingSub', false);
+      this.$store.dispatch('setRingFinishedLeft', false);
+      this.$store.dispatch('setRingFinishedCenter', false);
+      this.$store.dispatch('setRingFinishedRight', false);
+      this.$store.dispatch('setRingDecisions', {
+        ringDecisionLeft: undefined,
+        ringDecisionCenter: undefined,
+        ringDecisionRight: undefined,
+      });
+      this.$store.dispatch('setRingActivity', [
+        {
+          home: 0,
+          away: 0,
+          homeSignificant: 0,
+          awaySignificant: 0,
+        },
+        {
+          home: 0,
+          away: 0,
+          homeSignificant: 0,
+          awaySignificant: 0,
+        },
+        {
+          home: 0,
+          away: 0,
+          homeSignificant: 0,
+          awaySignificant: 0,
+        },
+      ]);
+      this.$store.dispatch('setRingJudges', {
+        ringJudgesLeft: [],
+        ringJudgesCenter: [],
+        ringJudgesRight: [],
+      });
+    },
+
     setJudges() {
       let judges = this.ringJudges;
       const { ringJudgesLeft, ringJudgesCenter, ringJudgesRight } = judges;
@@ -631,6 +651,23 @@ export default {
         this.tabs[i].value = false;
       }
       this.tabs[selection].value = true;
+    },
+    postMatchMessage(outcome, ring, timeoutIntervalMultiplier) {
+      if (outcome.msg == undefined) {
+        return;
+      }
+
+      setTimeout(() => {
+        this.$store.dispatch('addMatchMessage', {
+          text: outcome.msg,
+          primary: outcome.primary,
+          secondary: outcome.secondary,
+        });
+        this.$store.dispatch('addMatchMessageToRing', {
+          ring: ring,
+          msg: outcome.msg,
+        });
+      }, this.timeoutInterval * timeoutIntervalMultiplier); // INTERVAL
     },
 
     //services
@@ -869,6 +906,9 @@ export default {
 
     endRound() {
       this.$store.dispatch('setIsBetweenRounds', true);
+
+      this.resetFighters();
+
       if (this.round == this.rounds.length) {
         //decision
         this.$store.dispatch('setIsFullTime', true);
@@ -1114,7 +1154,11 @@ export default {
           home = this.getFighter(this.homeTactic.selection.right);
           away = this.getFighter(this.awayTactic.selection.right);
         }
-        this.$store.dispatch('addMatchMessage', `${this.timestamp} ${msg}`);
+        this.$store.dispatch('addMatchMessage', {
+          text: `${this.timestamp} ${msg}`,
+          primary: '#FFFFFF',
+          secondary: '#000000',
+        });
 
         //pick fighter initiative
         const homeInitiative = matchEngine.checkInitiative(home);
@@ -1158,7 +1202,19 @@ export default {
 
         msg = `${attacker.nickname} attacks ${defender.nickname}`;
         setTimeout(() => {
-          this.$store.dispatch('addMatchMessage', msg);
+          if (this.isHomeAttack) {
+            this.$store.dispatch('addMatchMessage', {
+              text: msg,
+              primary: this.colors.home.primary,
+              secondary: this.colors.home.secondary,
+            });
+          } else {
+            this.$store.dispatch('addMatchMessage', {
+              text: msg,
+              primary: this.colors.away.primary,
+              secondary: this.colors.away.secondary,
+            });
+          }
         }, this.timeoutInterval); // INTERVAL
 
         //pick method of attack
@@ -1166,6 +1222,21 @@ export default {
         let outcome = matchEngine.engage(attackMethod, attacker, defender);
         console.log(outcome);
 
+        // attach colors
+        if (this.isHomeAttack) {
+          outcome = {
+            ...outcome,
+            primary: this.colors.home.primary,
+            secondary: this.colors.home.secondary,
+          };
+        } else {
+          outcome = {
+            ...outcome,
+            primary: this.colors.away.primary,
+            secondary: this.colors.away.secondary,
+          };
+        }
+        console.log('OUTCOME COLKORS' + outcome);
         //count activity
         // this.ringActivity = matchBrain.countActivity(
         //   ring,
@@ -1185,13 +1256,8 @@ export default {
 
         //OUTCOME
         //sort out the outcome,
-        setTimeout(() => {
-          this.$store.dispatch('addMatchMessage', outcome.msg);
-          this.$store.dispatch('addMatchMessageToRing', {
-            ring: ring,
-            msg: outcome.msg,
-          });
-        }, this.timeoutInterval * timeoutIntervalMultiplier); // INTERVAL
+
+        this.postMatchMessage(outcome, ring, timeoutIntervalMultiplier);
         timeoutIntervalMultiplier += 1;
 
         //updates momentum, condition, exposed and learned
@@ -1250,7 +1316,7 @@ export default {
           this.substitutionAvailable &&
           !this.isFullTime
         ) {
-          this.$store.dispatch('setSubstitutionMade', true);
+          // this.$store.dispatch('setSubstitutionMade', true);
 
           this.$store.dispatch('setPendingSub', true); //triggers makeSubstitution at the beginning of getOn()
           this.$store.dispatch('setIsPaused', true);
@@ -1494,6 +1560,24 @@ export default {
           }, 250);
         }, 250);
       }, 250);
+    },
+    resetFighters() {
+      this.getFighter(this.homeTactic.selection.left).match.controlled = false;
+      this.getFighter(this.homeTactic.selection.left).match.grappled = false;
+      this.getFighter(this.awayTactic.selection.left).match.controlled = false;
+      this.getFighter(this.awayTactic.selection.left).match.grappled = false;
+      this.getFighter(
+        this.homeTactic.selection.center
+      ).match.controlled = false;
+      this.getFighter(this.homeTactic.selection.center).match.grappled = false;
+      this.getFighter(
+        this.awayTactic.selection.center
+      ).match.controlled = false;
+      this.getFighter(this.awayTactic.selection.center).match.grappled = false;
+      this.getFighter(this.homeTactic.selection.right).match.controlled = false;
+      this.getFighter(this.homeTactic.selection.right).match.grappled = false;
+      this.getFighter(this.awayTactic.selection.right).match.controlled = false;
+      this.getFighter(this.awayTactic.selection.right).match.grappled = false;
     },
   },
 };

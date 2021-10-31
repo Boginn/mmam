@@ -20,7 +20,8 @@
           :key="index"
         >
           <div
-            class="secondary font-shadow body-1 pt-1"
+            :style="{ backgroundImage: homeBanner }"
+            class="font-shadow body-1 pt-1"
             v-if="
               !getFighter(fighter).match.finished &&
                 !getFighter(fighter).match.substituted &&
@@ -73,7 +74,7 @@
             class="positions-match "
             v-bind:class="{
               red: $parent.ringFinishedLeft,
-              primary: !$parent.ringFinishedLeft,
+              homePrimary: !$parent.ringFinishedLeft,
             }"
           >
             <v-row class="ring-message-row">
@@ -90,7 +91,7 @@
             class="positions-match centerPosition"
             v-bind:class="{
               red: $parent.ringFinishedCenter,
-              primary: !$parent.ringFinishedCenter,
+              homePrimary: !$parent.ringFinishedCenter,
             }"
           >
             <v-row class="ring-message-row">
@@ -107,7 +108,7 @@
             class="positions-match "
             v-bind:class="{
               red: $parent.ringFinishedRight,
-              primary: !$parent.ringFinishedRight,
+              homePrimary: !$parent.ringFinishedRight,
             }"
           >
             <v-row class="ring-message-row">
@@ -127,7 +128,8 @@
           :key="index"
         >
           <div
-            class="fourth font-shadow body-1 pb-1"
+            :style="{ backgroundImage: awayBanner }"
+            class="font-shadow body-1 pb-1"
             v-if="
               !getFighter(fighter).match.finished &&
                 !getFighter(fighter).match.substituted &&
@@ -192,11 +194,26 @@ export default {
     homeTactic: Object,
     awayTactic: Object,
     messages: Array,
+    colors: Object,
+  },
+
+  created() {
+    console.log(this.colors);
+    this.$vuetify.theme.themes.dark.homePrimary = this.colors.home.primary;
+    this.$vuetify.theme.themes.dark.homeSecondary = this.colors.home.secondary;
+    this.$vuetify.theme.themes.dark.awayPrimary = this.colors.away.primary;
+    this.$vuetify.theme.themes.dark.awaySecondary = this.colors.away.secondary;
   },
 
   computed: {
     isDeveloper() {
       return this.$store.getters.isDeveloper;
+    },
+    homeBanner() {
+      return `linear-gradient(140deg,  ${this.colors.home.primary}, ${this.colors.home.primary}, ${this.colors.home.primary},${this.colors.home.primary}, ${this.colors.home.primary}, ${this.colors.home.secondary}, ${this.colors.home.secondary})`;
+    },
+    awayBanner() {
+      return `linear-gradient(140deg,  ${this.colors.away.primary}, ${this.colors.away.primary}, ${this.colors.away.primary},${this.colors.away.primary}, ${this.colors.away.primary}, ${this.colors.away.secondary}, ${this.colors.away.secondary})`;
     },
   },
   data: () => ({
@@ -237,7 +254,7 @@ export default {
   padding-top: 10px; */
   margin: 25px;
 
-  background-color: rgb(80, 76, 21);
+  /* background-color: rgb(80, 76, 21); */
   border-radius: 100%;
 }
 

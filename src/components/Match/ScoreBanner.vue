@@ -2,11 +2,11 @@
   <v-app-bar app :style="{ backgroundImage: gradientBanner }">
     <v-col class="text-center" style="font-size: 16pt;">
       <v-row>
-        <v-col>
+        <v-col class="homeSecondary--text font-shadow">
           {{ names.home }}
         </v-col>
         <v-col> {{ score.home }} - {{ score.away }} </v-col>
-        <v-col>
+        <v-col class="awaySecondary--text font-shadow">
           {{ names.away }}
         </v-col>
       </v-row>
@@ -22,17 +22,18 @@ export default {
   props: {
     score: Object,
     names: Object,
+    colors: Object,
   },
 
   data() {
     return {
-      homeColor: '#496F5D', // send in color from each team here
-      awayColor: '#5E6019',
+      home: this.colors.home,
+      away: this.colors.away,
     };
   },
   computed: {
     gradientBanner() {
-      return `linear-gradient(90deg, ${this.homeColor}, ${this.homeColor}, ${this.awayColor}, ${this.awayColor})`;
+      return `linear-gradient(90deg, ${this.home.primary}, ${this.home.primary}, ${this.away.primary}, ${this.away.primary})`;
     },
   },
 };

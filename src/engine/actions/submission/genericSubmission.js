@@ -25,6 +25,8 @@ export const genericSubmission = (action, attacker, defender) => {
   let outcome = new classes.Outcome();
   let { att, def } = outcome;
 
+  console.log(defender);
+
   // Physical checks
   let attackPhysMod = eng.groundedActionPhysicalCheck(attacker);
   let defendPhysMod = eng.groundedActionPhysicalCheck(defender);
@@ -42,8 +44,10 @@ export const genericSubmission = (action, attacker, defender) => {
   let defendExposed = eng.getRollWithMod(defender.match.exposed / 5);
 
   // Final outcome
-  const finalAttack = attackSkillMod + attackPhysMod + attackLearned;
-  const finalDefend = defendSkillMod + defendPhysMod - defendExposed;
+  const finalAttack =
+    attackSkillMod + attackPhysMod + eng.getModifier(attackLearned);
+  const finalDefend =
+    defendSkillMod + defendPhysMod - eng.getModifier(defendExposed);
 
   console.log(finalAttack, 'attack final mod');
   console.log(finalDefend, 'defend final mod');
@@ -51,14 +55,21 @@ export const genericSubmission = (action, attacker, defender) => {
   if (finalAttack >= finalDefend) {
     //success
 
-    // //grappling:
-    // def.save = true;
+    // Exposed/Learned checks
+    let attackLearned = eng.getRollWithMod(attacker.match.learned / 5);
+    let defendExposed = eng.getRollWithMod(defender.match.exposed / 5);
+    let average = eng.getAverage([attackLearned, defendExposed]);
+    console.log(average + 'average');
 
     // degree of success
     if (eng.getDifference(finalAttack, finalDefend) >= 15) {
       //completes submission
-      def.saves = 3;
 
+      if (average >= 20) {
+        def.saves = 3;
+      } else {
+        def.saves = 2;
+      }
       outcome.significant = true;
       outcome.point = true;
       outcome.msg = `${attacker.nickname} has locked in a ${action.text} on ${defender.nickname}`;
@@ -66,7 +77,11 @@ export const genericSubmission = (action, attacker, defender) => {
       def.exposed += 5;
       att.learned += 5;
 
-      def.saves = 2;
+      if (average >= 15) {
+        def.saves = 2;
+      } else {
+        def.saves = 1;
+      }
 
       outcome.point = true;
       outcome.msg = `${attacker.nickname} is having success with a ${action.text} attempt on ${defender.nickname}`;
@@ -83,14 +98,16 @@ export const genericSubmission = (action, attacker, defender) => {
     }
   } else {
     if (eng.getDifference(finalAttack, finalDefend) >= 15) {
-      //not complete, attacker exposed, defender learns
+      //defender gets out and resets
       att.exposed += 10;
       def.learned += 5;
       def.controlled = false;
-      outcome.msg = `${attacker.nickname} gets out of the ${action.text} attempt on ${defender.nickname}`;
+      def.grappled = false;
+
+      outcome.msg = `${defender.nickname} gets out of the ${action.text} attempt and resets!`;
     } else if (eng.getDifference(finalAttack, finalDefend) >= 10) {
-      //not complete, attacker learns
-      att.learned += 5;
+      //defender gets out
+      att.learned += 3;
       def.controlled = false;
       def.grappled = true;
       outcome.msg = `${attacker.nickname} fails to find a ${action.text} on ${defender.nickname}`;
@@ -102,6 +119,8 @@ export const genericSubmission = (action, attacker, defender) => {
     ...action,
     ...outcome,
   };
+
+  console.log(def.saves + 'saves');
 
   return action;
 };

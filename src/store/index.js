@@ -7,7 +7,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    isDeveloper: true,
+    isDeveloper: false,
 
     //ui
     day: 1,
@@ -45,6 +45,7 @@ export default new Vuex.Store({
     matchData: {
       score: { home: 0, away: 0 },
       names: { home: '', away: '' },
+      colors: { primary: '', secondary: '' },
       //bools
       isCommentary: true,
       isFullTime: false,
@@ -333,6 +334,12 @@ export default new Vuex.Store({
     setIsLive(context, payload) {
       context.commit('SET_IS_LIVE', payload);
     },
+    setMatchMessages(context, payload) {
+      context.commit('SET_MATCH_MESSAGES', payload);
+    },
+    setMatchMessagesForRings(context, payload) {
+      context.commit('SET_MATCH_MESSAGES_FOR_RINGS', payload);
+    },
     addMatchMessage(context, payload) {
       context.commit('ADD_MATCH_MESSAGE', payload);
     },
@@ -373,6 +380,9 @@ export default new Vuex.Store({
     },
     setNames(context, payload) {
       context.commit('SET_NAMES', payload);
+    },
+    setColors(context, payload) {
+      context.commit('SET_COLORS', payload);
     },
 
     //bools
@@ -436,6 +446,12 @@ export default new Vuex.Store({
       context.commit('SET_AWAY_TACTIC', payload);
     },
 
+    setHomeSubs(context, payload) {
+      context.commit('SET_HOME_SUBS', payload);
+    },
+    setAwaySubs(context, payload) {
+      context.commit('SET_AWAY_SUBS', payload);
+    },
     addHomeSub(context, payload) {
       context.commit('ADD_HOME_SUB', payload);
     },
@@ -447,13 +463,6 @@ export default new Vuex.Store({
     },
     removeAwaySub(context) {
       context.commit('REMOVE_AWAY_SUB');
-    },
-
-    setomeSubs(context, payload) {
-      context.commit('SET_RING_JUDGES', payload);
-    },
-    setAwaySubs(context, payload) {
-      context.commit('SET_RING_JUDGES', payload);
     },
 
     // setSubstitutionMade(context, payload) {
@@ -606,9 +615,13 @@ export default new Vuex.Store({
 
     //match
     SET_IS_LIVE(state, payload) {
-      state.matchMessages = [];
-      state.matchMessagesForRings = [[], [], []];
       state.isLive = payload;
+    },
+    SET_MATCH_MESSAGES(state, payload) {
+      state.matchMessages = payload;
+    },
+    SET_MATCH_MESSAGES_FOR_RINGS(state, payload) {
+      state.matchMessagesForRings = payload;
     },
     ADD_MATCH_MESSAGE(state, payload) {
       // if (state.matchMessages.length > 3) {
@@ -674,6 +687,9 @@ export default new Vuex.Store({
     SET_NAMES(state, payload) {
       state.matchData.names = payload;
     },
+    SET_COLORS(state, payload) {
+      state.matchData.colors = payload;
+    },
 
     SET_IS_COMMENTARY(state) {
       state.matchData.isCommentary = !state.matchData.isCommentary;
@@ -737,6 +753,12 @@ export default new Vuex.Store({
       state.matchData.awayTactic = payload;
     },
 
+    SET_HOME_SUBS(state, payload) {
+      state.matchData.homeSubs = payload;
+    },
+    SET_AWAY_SUBS(state, payload) {
+      state.matchData.awaySubs = payload;
+    },
     ADD_HOME_SUB(state, payload) {
       state.matchData.homeSubs.push(payload);
     },

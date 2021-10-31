@@ -19,12 +19,12 @@
       @click="cont()"
       class="continue-btn font-shadow"
       v-bind:class="{
-        'cyan darken-3 yellow--text': !checkTactic(),
         'green darken-3 white--text': checkTactic(),
+        'cyan darken-3 yellow--text': !checkTactic(),
       }"
     >
-      <h2 class="font-shadow" v-if="checkTactic()">Match Day</h2>
-      <h2 class="font-shadow" v-else>Proceed to Match</h2>
+      <h2 class="font-shadow" v-if="checkTactic()">Proceed to Match</h2>
+      <h2 class="font-shadow" v-else>Match Day</h2>
     </span>
 
     <!-- match continue buttons -->
@@ -47,7 +47,7 @@
           'fifth darken-3 white--text': !isPaused,
         }"
       >
-        <h2 class="font-shadow">Get On</h2>
+        <v-icon class="mb-1">mdi-play</v-icon>
       </span>
 
       <span
@@ -59,7 +59,7 @@
           'fifth darken-3 white--text': !isPaused,
         }"
       >
-        <h2 class="font-shadow">Pause</h2>
+        <v-icon class="mb-1 d-flex align-center">mdi-pause</v-icon>
       </span>
 
       <span
@@ -157,19 +157,16 @@ export default {
     },
 
     toggleControlStartRound() {
-      this.$store.dispatch('toggleControlStartRound', !this.controlStartRound);
+      this.$store.dispatch('toggleControlStartRound');
     },
     toggleControlGetOn() {
-      this.$store.dispatch('toggleControlGetOn', !this.controlGetOn);
+      this.$store.dispatch('toggleControlGetOn');
     },
     toggleControlTogglePause() {
-      this.$store.dispatch(
-        'toggleControlTogglePause',
-        !this.controlTogglePause
-      );
+      this.$store.dispatch('toggleControlTogglePause');
     },
     toggleControlEndMatch() {
-      this.$store.dispatch('toggleControlEndMatch', !this.controlEndMatch);
+      this.$store.dispatch('toggleControlEndMatch');
     },
   },
 };

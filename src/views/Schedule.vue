@@ -28,14 +28,26 @@
 
           <!-- eslint-disable-next-line -->
           <template v-slot:item.clubs[0]="{ item }">
-            <router-link :to="`/league/${item.clubs[0]}`" class="table">
-              {{ getClub(item.clubs[0]).name }}
+            <router-link
+              :to="`/league/${item.clubs[0]}`"
+              class="table title font-shadow secondary--text"
+            >
+              <span
+                v-bind:class="{
+                  'yellow--text': item.clubs[0] == selectedClubId,
+                }"
+              >
+                {{ getClub(item.clubs[0]).name }}</span
+              >
             </router-link>
           </template>
 
           <!-- eslint-disable-next-line -->
           <template v-slot:item.clubs[1]="{ item }">
-            <router-link :to="`/league/${item.clubs[1]}`" class="table">
+            <router-link
+              :to="`/league/${item.clubs[1]}`"
+              class="table title secondary--text"
+            >
               {{ getClub(item.clubs[1]).name }}
             </router-link>
           </template>
@@ -65,6 +77,9 @@ export default {
     },
   },
   computed: {
+    selectedClubId() {
+      return this.$store.getters.selectedClubId;
+    },
     //ui
     isTabClub() {
       return this.tabs[0].value;

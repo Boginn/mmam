@@ -30,6 +30,11 @@ export default new Vuetify({
         error: '#e42315',
         success: '#24aa0e',
         balance: '#172f85',
+
+        homePrimary: '#000000',
+        homeSecondary: '#000000',
+        awayPrimary: '#000000',
+        awaySecondary: '#000000',
       },
     },
   },

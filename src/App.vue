@@ -1,74 +1,31 @@
 <template>
   <v-app>
     <ScoreBanner
-      v-if="isLive"
+      v-if="isLive && isInit"
       :names="matchData.names"
       :score="matchData.score"
+      :colors="matchData.colors"
       class="ma-0"
     />
 
     <SystemBar
+      v-if="!isLive && isInit"
       :displayDate="displayDate"
       :selectedClubId="selectedClubId"
       :match="match"
-      v-else
     />
 
-    <!-- <v-app-bar app class="abcolor " dark v-else>
-      <img alt="logo" src="./assets/logo.png" />
-      <router-link :to="`/`" class="ml-5">
-        <v-btn :disabled="isMatchday" class="primary">
-          {{ selectedClub.name }}
-        </v-btn>
-      </router-link>
-      <router-link
-        :to="`/league`"
-        class="text-center ml-5 title font-shadow"
-        v-if="!isMatchday"
-      >
-        {{ placeInLeague }} in The English League
-      </router-link>
-      <span class="text-center ml-5 title font-shadow" v-if="isMatchday">
-        {{ matchTitle }}
-      </span>
-      <ButtonsSmall :routes="routes" :disabled="isMatchday" />
-      <v-col class="text-end">
-        <v-btn
-          v-if="!isMatchday"
-          outlined
-          small
-          class="mr-3 "
-          :disabled="isMatchday || isAdvancingDate"
-          @click="$router.go(-1)"
-          ><span> &larr;</span>
-        </v-btn>
-        <v-btn
-          v-if="!isMatchday"
-          outlined
-          small
-          class="mr-3 "
-          :disabled="isMatchday || isAdvancingDate"
-          @click="$router.go(1)"
-          ><span> &rarr;</span>
-        </v-btn>
-
-
-        <span class="text-center ml-5 title font-shadow " v-if="isDeveloper">
-          <span class="grey--text"> Date:</span> <b> {{ day }}</b
-          ><span class="grey--text"> displayDate:</span>
-          <b>{{ displayDate }}</b>
-        </span>
-        <span class="text-center ml-5 title font-shadow code" v-else>
-          <b class="code">{{ displayDate }}</b>
-        </span>
-      </v-col>
-    </v-app-bar> -->
-
     <v-main class="bgcolor">
-      <router-view />
+      <Initialize v-if="!isInit" @setUser="setUser" :league="league" />
+
+      <router-view v-else />
     </v-main>
 
-    <BottomBar @checkTactics="checkTacics()" @continue="this.continue" />
+    <BottomBar
+      v-if="isInit"
+      @checkTactics="checkTacics()"
+      @continue="this.continue"
+    />
   </v-app>
 </template>
 
@@ -76,11 +33,13 @@
 import classes from '@/data/classes.js';
 import engine from '@/engine/engine.js';
 import data from '@/data/data.js';
-import ScoreBanner from '@/components/Match/ScoreBanner.vue';
 import matchData from '@/data/matchData.js';
 import simulateMatch from '@/engine/simulateMatch.js';
+
+import ScoreBanner from '@/components/Match/ScoreBanner.vue';
 import BottomBar from '@/navbars/BottomBar.vue';
 import SystemBar from '@/navbars/SystemBar.vue';
+import Initialize from '@/components/Initialize.vue';
 
 export default {
   name: 'App',
@@ -88,6 +47,7 @@ export default {
     ScoreBanner,
     BottomBar,
     SystemBar,
+    Initialize,
   },
 
   created() {
@@ -108,33 +68,28 @@ export default {
     this.seedCommission();
     this.seedStaff();
 
-    //user input, select name, select club
-    this.$store.dispatch('setManagerName', this.selectedName);
-    this.selectClub();
-
     engine.checkContract(this.league, this.roster);
     console.log(this.roster);
     //and the coaches
     engine.seedStaffToClubs(this.league, this.staff);
     console.log(this.staff);
-    //generate a tactic for all the clubs
-    this.seedTactics();
-
-    //schedule the league, it's currently handmade
-    const schedule = engine.seedSchedule(this.league, this.idCodes.match);
-
-    this.seedSchedule(schedule);
-
-    //generate and set training schedule
-    this.seedTrainingSchedules();
 
     // this.$store.dispatch('setLive', true);
     // }
+
+    if (this.isDeveloper) {
+      this.setUser({ name: this.selectedName, id: this.selectedClubId });
+    }
   },
 
   data: () => ({
+    isInit: false,
+
+    //userSet
     selectedClubId: 1004,
     selectedName: 'Finnbogi Jökull Pétursson',
+
+    //
     selectedLeague: data.clubs.england,
     selectedRoster: data.fighters.roster,
     date: undefined,
@@ -312,6 +267,40 @@ export default {
         }
       }
     },
+    //user
+    setUser(input) {
+      console.log(input);
+      this.selectedClubId = input.id;
+      this.selectedName = input.name;
+
+      //user input, select name, select club
+      this.$store.dispatch('setManagerName', this.selectedName);
+      this.selectClub();
+
+      //generate a tactic for all the clubs
+      this.seedTactics();
+
+      //schedule the league, it's currently handmade
+      const schedule = engine.seedSchedule(this.league, this.idCodes.match);
+
+      this.seedSchedule(schedule);
+
+      //generate and set training schedule
+      this.seedTrainingSchedules();
+
+      this.isInit = true;
+    },
+
+    setColorProfile(pri, sec) {
+      console.log(pri);
+      console.log(sec);
+
+      this.$vuetify.theme.themes.dark.primary = pri;
+      this.$vuetify.theme.themes.dark.secondary = sec;
+
+      console.log(this.$vuetify.theme.themes.dark.primary);
+      console.log(this.$vuetify.theme.themes.dark.secondary);
+    },
 
     //services
     getClub(id) {
@@ -345,16 +334,14 @@ export default {
       const newsItem = data.news.manager.hired[0];
       let { title, content } = newsItem;
 
+      let club = this.getClub(this.selectedClubId);
+
       title = engine.formatNewsManager(title, this.managerName);
-      title = engine.formatNewsClub(
-        title,
-        this.getClub(this.selectedClubId).name
-      );
+      title = engine.formatNewsClub(title, club.name);
       content = engine.formatNewsManager(content, this.managerName);
-      content = engine.formatNewsClub(
-        content,
-        this.getClub(this.selectedClubId).name
-      );
+      content = engine.formatNewsClub(content, club.name);
+
+      this.setColorProfile(club.color.primary, club.color.secondary);
 
       // console.log(this.displayDate);
 

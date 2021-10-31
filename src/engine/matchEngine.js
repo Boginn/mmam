@@ -1,7 +1,12 @@
 import matchData from '@/data/matchData.js';
 import classes from '@/data/classes.js';
+import { standardHold, standardDefend } from '@/engine/actions/other/';
 import { singleLeg } from '@/engine/actions/grapple/';
 import { oneTwo, oneTwoThree, variousCombo } from '@/engine/actions/strike/';
+import {
+  genericSubmission,
+  maintainSubmission,
+} from '@/engine/actions/submission/';
 
 export default {
   //services
@@ -384,11 +389,14 @@ export default {
   */
 
   pickMethodAttack(fighter, opponent) {
-    let method; // returned
-
-    // if save is true then he needs to disengage
+    let method;
+    // if grappled is true then he needs to disengage
     if (fighter.match.grappled) {
       return matchData.disengage.value; // 'disengage';
+    }
+    // if controlled is true then he needs to defend
+    if (fighter.match.controlled) {
+      return matchData.defend.value; // 'defend';
     }
 
     // if opponent is controlloed, attempt to submit
@@ -458,8 +466,6 @@ export default {
         });
       }
     }
-
-    //
     return method;
   },
 
@@ -476,91 +482,41 @@ export default {
       return this.submission(attacker, defender);
     } else if (method == 'hold') {
       return this.hold(attacker, defender);
+    } else if (method == 'defend') {
+      return this.hold(attacker, defender);
     }
   },
 
   /*AFTER .engage*/
 
   submission(attacker, defender) {
-    let outcome = new classes.Outcome();
-    let { def, att } = outcome;
+    let action;
+    // outcome.msg = `${attacker.nickname} attempts a submission on ${defender.nickname}`;
+    if (defender.match.saves == 3) {
+      console.log('genericSubmission time');
+      console.log(defender);
 
-    // outcome.point = true;
-    outcome.msg = `${attacker.nickname} attempts a submission on ${defender.nickname}`;
-    def.exposed += 5;
-    def.learned += 5;
-    att.exposed += 5;
-    att.learned += 5;
-    return outcome;
+      action = genericSubmission(matchData.submission, attacker, defender);
+    } else {
+      console.log('maintainSubmission time');
+      action = maintainSubmission(matchData.submission, attacker, defender);
+    }
+
+    return action;
   },
   hold(attacker, defender) {
-    let outcome = new classes.Outcome();
-    let { def, att } = outcome;
-    const dc = defender.match.dc;
+    let action;
 
-    // can do a skill check here depending on type of position
-    // fluid and versa chosen because  grappling
-    let attackMod = Math.max(
-      ...[
-        this.getRollWithMod(attacker.skill.fluidity),
-        this.getRollWithMod(attacker.skill.versatility),
-      ]
-    );
-    let defendMod = Math.max(
-      ...[
-        this.getRollWithMod(defender.skill.fluidity),
-        this.getRollWithMod(defender.skill.versatility),
-      ]
-    );
-    if (this.getDifference(attackMod, defendMod) >= 10) {
-      if (attackMod >= defendMod) {
-        def.dc = dc - 4;
-      } else {
-        def.dc = dc + 4;
-      }
-    } else if (this.getDifference(attackMod, defendMod) >= 5) {
-      if (attackMod >= defendMod) {
-        def.dc = dc - 2;
-      } else {
-        def.dc = dc + 2;
-      }
-    } else {
-      if (attackMod >= defendMod) {
-        def.dc = dc - 1;
-      } else {
-        def.dc = dc + 1;
-      }
-    }
+    action = standardHold(attacker, defender);
 
-    // attempt to control
-    attackMod = Math.max(
-      ...[
-        this.getRollWithMod(attacker.skill.fluidity),
-        this.getRollWithMod(attacker.skill.versatility),
-      ]
-    );
-    defendMod = Math.max(
-      ...[
-        this.getRollWithMod(defender.skill.fluidity),
-        this.getRollWithMod(defender.skill.versatility),
-      ]
-    );
-    attackMod += this.getRollWithMod(attacker.match.learned / 5);
-    defendMod -= this.getRollWithMod(defender.match.exposed / 5);
-    defendMod += this.getRollWithMod(def.dc);
+    return action;
+  },
+  defend(attacker, defender) {
+    let action;
 
-    if (attackMod >= defendMod) {
-      outcome.point = true;
-      def.controlled = true;
-      outcome.msg = `${attacker.nickname} is controlling ${defender.nickname}`;
-    } else {
-      outcome.msg = `${attacker.nickname} is holding ${defender.nickname}`;
-    }
-    def.exposed += 5;
-    def.learned += 5;
-    att.exposed += 5;
-    att.learned += 5;
-    return outcome;
+    action = standardDefend(attacker, defender);
+
+    return action;
   },
   grapple(attacker, defender) {
     let action;

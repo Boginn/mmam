@@ -63,23 +63,25 @@ last time:
     get the AI choosing based on form
     introduce morale
 
-    lots of talk bout morale+form+momentum being boosters
+    lots of talmbout morale+form+momentum being boosters
 
     loads of stuff added in state to start saving more to be able to
     tackle the problem of pressing back/navigation
+    keep watch for things to being reset properly befoer next match
 
-    bottombar getting there
-    need to set up timeout disablers for everytring (like isAdvancingDate)
+    might be sweet to start working on bringin color from the team
+    could also make an intro screen at this point
+    then fix the look of schedule
 
-    TALLYPOINTS GETTING undefined
-   
+    work on submission logic, right now it;s too many messages of the attempt
+    check for balance
 
 
 
    
   features:
 
-    put in a league tab in Match.vue to see the live league table
+
 
 
 

@@ -109,7 +109,6 @@ export const singleLeg = (action, attacker, defender) => {
     //success
 
     //grappling:
-    def.grappled = true;
 
     // degree of success
     if (eng.getDifference(finalAttack, finalDefend) >= 15) {
@@ -117,6 +116,7 @@ export const singleLeg = (action, attacker, defender) => {
       def.exposed += 15;
       att.learned += 10;
       def.damage += 10;
+      def.grappled = true;
 
       def.dc = 11 + eng.getModifier(attacker.skill.versatility);
 
@@ -128,6 +128,7 @@ export const singleLeg = (action, attacker, defender) => {
       def.exposed += 10;
       att.learned += 5;
       def.damage += 5;
+      def.grappled = true;
 
       def.dc = 8 + eng.getModifier(attacker.skill.versatility);
 
