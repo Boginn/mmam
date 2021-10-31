@@ -1,10 +1,10 @@
 <template>
   <v-container class="mt-16">
-    <v-card class="fourth">
+    <v-card class="sixth">
       <v-row>
         <v-col>
-          <v-row class="d-block pa-5">
-            <v-col v-for="club in league" :key="club.id" class="pa-1">
+          <v-row class="d-block ma-5 pa-1 selected">
+            <v-col v-for="club in league" :key="club.id" class="pa-1 ">
               <div
                 class="item font-shadow "
                 @click="id = club.id"
@@ -26,8 +26,13 @@
             Welcome to MMA Manager.
           </v-card-title>
           <v-card-text>
-            You can press spacebar to continue, play and pause. Some other
-            useful info. Maybe a bit of guidance.
+            <p>
+              You can press spacebar to continue, play and pause.
+            </p>
+            Some other useful info.
+            <p>
+              Maybe a bit of guidance.
+            </p>
           </v-card-text>
           <v-card-text>
             <label class="d-block" for="name">Manager name:</label>
@@ -55,6 +60,7 @@
             <v-btn
               style="width: 100%"
               class="seventh"
+              :disabled="id == undefined || name == undefined || name == ''"
               @click="$emit('setUser', { name: name, id: id })"
               >Proceed</v-btn
             >
@@ -74,7 +80,7 @@ export default {
   },
 
   data: () => ({
-    name: undefined,
+    name: 'Finnbogi Jökull Pétursson',
     id: undefined,
   }),
 
@@ -83,7 +89,7 @@ export default {
       return this.$store.getters.getClubById(id);
     },
     banner(primary, secondary) {
-      return `linear-gradient(140deg,  ${primary}, ${primary}, ${primary},${primary}, ${primary}, ${secondary}, ${secondary})`;
+      return `linear-gradient(140deg,  ${primary} 50%,  ${secondary})`;
     },
   },
 };

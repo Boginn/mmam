@@ -77,6 +77,8 @@
               homePrimary: !$parent.ringFinishedLeft,
             }"
           >
+            <!-- <canvas id="canvas1"> </canvas> -->
+            <!-- <iframe src="@/assets/dots/index.html" title="description"></iframe> -->
             <v-row class="ring-message-row">
               <v-col class="pa-7 pt-6 white--text ring-message">
                 <span v-if="!$parent.ringFinishedLeft">
@@ -210,10 +212,10 @@ export default {
       return this.$store.getters.isDeveloper;
     },
     homeBanner() {
-      return `linear-gradient(140deg,  ${this.colors.home.primary}, ${this.colors.home.primary}, ${this.colors.home.primary},${this.colors.home.primary}, ${this.colors.home.primary}, ${this.colors.home.secondary}, ${this.colors.home.secondary})`;
+      return `linear-gradient(140deg,  ${this.colors.home.primary} 70%, ${this.colors.home.secondary}, ${this.colors.home.secondary})`;
     },
     awayBanner() {
-      return `linear-gradient(140deg,  ${this.colors.away.primary}, ${this.colors.away.primary}, ${this.colors.away.primary},${this.colors.away.primary}, ${this.colors.away.primary}, ${this.colors.away.secondary}, ${this.colors.away.secondary})`;
+      return `linear-gradient(140deg,  ${this.colors.away.primary} 70%, ${this.colors.away.secondary}, ${this.colors.away.secondary})`;
     },
   },
   data: () => ({

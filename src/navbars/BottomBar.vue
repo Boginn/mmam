@@ -82,6 +82,10 @@ export default {
     selectedClubId: Number,
   },
 
+  created() {
+    window.addEventListener('keydown', (e) => this.keyPress(e));
+  },
+
   computed: {
     selectedClub() {
       return this.getClub(this.$store.getters.selectedClubId);
@@ -153,6 +157,38 @@ export default {
       } else {
         console.log('false');
         return false;
+      }
+    },
+
+    //ui
+    keyPress(e) {
+      // timeout here for the islive stuff
+      if (e.code == 'Space') {
+        e.preventDefault();
+        console.log(this.isBusy);
+        if (!this.isBusy) {
+          this.$store.dispatch('setIsBusy', true);
+
+          if (this.isLive) {
+            if (this.isBetweenRounds) {
+              this.$store.dispatch('toggleControlStartRound');
+            }
+            if (!this.isDisabled && !this.isBetweenRounds && !this.isFullTime) {
+              this.$store.dispatch('toggleControlGetOn');
+            }
+            if (this.isDisabled && !this.isBetweenRounds && !this.isFullTime) {
+              this.$store.dispatch('toggleControlTogglePause');
+            }
+            if (this.isFullTime) {
+              this.$store.dispatch('toggleControlEndMatch');
+            }
+          } else {
+            this.$emit('continue');
+          }
+          setTimeout(() => {
+            this.$store.dispatch('setIsBusy', false);
+          }, 250);
+        }
       }
     },
 

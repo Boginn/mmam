@@ -8,23 +8,31 @@
     <v-row>
       <v-col>
         <v-data-table
+          fixed-header
           :headers="headers"
           :items="squad"
           :items-per-page="10"
           item-key="name"
+          :style="{ backgroundImage: banner }"
           class="elevation-6  ma-5 pa-4 mt-8 fill-width  font-shadow"
           :hide-default-footer="true"
         >
+          <template v-slot:top> </template>
           <!-- eslint-disable-next-line -->
           <template v-slot:header.personal.name="{ header }">
-            <div class="justify-center title">
+            <h1 class="font-shadow">
               {{ getClub(id).name }}
-            </div>
+            </h1>
           </template>
           <!-- eslint-disable-next-line -->
           <template v-slot:item.personal.name="{ item }">
-            <router-link :to="`/roster/${item.id}`" class="table">
-              <v-icon class="mb-1" small>mdi-arrow-top-left</v-icon>
+            <router-link
+              :to="`/roster/${item.id}`"
+              class="name-in-table title font-shadow"
+              :style="{
+                color: getClub(id).color.secondary,
+              }"
+            >
               {{ item.personal.name }}
             </router-link>
           </template>
@@ -110,7 +118,18 @@ export default {
     }
   },
 
+  data: () => ({
+    id: undefined,
+    club: undefined,
+  }),
+
   computed: {
+    banner() {
+      return `linear-gradient(-3deg,  ${
+        this.getClub(this.id).color.primary
+      } 78%,  ${this.getClub(this.id).color.secondary})`;
+    },
+
     headers() {
       return data.headers.squad;
     },
@@ -131,10 +150,6 @@ export default {
       return data.routes.squad;
     },
   },
-  data: () => ({
-    id: undefined,
-    club: undefined,
-  }),
 
   methods: {
     imageSource(item) {
@@ -154,3 +169,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.name-in-table:hover {
+  color: white !important;
+}
+</style>

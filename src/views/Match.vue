@@ -76,6 +76,7 @@
               :awaySubs="awaySubs"
               :homeSubs="homeSubs"
               :substitutionAvailable="substitutionAvailable"
+              :colors="colors"
             />
             <MatchTactics
               v-if="isTabMatchTactics"

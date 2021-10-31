@@ -3,15 +3,15 @@ import data from '../data/data.js';
 import matchEngine from './matchEngine.js';
 
 export default {
-  returnPlayerClub: (league, selectedClubId) => {
-    var playerClub;
-    league.forEach((club) => {
-      if (club.id == selectedClubId) {
-        playerClub = club;
-      }
-    });
-    return playerClub;
-  }, // not used i think
+  // returnPlayerClub: (league, selectedClubId) => {
+  //   var playerClub;
+  //   league.forEach((club) => {
+  //     if (club.id == selectedClubId) {
+  //       playerClub = club;
+  //     }
+  //   });
+  //   return playerClub;
+  // }, // not used i think
 
   //services
   checkTactic: (tactic) => {
@@ -27,10 +27,10 @@ export default {
       tactic.selection.center &&
       tactic.selection.right
     ) {
-      console.log('true on checkTacit');
+      console.log('true on checkTactic');
       return true;
     } else {
-      console.log('false on checkTacit');
+      console.log('false on checkTactic');
       return false;
     }
   },
@@ -98,6 +98,7 @@ export default {
   dateByDay(day) {
     let res = new Date(data.date);
     res.setDate(res.getDate() + day - 1);
+
     return res;
   },
 

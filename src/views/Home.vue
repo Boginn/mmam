@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <Dots v-if="isDeveloper" />
     <Buttons :routes="routes" />
     <v-col>
       <v-divider class="mt-4"></v-divider>
@@ -16,13 +17,17 @@
 <script>
 // @ is an alias to /src
 import Buttons from '@/components/Buttons.vue';
+import Dots from '@/components/Dots.vue';
 import data from '@/data/data.js';
 
 export default {
   name: 'Home',
   components: {
     Buttons,
+    Dots,
   },
+
+  data: () => ({}),
 
   computed: {
     routes() {
@@ -37,8 +42,10 @@ export default {
     selectedClub() {
       return this.getClub(this.$store.getters.selectedClubId);
     },
+    isDeveloper() {
+      return this.$store.getters.isDeveloper;
+    },
   },
-  data: () => ({}),
 
   methods: {
     getClub(id) {
@@ -47,3 +54,16 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+#scetch {
+  padding: 20px;
+  margin: 20px;
+}
+
+#c {
+  height: 200px;
+  width: 400px;
+  border: 1px solid gray;
+}
+</style>

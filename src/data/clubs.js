@@ -35,7 +35,7 @@ const england = [
   new classes.Club(
     'Groicester',
     'England',
-    { primary: '#E71D36', secondary: '#161925' },
+    { primary: '#E71D36', secondary: '#121259' },
     [9013, 9026, 9028, 9029, 9030]
   ), // 5
   new classes.Club(

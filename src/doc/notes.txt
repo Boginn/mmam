@@ -61,20 +61,20 @@ last time:
     we had lots of refactors, grapples and strikes ready to be made
     should probably customize the rest of the fighters
     get the AI choosing based on form
-    introduce morale
 
+    introduce morale
     lots of talmbout morale+form+momentum being boosters
 
-    loads of stuff added in state to start saving more to be able to
-    tackle the problem of pressing back/navigation
-    keep watch for things to being reset properly befoer next match
+    lets follow through on the asset/dots/ stuff. move the js into a component
+    and try to display them moving buddies
+    amazing to get dots in the rings moving randomly in relation to each other
+    stop if grappling etc
+    colored for each team ofc
+    messagesForRings change to object to hold color, put banner on the side of
+    the relevant club with the ringmessage and make the dots move meanwhile
 
-    might be sweet to start working on bringin color from the team
-    could also make an intro screen at this point
-    then fix the look of schedule
 
-    work on submission logic, right now it;s too many messages of the attempt
-    check for balance
+   
 
 
 

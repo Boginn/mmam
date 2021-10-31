@@ -88,7 +88,8 @@
             :key="index"
           >
             <div
-              class="secondary font-shadow body-1 pt-1"
+              :style="{ backgroundImage: banner }"
+              class="font-shadow body-1 pt-1"
               v-if="
                 !getFighter(fighter).match.finished &&
                   !getFighter(fighter).match.substituted &&
@@ -146,6 +147,9 @@ export default {
   },
 
   computed: {
+    banner() {
+      return `linear-gradient(140deg,  ${this.$vuetify.theme.themes.dark.primary}, ${this.$vuetify.theme.themes.dark.primary}, ${this.$vuetify.theme.themes.dark.primary},${this.$vuetify.theme.themes.dark.primary}, ${this.$vuetify.theme.themes.dark.primary}, ${this.$vuetify.theme.themes.dark.secondary}, ${this.$vuetify.theme.themes.dark.secondary})`;
+    },
     instructionsGeneral() {
       return this.tactic.instructions.general;
     },

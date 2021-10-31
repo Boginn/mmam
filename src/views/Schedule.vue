@@ -9,8 +9,8 @@
             class="ml-1 mt-3 pa-2 "
             @click="selectTab(index)"
             v-bind:class="{
-              seventh: tabs[index].value,
-              sixth: !tabs[index].value,
+              sixth: tabs[index].value,
+              bgcolor: !tabs[index].value,
             }"
             >{{ tab.name }}
           </v-tab>
@@ -22,10 +22,8 @@
           :sort-by.sync="sortBy"
           :sort-desc.sync="sortDesc"
           item-key="name"
-          class="elevation-6 seventh ma-5 pa-4 mt-3 fill-width  font-shadow"
+          class="elevation-6 sixth ma-5 pa-4 mt-3 fill-width  font-shadow"
         >
-          <template v-slot:top> </template>
-
           <!-- eslint-disable-next-line -->
           <template v-slot:item.clubs[0]="{ item }">
             <router-link
@@ -48,8 +46,19 @@
               :to="`/league/${item.clubs[1]}`"
               class="table title secondary--text"
             >
-              {{ getClub(item.clubs[1]).name }}
+              <span
+                v-bind:class="{
+                  'yellow--text': item.clubs[1] == selectedClubId,
+                }"
+              >
+                {{ getClub(item.clubs[1]).name }}</span
+              >
             </router-link>
+          </template>
+
+          <!-- eslint-disable-next-line -->
+          <template v-slot:item.date="{ item }">
+            {{ dateByDay(item.date) }}
           </template>
         </v-data-table>
       </v-col>
@@ -59,23 +68,18 @@
 
 <script>
 import data from '@/data/data.js';
+import engine from '@/engine/engine.js';
 
 export default {
   name: 'Schedule',
   components: {},
-  methods: {
-    getClub(id) {
-      return this.$store.getters.getClubById(id);
-    },
 
-    //ui
-    selectTab(selection) {
-      for (let i = 0; i < this.tabs.length; i++) {
-        this.tabs[i].value = false;
-      }
-      this.tabs[selection].value = true;
-    },
-  },
+  data: () => ({
+    sortBy: 'date',
+    sortDesc: false,
+    tabs: data.tabs.schedule,
+  }),
+
   computed: {
     selectedClubId() {
       return this.$store.getters.selectedClubId;
@@ -119,10 +123,25 @@ export default {
       return this.$store.getters.selectedClubId;
     },
   },
-  data: () => ({
-    sortBy: 'date',
-    sortDesc: false,
-    tabs: data.tabs.schedule,
-  }),
+
+  methods: {
+    getClub(id) {
+      return this.$store.getters.getClubById(id);
+    },
+
+    //ui
+    selectTab(selection) {
+      for (let i = 0; i < this.tabs.length; i++) {
+        this.tabs[i].value = false;
+      }
+      this.tabs[selection].value = true;
+    },
+    dateByDay(day) {
+      return this.splitDate(engine.dateByDay(day));
+    },
+    splitDate(date) {
+      return engine.arrangeDate(date.toString().split(' '));
+    },
+  },
 };
 </script>

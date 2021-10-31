@@ -7,7 +7,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    isDeveloper: false,
+    isDeveloper: true,
 
     //ui
     day: 1,
@@ -223,9 +223,9 @@ export default new Vuex.Store({
     schedule(state) {
       return state.schedule.filter((match) => match.date >= state.day);
     },
-    playerClub(state) {
-      return engine.returnPlayerClub(state.league, state.selectedClubId);
-    },
+    // playerClub(state) {
+    //   return engine.returnPlayerClub(state.league, state.selectedClubId);
+    // },
 
     //archive
     matches(state) {

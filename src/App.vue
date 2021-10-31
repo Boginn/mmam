@@ -51,31 +51,7 @@ export default {
   },
 
   created() {
-    window.addEventListener('keydown', (e) => this.keyPress(e));
-
-    // if (!this.live) {
-    engine.initialize(
-      this.idCodes.fighter,
-      this.idCodes.club,
-      this.idCodes.staff
-    );
-
-    this.date = this.getDate;
-    this.displayDate = engine.arrangeDate(this.splitDate);
-
-    this.seedRoster(this.selectedRoster);
-    this.seedLeague(this.selectedLeague);
-    this.seedCommission();
-    this.seedStaff();
-
-    engine.checkContract(this.league, this.roster);
-    console.log(this.roster);
-    //and the coaches
-    engine.seedStaffToClubs(this.league, this.staff);
-    console.log(this.staff);
-
-    // this.$store.dispatch('setLive', true);
-    // }
+    this.init();
 
     if (this.isDeveloper) {
       this.setUser({ name: this.selectedName, id: this.selectedClubId });
@@ -236,47 +212,29 @@ export default {
   },
 
   methods: {
-    //ui
-    keyPress(e) {
-      // timeout here for the islive stuff
-      if (e.code == 'Space') {
-        e.preventDefault();
-        console.log(this.isBusy);
-        if (!this.isBusy) {
-          this.$store.dispatch('setIsBusy', true);
+    //init
+    init() {
+      engine.initialize(
+        this.idCodes.fighter,
+        this.idCodes.club,
+        this.idCodes.staff
+      );
 
-          if (this.isLive) {
-            if (this.isBetweenRounds) {
-              this.$store.dispatch('toggleControlStartRound');
-            }
-            if (!this.isDisabled && !this.isBetweenRounds && !this.isFullTime) {
-              this.$store.dispatch('toggleControlGetOn');
-            }
-            if (this.isDisabled && !this.isBetweenRounds && !this.isFullTime) {
-              this.$store.dispatch('toggleControlTogglePause');
-            }
-            if (this.isFullTime) {
-              this.$store.dispatch('toggleControlEndMatch');
-            }
-          } else {
-            this.continue();
-          }
-          setTimeout(() => {
-            this.$store.dispatch('setIsBusy', false);
-          }, 250);
-        }
-      }
+      this.date = this.getDate;
+      this.displayDate = engine.arrangeDate(this.splitDate);
+
+      this.seedRoster(this.selectedRoster);
+      this.seedLeague(this.selectedLeague);
+      this.seedCommission();
+      this.seedStaff();
+
+      engine.checkContract(this.league, this.roster);
+      console.log(this.roster);
+      //and the coaches
+      engine.seedStaffToClubs(this.league, this.staff);
+      console.log(this.staff);
     },
-    //user
-    setUser(input) {
-      console.log(input);
-      this.selectedClubId = input.id;
-      this.selectedName = input.name;
-
-      //user input, select name, select club
-      this.$store.dispatch('setManagerName', this.selectedName);
-      this.selectClub();
-
+    postUserInputInit() {
       //generate a tactic for all the clubs
       this.seedTactics();
 
@@ -289,6 +247,18 @@ export default {
       this.seedTrainingSchedules();
 
       this.isInit = true;
+    },
+    //user
+    setUser(input) {
+      console.log(input);
+      // this.selectedClubId = input.id;
+      // this.selectedName = input.name;
+
+      //user input, select name, select club
+      this.$store.dispatch('setManagerName', input.name);
+      this.selectClub(input.id);
+
+      this.postUserInputInit();
     },
 
     setColorProfile(pri, sec) {
@@ -330,11 +300,11 @@ export default {
       }
     },
 
-    selectClub() {
+    selectClub(id) {
       const newsItem = data.news.manager.hired[0];
       let { title, content } = newsItem;
 
-      let club = this.getClub(this.selectedClubId);
+      let club = this.getClub(id);
 
       title = engine.formatNewsManager(title, this.managerName);
       title = engine.formatNewsClub(title, club.name);
@@ -350,7 +320,7 @@ export default {
         new classes.NewsItem(this.displayDate, title, content)
       );
 
-      this.$store.dispatch('selectClub', this.selectedClubId);
+      this.$store.dispatch('selectClub', id);
     },
     updateDisplayDate() {
       this.displayDate = engine.arrangeDate(this.getDate.toString().split(' '));

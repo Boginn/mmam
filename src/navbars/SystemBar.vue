@@ -1,14 +1,14 @@
 <template>
   <v-app-bar app class="abcolor " dark>
-    <img alt="logo" src="../assets/logo.png" />
+    <img alt="logo" src="../assets/logo-white.png" />
     <router-link :to="`/`" class="ml-5">
-      <v-btn :disabled="isMatchday" class="primary">
+      <v-btn :disabled="isMatchday" class="primary secondary--text font-shadow">
         {{ selectedClub.name }}
       </v-btn>
     </router-link>
     <router-link
       :to="`/league`"
-      class="text-center ml-5 title font-shadow"
+      class="text-center ml-5 title font-shadow white--text"
       v-if="!isMatchday"
     >
       {{ placeInLeague }} in The English League
