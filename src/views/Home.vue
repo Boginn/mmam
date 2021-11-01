@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <Dots v-if="isDeveloper" />
+    <!-- <Dots v-if="isDeveloper" /> -->
     <Buttons :routes="routes" />
     <v-col>
       <v-divider class="mt-4"></v-divider>
@@ -17,14 +17,14 @@
 <script>
 // @ is an alias to /src
 import Buttons from '@/components/Buttons.vue';
-import Dots from '@/components/Dots.vue';
+// import Dots from '@/components/Dots.vue';
 import data from '@/data/data.js';
 
 export default {
   name: 'Home',
   components: {
     Buttons,
-    Dots,
+    // Dots,
   },
 
   data: () => ({}),

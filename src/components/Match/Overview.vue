@@ -74,11 +74,10 @@
             class="positions-match "
             v-bind:class="{
               red: $parent.ringFinishedLeft,
-              homePrimary: !$parent.ringFinishedLeft,
+              sixth: !$parent.ringFinishedLeft,
             }"
           >
-            <!-- <canvas id="canvas1"> </canvas> -->
-            <!-- <iframe src="@/assets/dots/index.html" title="description"></iframe> -->
+            <Dots :colors="colors" />
             <v-row class="ring-message-row">
               <v-col class="pa-7 pt-6 white--text ring-message">
                 <span v-if="!$parent.ringFinishedLeft">
@@ -93,7 +92,7 @@
             class="positions-match centerPosition"
             v-bind:class="{
               red: $parent.ringFinishedCenter,
-              homePrimary: !$parent.ringFinishedCenter,
+              sixth: !$parent.ringFinishedCenter,
             }"
           >
             <v-row class="ring-message-row">
@@ -110,7 +109,7 @@
             class="positions-match "
             v-bind:class="{
               red: $parent.ringFinishedRight,
-              homePrimary: !$parent.ringFinishedRight,
+              sixth: !$parent.ringFinishedRight,
             }"
           >
             <v-row class="ring-message-row">
@@ -190,6 +189,7 @@ export default {
   components: {
     Unit: () => import('@/components/Unit.vue'),
     Modal: () => import('@/components/Modal.vue'),
+    Dots: () => import('@/components/Dots.vue'),
   },
 
   props: {

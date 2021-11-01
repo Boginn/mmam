@@ -108,9 +108,12 @@ export default {
       }
 
       if (this.isTabLeague) {
+        console.log(this.$store.getters.schedule);
+
         result = this.$store.getters.schedule;
       }
       if (this.isTabArchive) {
+        console.log(this.$store.getters.matches);
         result = this.$store.getters.matches;
       }
       return result;

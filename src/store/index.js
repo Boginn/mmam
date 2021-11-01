@@ -229,6 +229,7 @@ export default new Vuex.Store({
 
     //archive
     matches(state) {
+      console.log(state.matches);
       return state.matches;
     },
     news(state) {
@@ -835,7 +836,8 @@ export default new Vuex.Store({
       state.archivedMatchId += 1;
       const id = state.archivedMatchId;
       payload = { ...payload, id: id };
-      state.matches.push(payload);
+      console.log(payload);
+      state.matches.push({ ...payload, id: id });
     },
     ADD_FIGHTER_FORM(state, payload) {
       state.roster.forEach((element) => {

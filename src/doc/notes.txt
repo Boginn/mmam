@@ -19,6 +19,8 @@
 
     when in any squad, the link squad does nothing but should go to selected club's squad
 
+    schedule -> archive Cannot read property 0 of undefined
+
 
 
 
@@ -31,7 +33,7 @@ tweaks:
    
    
 implement:
-    screen to pick team to manage
+   
   
     fixture:
         click on 
@@ -40,7 +42,9 @@ implement:
 
     match:
 
-
+        submissions should be harder to complete the longer the fight goes on
+            sweatfactor
+            mitigated a bit by workrate and stamina
  
         manager might be able to ask fighters to specifically strike or grapple but it's
         ultimately up to the fighters. fighters, in most situations, will follow other 
@@ -73,9 +77,14 @@ last time:
     messagesForRings change to object to hold color, put banner on the side of
     the relevant club with the ringmessage and make the dots move meanwhile
 
+    lets add club color to header of unit modal/screen
+
+    maybe getOn uses action count and makes sure there aren't completely dead rounds
+    except very rarely. could use for each ring to spread the action out
+
 
    
-
+    Per 'the snake' Ush
 
 
    
