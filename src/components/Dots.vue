@@ -3,14 +3,31 @@
     <div id="sketch">
       <canvas id="canvas"></canvas>
     </div>
-    <div>
-      <v-btn @click="pharc()"></v-btn>
-    </div>
+    <!-- <div> -->
+    <!-- <v-btn @click="pharc()"></v-btn> -->
+    <!-- </div> -->
   </v-container>
 </template>
 
 <script>
 // @ is an alias to /src
+
+class Unit {
+  color;
+  pos = {
+    x: 25,
+    y: 25,
+  };
+  size = 15;
+  leftSpeed = 1;
+  topSpeed = 2;
+  // expandState: undefined,
+
+  constructor(color) {
+    // this.pos = pos;
+    this.color = color;
+  }
+}
 
 export default {
   name: 'Dots',
@@ -19,6 +36,15 @@ export default {
     var canvas = document.getElementById('canvas');
     this.canvasElement = canvas;
     this.canvas = canvas.getContext('2d');
+
+    this.animateFoundation();
+
+    // border helper
+    // this.canvas.beginPath();
+    // this.canvas.rect(0, 0, 145, 145);
+
+    // this.canvas.strokeStyle = 'white';
+    // this.canvas.stroke();
   },
 
   props: {
@@ -29,12 +55,14 @@ export default {
     canvasElement: null,
     canvas: null,
 
-    pos: { x: 100, y: 75 },
+    // pos: { x: 100, y: 75 },
 
     //
     circles: [],
     // canvas: document.getElementById('c'),
     // context: this.canvas.getContext('2d'),
+
+    unitDot: undefined,
 
     opacity: 1, // the opacity of the circles 0 to 1
     circleColor: ['rgba(34, 49, 63,)'],
@@ -49,15 +77,42 @@ export default {
   computed: {},
 
   methods: {
-    drawDot(pos, color) {
+    drawDotUp(unit) {
       // clear canvas
       // this.canvas.clearRect(0, 0, 400, 200);
+      const { pos, color, size } = unit;
       const { x, y } = pos;
+      console.log(color);
 
-      this.canvas.clearRect(0, 0, x, y);
+      this.canvas.clearRect(x, y, x, y);
+      // this.canvas.clearRect(0, 0, x, y);
       // draw rect
       this.canvas.beginPath();
-      this.canvas.arc(x, y, 10, 0, 2 * Math.PI);
+      this.canvas.arc(x, y, size, 0, 2 * Math.PI);
+      this.canvas.fillStyle = color.primary;
+      this.canvas.fill();
+      this.canvas.strokeStyle = color.secondary;
+      this.canvas.stroke();
+
+      // this.canvas.beginPath();
+      // this.canvas.arc(10, 75, 10, 0, 2 * Math.PI);
+      // this.canvas.fillStyle = this.colors.away.primary;
+      // this.canvas.fill();
+      // this.canvas.strokeStyle = this.colors.away.secondary;
+      // this.canvas.stroke();
+    },
+    drawDotDown(unit) {
+      // clear canvas
+      // this.canvas.clearRect(0, 0, 400, 200);
+      const { pos, color, size } = unit;
+      const { x, y } = pos;
+      console.log(color);
+
+      this.canvas.clearRect(0, 0, x, y);
+      // this.canvas.clearRect(0, 0, x, y);
+      // draw rect
+      this.canvas.beginPath();
+      this.canvas.arc(x, y, size, 0, 2 * Math.PI);
       this.canvas.fillStyle = color.primary;
       this.canvas.fill();
       this.canvas.strokeStyle = color.secondary;
@@ -71,11 +126,76 @@ export default {
       // this.canvas.stroke();
     },
 
-    pharc() {
-      this.drawDot({ x: 50, y: 40 }, this.colors.away);
-      this.drawDot({ x: 50, y: 30 }, this.colors.home);
-      this.buildArray();
-      this.build();
+    animateFoundation() {
+      let home = new Unit(this.colors.home);
+      let away = new Unit(this.colors.away);
+
+      away.pos.x += 55;
+      away.pos.y += 55;
+
+      this.animateUnitDown(home, 5);
+      this.animateUnitUp(away, -5);
+    },
+
+    animateUnitUp(unit, value) {
+      console.log(unit);
+
+      let { pos } = unit;
+
+      setTimeout(() => {
+        this.drawDotUp(unit);
+        pos.x += value;
+        pos.y += value;
+        console.log('s');
+        setTimeout(() => {
+          this.drawDotUp(unit);
+          pos.x += value;
+          pos.y += value;
+          console.log('s');
+          setTimeout(() => {
+            this.drawDotUp(unit);
+            pos.x += value;
+            pos.y += value;
+            console.log('s');
+            setTimeout(() => {
+              this.drawDotUp(unit);
+              pos.x += value;
+              pos.y += value;
+              console.log('s');
+            }, 100);
+          }, 100);
+        }, 100);
+      }, 100);
+    },
+    animateUnitDown(unit, value) {
+      console.log(unit);
+
+      let { pos } = unit;
+
+      setTimeout(() => {
+        this.drawDotDown(unit);
+        pos.x += value;
+        pos.y += value;
+        console.log('s');
+        setTimeout(() => {
+          this.drawDotDown(unit);
+          pos.x += value;
+          pos.y += value;
+          console.log('s');
+          setTimeout(() => {
+            this.drawDotDown(unit);
+            pos.x += value;
+            pos.y += value;
+            console.log('s');
+            setTimeout(() => {
+              this.drawDotDown(unit);
+              pos.x += value;
+              pos.y += value;
+              console.log('s');
+            }, 100);
+          }, 100);
+        }, 100);
+      }, 100);
     },
 
     //
