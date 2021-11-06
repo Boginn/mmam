@@ -91,6 +91,7 @@ export default {
       return this.getClub(this.$store.getters.selectedClubId);
     },
 
+    //matchData
     isFullTime() {
       return this.$store.getters.matchData.isFullTime;
     },
@@ -100,6 +101,11 @@ export default {
     isDisabled() {
       return this.$store.getters.matchData.isDisabled;
     },
+    isBusy() {
+      return this.$store.getters.matchData.isBusy;
+    },
+
+    //
     isMatchday() {
       return this.$store.getters.isMatchday;
     },
@@ -116,6 +122,7 @@ export default {
       return this.$store.getters.isAdvancingDate;
     },
 
+    //control
     controlStartRound() {
       return this.$store.getters.control.startRound;
     },

@@ -68,59 +68,127 @@
             </div></div
         ></v-col>
       </v-row>
-      <v-row align="center">
-        <v-col align="center">
+      <v-row align="center" class="ma-0 pt-0">
+        <!--  -->
+        <v-col align="center" class="ma-0 pt-0">
+          <v-card-text class="ma-0 pt-0" v-if="leftMsg">
+            <v-col
+              class="ring-message font-shadow"
+              v-if="!ringFinishedLeft && leftMsg.isHomeAttack"
+              :style="{
+                backgroundColor: leftMsg.primary,
+                color: leftMsg.secondary,
+              }"
+            >
+              {{ leftMsg.text }}</v-col
+            >
+          </v-card-text>
           <div
-            class="positions-match "
+            class="positions-match d-flex align-center"
             v-bind:class="{
-              red: $parent.ringFinishedLeft,
-              sixth: !$parent.ringFinishedLeft,
+              red: ringFinishedLeft,
+              sixth: !ringFinishedLeft,
             }"
           >
-            <Dots :colors="colors" />
-            <v-row class="ring-message-row">
-              <v-col class="pa-7 pt-6 white--text ring-message">
-                <span v-if="!$parent.ringFinishedLeft">
-                  {{ messages[0].slice().reverse()[0] }}</span
-                >
-              </v-col>
-            </v-row>
+            <Dots
+              v-if="leftMsg"
+              :colors="colors"
+              :isHomeAttack="leftMsg.isHomeAttack"
+            />
           </div>
+          <v-card-text class="ma-0 pt-0" v-if="leftMsg">
+            <v-col
+              class=" ring-message font-shadow"
+              v-if="!ringFinishedLeft && !leftMsg.isHomeAttack"
+              :style="{
+                backgroundColor: leftMsg.primary,
+                color: leftMsg.secondary,
+              }"
+            >
+              {{ leftMsg.text }}</v-col
+            >
+          </v-card-text>
         </v-col>
-        <v-col align="center">
-          <div
-            class="positions-match centerPosition"
-            v-bind:class="{
-              red: $parent.ringFinishedCenter,
-              sixth: !$parent.ringFinishedCenter,
-            }"
-          >
-            <v-row class="ring-message-row">
-              <v-col class="pa-7 pt-6 white--text ring-message">
-                <span v-if="!$parent.ringFinishedCenter">
-                  {{ messages[1].slice().reverse()[0] }}</span
-                >
-              </v-col>
-            </v-row>
-          </div></v-col
-        >
-        <v-col align="center">
+        <!--  -->
+        <v-col align="center" class="ma-0 pt-0">
+          <v-card-text class="ma-0 pt-0" v-if="centerMsg">
+            <v-col
+              class=" ring-message font-shadow"
+              v-if="!ringFinishedCenter && centerMsg.isHomeAttack"
+              :style="{
+                backgroundColor: centerMsg.primary,
+                color: centerMsg.secondary,
+              }"
+            >
+              {{ centerMsg.text }}</v-col
+            >
+          </v-card-text>
           <div
             class="positions-match "
             v-bind:class="{
-              red: $parent.ringFinishedRight,
-              sixth: !$parent.ringFinishedRight,
+              red: ringFinishedCenter,
+              sixth: !ringFinishedCenter,
             }"
           >
-            <v-row class="ring-message-row">
-              <v-col class="pa-7 pt-6 white--text ring-message">
-                <span v-if="!$parent.ringFinishedRight">
-                  {{ messages[2].slice().reverse()[0] }}</span
-                >
-              </v-col>
-            </v-row>
-          </div></v-col
-        >
+            <Dots
+              v-if="centerMsg"
+              :colors="colors"
+              :isHomeAttack="centerMsg.isHomeAttack"
+            />
+          </div>
+          <v-card-text class="ma-0 pt-0" v-if="centerMsg">
+            <v-col
+              class="ring-message font-shadow"
+              v-if="!ringFinishedCenter && !centerMsg.isHomeAttack"
+              :style="{
+                backgroundColor: centerMsg.primary,
+                color: centerMsg.secondary,
+              }"
+            >
+              {{ centerMsg.text }}</v-col
+            >
+          </v-card-text>
+        </v-col>
+
+        <v-col align="center" class="ma-0 pt-0">
+          <v-card-text class="ma-0 pt-0" v-if="rightMsg">
+            <v-col
+              class=" ring-message font-shadow"
+              v-if="!ringFinishedRight && rightMsg.isHomeAttack"
+              :style="{
+                backgroundColor: rightMsg.primary,
+                color: rightMsg.secondary,
+              }"
+            >
+              {{ rightMsg.text }}</v-col
+            >
+          </v-card-text>
+          <div
+            class="positions-match "
+            v-bind:class="{
+              red: ringFinishedRight,
+              sixth: !ringFinishedRight,
+            }"
+          >
+            <Dots
+              v-if="rightMsg"
+              :colors="colors"
+              :isHomeAttack="rightMsg.isHomeAttack"
+            />
+          </div>
+          <v-card-text class="ma-0 pt-0" v-if="rightMsg">
+            <v-col
+              class=" ring-message font-shadow"
+              v-if="!ringFinishedRight && !rightMsg.isHomeAttack"
+              :style="{
+                backgroundColor: rightMsg.primary,
+                color: rightMsg.secondary,
+              }"
+            >
+              {{ rightMsg.text }}</v-col
+            >
+          </v-card-text>
+        </v-col>
       </v-row>
       <v-row align="center" class="ma-0 pt-0">
         <v-col
@@ -184,12 +252,13 @@
 
 <script>
 import engine from '@/engine/engine.js';
+
 export default {
   name: 'Overview',
   components: {
     Unit: () => import('@/components/Unit.vue'),
     Modal: () => import('@/components/Modal.vue'),
-    Dots: () => import('@/components/Dots.vue'),
+    Dots: () => import('@/components/Match/Dots.vue'),
   },
 
   props: {
@@ -200,7 +269,7 @@ export default {
   },
 
   created() {
-    console.log(this.colors);
+    console.log(this.messages);
     this.$vuetify.theme.themes.dark.homePrimary = this.colors.home.primary;
     this.$vuetify.theme.themes.dark.homeSecondary = this.colors.home.secondary;
     this.$vuetify.theme.themes.dark.awayPrimary = this.colors.away.primary;
@@ -216,6 +285,28 @@ export default {
     },
     awayBanner() {
       return `linear-gradient(140deg,  ${this.colors.away.primary} 70%, ${this.colors.away.secondary}, ${this.colors.away.secondary})`;
+    },
+
+    //matchData
+    ringFinishedLeft() {
+      return this.$store.getters.matchData.ringFinishedLeft;
+    },
+    ringFinishedCenter() {
+      return this.$store.getters.matchData.ringFinishedCenter;
+    },
+    ringFinishedRight() {
+      return this.$store.getters.matchData.ringFinishedRight;
+    },
+
+    //
+    leftMsg() {
+      return this.messages[0].slice().reverse()[0];
+    },
+    centerMsg() {
+      return this.messages[1].slice().reverse()[0];
+    },
+    rightMsg() {
+      return this.messages[2].slice().reverse()[0];
     },
   },
   data: () => ({
@@ -260,15 +351,21 @@ export default {
   border-radius: 100%;
 }
 
-.ring-message {
+.ring-message font-shadow {
   text-overflow: ellipsis;
   overflow: hidden;
   max-height: 170px;
   font-size: 13pt;
 }
-.ring-message-row {
-  display: flex;
-  align-items: center;
-  height: 170px;
-}
+/* 
+.dot {
+  /* width: 1px;
+  /* height: 10px;
+
+  margin: 60px;
+
+  border-radius: 100%;
+
+  background-color: blue;
+} */
 </style>

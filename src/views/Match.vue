@@ -666,7 +666,10 @@ export default {
         });
         this.$store.dispatch('addMatchMessageToRing', {
           ring: ring,
-          msg: outcome.msg,
+          text: outcome.msg,
+          primary: outcome.primary,
+          secondary: outcome.secondary,
+          isHomeAttack: outcome.isHomeAttack,
         });
       }, this.timeoutInterval * timeoutIntervalMultiplier); // INTERVAL
     },
@@ -1229,12 +1232,14 @@ export default {
             ...outcome,
             primary: this.colors.home.primary,
             secondary: this.colors.home.secondary,
+            isHomeAttack: this.isHomeAttack,
           };
         } else {
           outcome = {
             ...outcome,
             primary: this.colors.away.primary,
             secondary: this.colors.away.secondary,
+            isHomeAttack: this.isHomeAttack,
           };
         }
         console.log('OUTCOME COLKORS' + outcome);

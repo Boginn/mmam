@@ -21,6 +21,8 @@
 
     schedule -> archive Cannot read property 0 of undefined
 
+    points in league table, account for finish vs against
+
 
 
 
@@ -60,6 +62,9 @@ implement:
       
 
 last time:
+
+    lets make clicking the date take you to fixtures or maybe last place you wwere
+    conditionally, otherwsie go to fixtures?
     
 
     we had lots of refactors, grapples and strikes ready to be made
@@ -89,6 +94,16 @@ last time:
 
    
   features:
+
+    animation:
+        needs plan out
+        variable for going up or down to decide how to clear last frame
+            ie. program for the up and down, matbe leftright
+        recursively call the timeout functionality
+        just make different functions for each type of movement/engagement
+            account for which one has the initiative
+            flash red if finished
+        play an animation based on those functions
 
 
 

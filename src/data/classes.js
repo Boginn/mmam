@@ -265,4 +265,19 @@ export default {
       this.content = content;
     }
   },
+  MatchDot: class {
+    color;
+    pos = {
+      x: 75,
+      y: 50,
+    };
+    size = 15;
+
+    // expandState: undefined,
+
+    constructor(color, pos) {
+      this.pos = pos;
+      this.color = color;
+    }
+  },
 };

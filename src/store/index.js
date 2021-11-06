@@ -7,7 +7,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    isDeveloper: false,
+    isDeveloper: true,
 
     //ui
     day: 1,
@@ -634,7 +634,7 @@ export default new Vuex.Store({
       // if (state.matchMessages.length > 3) {
       //   state.matchMessages.splice(0, 1);
       // }
-      state.matchMessagesForRings[payload.ring - 1].push(payload.msg);
+      state.matchMessagesForRings[payload.ring - 1].push(payload);
     },
 
     ADD_SQUAD(state, payload) {
