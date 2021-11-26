@@ -21,7 +21,8 @@
 
     schedule -> archive Cannot read property 0 of undefined
 
-    points in league table, account for finish vs against
+   ! points in league table, account for finish vs against
+
 
 
 
@@ -36,6 +37,9 @@ tweaks:
    
 implement:
    
+    ai:
+            get clubs thinking
+            get the AI choosing based on form
   
     fixture:
         click on 
@@ -43,6 +47,7 @@ implement:
         
 
     match:
+
 
         submissions should be harder to complete the longer the fight goes on
             sweatfactor
@@ -63,26 +68,16 @@ implement:
 
 last time:
 
-    lets make clicking the date take you to fixtures or maybe last place you wwere
-    conditionally, otherwsie go to fixtures?
-    
+think finishes are countiong twice for the slectedClub
 
-    we had lots of refactors, grapples and strikes ready to be made
-    should probably customize the rest of the fighters
-    get the AI choosing based on form
+   there is no bad stuff for having no stamina yet!
+
+    cool if more reckless/attacking instructions lead to spending
+    more stamina and versa
+
 
     introduce morale
     lots of talmbout morale+form+momentum being boosters
-
-    lets follow through on the asset/dots/ stuff. move the js into a component
-    and try to display them moving buddies
-    amazing to get dots in the rings moving randomly in relation to each other
-    stop if grappling etc
-    colored for each team ofc
-    messagesForRings change to object to hold color, put banner on the side of
-    the relevant club with the ringmessage and make the dots move meanwhile
-
-    lets add club color to header of unit modal/screen
 
     maybe getOn uses action count and makes sure there aren't completely dead rounds
     except very rarely. could use for each ring to spread the action out
@@ -96,14 +91,7 @@ last time:
   features:
 
     animation:
-        needs plan out
-        variable for going up or down to decide how to clear last frame
-            ie. program for the up and down, matbe leftright
-        recursively call the timeout functionality
-        just make different functions for each type of movement/engagement
-            account for which one has the initiative
-            flash red if finished
-        play an animation based on those functions
+
 
 
 

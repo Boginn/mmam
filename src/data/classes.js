@@ -42,7 +42,7 @@ class Person {
     flair: null,
     agility: null,
     strength: null,
-    stamina: null,
+    endurance: null,
     workRate: null,
     pace: null,
     acceleration: null,
@@ -95,17 +95,19 @@ export default {
     };
 
     match = {
-      saves: 3,
+      stamina: undefined,
+      saves: undefined,
       controlled: undefined,
       grappled: undefined,
-      dc: 0,
+      dc: undefined,
       momentum: undefined,
       condition: undefined,
       exposed: undefined,
       learned: undefined,
       finished: undefined,
       substituted: undefined,
-      finishes: 0,
+      finishes: undefined,
+      composure: undefined,
     };
 
     tactic = {
@@ -200,6 +202,7 @@ export default {
     msg = undefined;
 
     att = {
+      stamina: 0,
       exposed: 0,
       damage: 0,
       learned: 0,
@@ -211,6 +214,7 @@ export default {
     };
 
     def = {
+      stamina: 0,
       exposed: 0,
       damage: 0,
       learned: 0,

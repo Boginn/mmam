@@ -71,6 +71,8 @@ export const oneTwoThree = (action, attacker, defender) => {
   let physDC = 12;
   let skillDC = 16;
 
+  att.stamina = -15;
+
   // Physical checks
   let attackPhysMod = eng.normalActionPhysicalCheck(attacker);
   let defendPhysMod = eng.normalActionPhysicalCheck(defender);
@@ -114,6 +116,8 @@ export const oneTwoThree = (action, attacker, defender) => {
       att.learned += 5;
       def.damage += 16;
 
+      att.stamina += 5;
+
       outcome.significant = true;
       outcome.point = true;
       outcome.msg = `${attacker.nickname} lands a devistating ${action.text} on ${defender.nickname}`;
@@ -123,6 +127,8 @@ export const oneTwoThree = (action, attacker, defender) => {
       att.learned += 5;
       def.damage += 10;
 
+      att.stamina += 5;
+
       outcome.significant = true;
       outcome.point = true;
       outcome.msg = `${attacker.nickname} completes a significant ${action.text} on ${defender.nickname}`;
@@ -130,6 +136,7 @@ export const oneTwoThree = (action, attacker, defender) => {
       //complete, point
       att.learned += 5;
       def.damage += 5;
+      def.stamina += 5;
 
       outcome.point = true;
       outcome.msg = `${attacker.nickname} barely lands a ${action.text} on ${defender.nickname}`;
@@ -140,16 +147,24 @@ export const oneTwoThree = (action, attacker, defender) => {
       att.exposed += 10;
       def.learned += 10;
 
+      att.stamina -= 10;
+      def.stamina += 15;
+
       outcome.msg = `${attacker.nickname} completely fumbles a ${action.text} attempt on ${defender.nickname}`;
     } else if (eng.getDifference(finalAttack, finalDefend) >= 10) {
       //not complete, attacker exposed
       att.exposed += 5;
+
+      att.stamina -= 5;
+      def.stamina += 10;
 
       outcome.msg = `${attacker.nickname} fails to complete a ${action.text} on ${defender.nickname}`;
     } else {
       //not complete, attacker learns
       att.learned += 5;
 
+      att.stamina -= 5;
+      def.stamina += 5;
       outcome.msg = `${attacker.nickname} almost gets the ${action.text} on ${defender.nickname}`;
     }
   }

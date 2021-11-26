@@ -25,6 +25,9 @@ export const standardHold = (attacker, defender) => {
   const dc = defender.match.dc;
   console.log(dc + 'dc');
 
+  att.stamina -= 10;
+  def.stamina -= 10;
+
   // can do a skill check here depending on type of position
   // fluid and versa chosen because  grappling
   let attackMod = Math.max(
@@ -93,11 +96,15 @@ export const standardHold = (attacker, defender) => {
     if (eng.getDifference(attackMod, defendMod) >= 10) {
       def.controlled = true;
 
+      def.stamina -= 7;
+
       outcome.point = true;
       outcome.msg = `${attacker.nickname} is controlling ${defender.nickname}`;
     } else if (eng.getDifference(attackMod, defendMod) >= 5) {
       def.exposed += 5;
       att.learned += 5;
+
+      def.stamina -= 4;
       outcome.msg = `${attacker.nickname} is holding ${defender.nickname}`;
     } else {
       outcome.msg = `${attacker.nickname} is holding ${defender.nickname}`;

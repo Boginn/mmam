@@ -1,23 +1,21 @@
 <template>
-  <div>
-    <canvas id="canvas"></canvas>
+  <div v-if="isShowing">
+    <!-- <v-btn @click="isShowing = false">asdf</v-btn> -->
+    <v-row class="d-flex justify-center ">
+      <v-card class="attack dott" :style="homeStyle"></v-card>
+    </v-row>
+    <v-row class="d-flex justify-center ">
+      <v-card class="defend dott" :style="awayStyle"></v-card>
+    </v-row>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-
-import classes from '../../data/classes.js';
-
 export default {
   name: 'HomeInitiativeDots',
 
   mounted() {
-    var canvas = document.getElementById('canvas');
-    this.canvasElement = canvas;
-    this.canvas = canvas.getContext('2d');
-
-    this.animateFoundation();
+    this.toggleDots();
   },
 
   props: {
@@ -25,71 +23,79 @@ export default {
   },
 
   data: () => ({
-    canvasElement: null,
-    canvas: null,
-
-    //boundaries
-    minBounds: 15,
-    maxBounds: 65,
-
-    speed: 5,
+    isShowing: true,
   }),
 
-  computed: {},
+  computed: {
+    homeStyle() {
+      return {
+        background: this.colors.home.primary,
+        border: `1px solid ${this.colors.home.secondary}`,
+      };
+    },
+    awayStyle() {
+      return {
+        background: this.colors.away.primary,
+        border: `1px solid ${this.colors.away.secondary}`,
+      };
+    },
+    timeoutInterval() {
+      return this.$store.getters.timeoutInterval;
+    },
+  },
 
   methods: {
-    random() {
-      return (
-        Math.floor(Math.random() * (this.maxBounds - this.minBounds)) +
-        this.minBounds
-      );
-    },
-    drawDot(unit) {
-      const { pos, color, size } = unit;
-      const { x, y } = pos;
-
-      this.canvas.clearRect(0, 0, 100, 65);
-
-      this.canvas.beginPath();
-      this.canvas.arc(x, y, size, 0, 2 * Math.PI);
-      this.canvas.fillStyle = color.primary;
-      this.canvas.fill();
-      this.canvas.strokeStyle = color.secondary;
-      this.canvas.stroke();
-    },
-
-    animateFoundation() {
-      let home = new classes.MatchDot(this.colors.home, {
-        x: 75,
-        y: 30,
-      });
-      let away = new classes.MatchDot(this.colors.away, {
-        x: 75,
-        y: 80,
-      });
-
-      this.animateUnit(home);
-      this.drawDot(away);
-    },
-
-    animateUnit(unit) {
-      unit.pos.y += this.speed;
+    toggleDots() {
       setTimeout(() => {
-        this.drawDot(unit);
-        // this.drawDot(away);
-        if (unit.pos.y < 70) {
-          this.animateUnit(unit);
-        }
-      }, 120);
+        this.isShowing = false;
+        setTimeout(() => {
+          this.isShowing = true;
+          this.toggleDots();
+        }, 1000);
+      }, this.timeoutInterval + 1000);
     },
   },
 };
 </script>
 
 <style scoped>
-#c {
-  height: 200px;
-  width: 400px;
-  border: 1px solid gray;
+.dott {
+  width: 25px;
+  height: 25px;
+
+  border-radius: 100%;
+}
+
+.attack {
+  margin-top: 70px;
+
+  animation: attackAnimation 1s linear;
+
+  z-index: 2;
+}
+.defend {
+  margin-top: -10px;
+
+  animation: defendAnimation 1s linear;
+}
+@keyframes attackAnimation {
+  from {
+    margin-top: 30px;
+    /* color: ${colours.fifth}; */
+  }
+  to {
+    margin-top: 70px;
+    /* color: white; */
+  }
+}
+@keyframes defendAnimation {
+  from {
+    margin-top: 60px;
+    /* color: ${colours.fifth}; */
+  }
+  to {
+    margin-top: -10px;
+    /* color: white; */
+  }
 }
 </style>

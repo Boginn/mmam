@@ -48,6 +48,7 @@ export default new Vuex.Store({
       colors: { primary: '', secondary: '' },
       //bools
       isCommentary: true,
+      isRings: true,
       isFullTime: false,
       isBetweenRounds: true,
       isHomeAttack: true,
@@ -390,6 +391,9 @@ export default new Vuex.Store({
     setIsCommentary(context) {
       context.commit('SET_IS_COMMENTARY');
     },
+    setIsRings(context) {
+      context.commit('SET_IS_RINGS');
+    },
     setIsFullTime(context, payload) {
       context.commit('SET_IS_FULL_TIME', payload);
     },
@@ -694,6 +698,9 @@ export default new Vuex.Store({
 
     SET_IS_COMMENTARY(state) {
       state.matchData.isCommentary = !state.matchData.isCommentary;
+    },
+    SET_IS_RINGS(state) {
+      state.matchData.isRings = !state.matchData.isRings;
     },
     SET_IS_FULL_TIME(state, payload) {
       state.matchData.isFullTime = payload;

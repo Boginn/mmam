@@ -53,14 +53,83 @@ export default {
 </script>
 
 <style scoped>
-#scetch {
-  padding: 20px;
-  margin: 20px;
+.dott {
+  width: 25px;
+  height: 25px;
+
+  border-radius: 100%;
+
+  border: 1px solid black;
+  background: red;
 }
 
-#c {
-  height: 200px;
-  width: 400px;
-  border: 1px solid gray;
+.attack {
+  margin-top: 40px;
+
+  animation: varName03 1s linear;
+
+  z-index: 2;
+}
+.defend {
+  margin-top: -10px;
+
+  animation: varName04 1s linear;
+}
+.positions-match {
+  width: 170px;
+  height: 170px;
+  /* margin: -35px;
+  margin-left: 25px;
+  margin-right: 25px;
+  padding-top: 10px; */
+  margin: 25px;
+  padding-top: 50px;
+
+  /* animation: varName02 1s linear; */
+
+  background-color: rgb(80, 76, 21);
+  border-radius: 100%;
+}
+
+@keyframes varName01 {
+  30% {
+    /* color: ${colours.fifth}; */
+  }
+  50% {
+    /* color: white; */
+  }
+  100% {
+    /* color: ${colours.fifth}; */
+  }
+}
+@keyframes varName02 {
+  from {
+    padding-top: 0px;
+    /* color: ${colours.fifth}; */
+  }
+  to {
+    padding-top: 50px;
+    /* color: white; */
+  }
+}
+@keyframes varName03 {
+  from {
+    margin-top: 0px;
+    /* color: ${colours.fifth}; */
+  }
+  to {
+    margin-top: 40px;
+    /* color: white; */
+  }
+}
+@keyframes varName04 {
+  from {
+    margin-top: 50px;
+    /* color: ${colours.fifth}; */
+  }
+  to {
+    margin-top: -10px;
+    /* color: white; */
+  }
 }
 </style>

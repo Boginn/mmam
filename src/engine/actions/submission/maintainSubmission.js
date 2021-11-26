@@ -45,11 +45,17 @@ pretty much same as genericSubmission except for msg
   let attackLearned = eng.getRollWithMod(attacker.match.learned / 5);
   let defendExposed = eng.getRollWithMod(defender.match.exposed / 5);
 
+  // condition checks
+  let defendCondition = eng.getRollWithMod(defender.match.condition / 5);
+
   // Final outcome
   const finalAttack =
     attackSkillMod + attackPhysMod + eng.getModifier(attackLearned);
   const finalDefend =
-    defendSkillMod + defendPhysMod - eng.getModifier(defendExposed);
+    defendSkillMod +
+    defendPhysMod -
+    eng.getModifier(defendExposed) +
+    eng.getModifier(defendCondition);
 
   console.log(finalAttack, 'attack final mod');
   console.log(finalDefend, 'defend final mod');

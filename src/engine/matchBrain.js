@@ -3,17 +3,27 @@ import decisionEngine from '@/engine/decisionEngine.js';
 
 export default {
   reset(item) {
+    item.match.stamina = item.fitness;
     item.match.saves = 3;
     item.match.controlled = false;
     item.match.grappled = false;
-    item.match.dc = null;
-    item.match.exposed = 0;
-    item.match.condition =
-      item.fitness > item.condition ? item.fitness : item.condition;
-    item.match.learned = 0;
+    item.match.dc = 0;
     item.match.momentum = false;
+    item.match.condition = matchEngine.getAverage([
+      item.fitness,
+      item.condition,
+    ]);
+    // item.fitness > item.condition ? item.fitness : item.condition;
+    item.match.exposed = 0;
+    item.match.learned = 0;
     item.match.finished = false;
     item.match.substituted = false;
+    item.match.finishes = 0;
+    item.match.composure = {
+      adaptability: true,
+      workRate: true,
+      endurance: true,
+    };
   },
   seedRoundsToPointCounters(rounds) {
     const ringTruePoints = {
@@ -154,6 +164,7 @@ export default {
   },
   updateFighterMatchStats(attacker, defender, outcome) {
     const { att, def } = outcome;
+    attacker.match.stamina += att.stamina;
     attacker.match.condition -= att.damage;
     attacker.match.exposed += att.exposed;
     attacker.match.learned += att.learned;
@@ -174,12 +185,14 @@ export default {
       attacker.match.controlled = att.controlled;
     }
 
+    attacker.match.stamina = matchEngine.stayPercentage(attacker.match.stamina);
     attacker.match.exposed = matchEngine.stayPercentage(attacker.match.exposed);
     attacker.match.learned = matchEngine.stayPercentage(attacker.match.learned);
     attacker.match.condition = matchEngine.stayPercentage(
       attacker.match.condition
     );
 
+    defender.match.stamina += def.stamina;
     defender.match.condition -= def.damage;
     defender.match.exposed += def.exposed;
     defender.match.learned += def.learned;
@@ -200,6 +213,7 @@ export default {
       defender.match.controlled = def.controlled;
     }
 
+    defender.match.stamina = matchEngine.stayPercentage(defender.match.stamina);
     defender.match.exposed = matchEngine.stayPercentage(defender.match.exposed);
     defender.match.learned = matchEngine.stayPercentage(defender.match.learned);
     defender.match.condition = matchEngine.stayPercentage(

@@ -17,7 +17,7 @@ export default {
     let chance;
     let cSec = currentSecond;
 
-    for (let i = cSec; i < 59; i = i + 2) {
+    for (let i = cSec; i < 59; i = i + 1) {
       // // console.log(i + " i");
       cSec = cSec + 2;
 
@@ -225,7 +225,7 @@ export default {
   groundedActionPhysicalCheck(fighter) {
     let array = [];
     array.push(this.getRollWithMod(fighter.physical.strength));
-    array.push(this.getRollWithMod(fighter.physical.stamina));
+    array.push(this.getRollWithMod(fighter.physical.endurance));
     array.push(this.getRollWithMod(fighter.physical.workRate));
     array.push(this.getRollWithMod(fighter.physical.explosiveness));
     return this.processCheck(array, fighter);
@@ -331,9 +331,9 @@ export default {
 
     // console.log(fighter);
 
-    //stamina mod
+    //endurance mod
     if (fighter.match.condition < 60) {
-      stamMod = this.getModifier(fighter.physical.stamina);
+      stamMod = this.getModifier(fighter.physical.endurance);
       // console.log(`${stamMod} stam mod`);
     }
     //vision check for position mod
@@ -408,15 +408,27 @@ export default {
       return matchData.hold.value; // 'hold';
     }
 
-    //if fighter is exposed or hurt he will do so according to instructions
-    //then pass a check to follow the instructions
+    //can only heal three times, after that fighter prefers to keep going unless exposed
+    let isOutOfComposure =
+      !fighter.match.composure.adaptability &&
+      !fighter.match.composure.endurance &&
+      !fighter.match.composure.workRate
+        ? true
+        : false;
+
+    //if fighter is exposed or hurt he will do something according to instructions
     let isExposed = fighter.match.exposed > this.getExposedFactor(fighter);
-    isExposed = this.exposedMentalCheck(fighter) >= 5 ? isExposed : !isExposed;
     let isHurt = fighter.match.condition < this.getHurtFactor(fighter);
+
+    //then pass a check to follow the instructions
+    isExposed = this.exposedMentalCheck(fighter) >= 5 ? isExposed : !isExposed;
     isHurt = this.hurtMentalCheck(fighter) >= 10 ? isHurt : !isHurt;
 
-    console.log(isExposed || isHurt);
-    if (isExposed || isHurt) {
+    if (isOutOfComposure) {
+      if (isExposed) {
+        return matchData.compose.value; // 'compose';
+      }
+    } else if (isHurt) {
       return matchData.compose.value; // 'compose';
     }
 
@@ -594,8 +606,13 @@ export default {
     // and some condition back
     if (this.getRollWithMod(attacker.mental.adaptability) >= 10) {
       att.exposed -= this.roll(10) + 5;
-      if (attacker.match.condition <= 20) {
-        att.damage -= 5;
+      if (
+        attacker.match.composure.adaptability &&
+        attacker.match.condition <= 20
+      ) {
+        att.damage -=
+          this.roll(10) + this.getModifier(attacker.mental.adaptability);
+        attacker.match.composure.adaptability = false;
       }
       if (this.getRollWithMod(defender.mental.adaptability) <= 10) {
         def.learned -= this.roll(10) + 5;
@@ -603,21 +620,30 @@ export default {
     } else {
       att.exposed -= 5;
     }
-    if (this.getRollWithMod(attacker.physical.stamina) >= 10) {
+
+    if (this.getRollWithMod(attacker.physical.endurance) >= 10) {
       att.exposed -= this.roll(10) + 5;
-      if (attacker.match.condition <= 20) {
-        att.damage -= 5;
+      if (
+        attacker.match.composure.endurance &&
+        attacker.match.condition <= 20
+      ) {
+        att.damage -=
+          this.roll(10) + this.getModifier(attacker.physical.endurance);
+        attacker.match.composure.endurance = false;
       }
-      if (this.getRollWithMod(defender.physical.stamina) <= 10) {
+      if (this.getRollWithMod(defender.physical.endurance) <= 10) {
         def.learned -= this.roll(10) + 5;
       }
     } else {
       att.exposed -= 5;
     }
+
     if (this.getRollWithMod(attacker.physical.workRate) >= 10) {
       att.exposed -= this.roll(10) + 5;
-      if (attacker.match.condition <= 20) {
-        att.damage -= 5;
+      if (attacker.match.composure.workRate && attacker.match.condition <= 20) {
+        att.damage -=
+          this.roll(10) + this.getModifier(attacker.physical.workRate);
+        attacker.match.composure.workRate = false;
       }
       if (this.getRollWithMod(defender.physical.workRate) <= 10) {
         def.learned -= this.roll(10) + 5;
@@ -726,6 +752,8 @@ oneTwo
 oneTwoThree
 variousCombo
 */
+
+  /***************************************/
 
   //fighter things
 

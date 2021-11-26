@@ -3,7 +3,10 @@
     <v-row>
       <v-col>
         <v-card class="sixth">
-          <v-card-title class="justify-space-between eight">
+          <v-card-title
+            class="justify-space-between "
+            :style="`background: ${color.primary}; color: ${color.secondary}`"
+          >
             <span class="font-shadow"
               >{{ firstName }} '{{ fighter.nickname }}' {{ lastName }} ({{
                 fighter.personal.age
@@ -158,9 +161,30 @@ export default {
   created() {
     const id = this.isFromRoute ? this.$route.params.id : this.fighterId;
     this.fighter = this.$store.getters.getFighterById(id);
+
+    console.log(this.league);
+
+    this.league.forEach((club) => {
+      club.squad.forEach((fighter) => {
+        console.log(fighter);
+        console.log(this.fighterId);
+
+        if (this.isFromRoute) {
+          this.fighterId = this.$route.params.id;
+        }
+
+        if (fighter == this.fighterId) {
+          this.color = { ...club.color };
+          console.log(this.color);
+        }
+      });
+    });
   },
 
   computed: {
+    league() {
+      return this.$store.getters.league;
+    },
     isFromRoute() {
       return this.$route.params.id < data.idCodes.fighter + 1000 ? true : false;
     },
@@ -228,8 +252,8 @@ export default {
           value: this.fighter.physical.strength,
         },
         {
-          name: 'Stamina',
-          value: this.fighter.physical.stamina,
+          name: 'Endurance',
+          value: this.fighter.physical.endurance,
         },
         {
           name: 'Work Rate',
@@ -296,6 +320,7 @@ export default {
 
   data: () => ({
     fighter: undefined,
+    color: undefined,
   }),
 
   methods: {

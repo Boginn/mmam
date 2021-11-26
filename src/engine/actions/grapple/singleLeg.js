@@ -71,6 +71,8 @@ export const singleLeg = (action, attacker, defender) => {
   let physDC = 10;
   let skillDC = 10;
 
+  att.stamina = -10;
+
   // Physical checks
   let attackPhysMod = eng.bigActionPhysicalCheck(attacker);
   let defendPhysMod = eng.bigActionPhysicalCheck(defender);
@@ -143,12 +145,17 @@ export const singleLeg = (action, attacker, defender) => {
 
       def.dc = 3 + eng.getModifier(attacker.skill.versatility);
 
+      def.stamina += 10;
+
       outcome.point = true;
       outcome.msg = `${attacker.nickname} completes a ${action.text} on ${defender.nickname}`;
     } else {
       //barely,
       def.exposed += 3;
       att.learned += 1;
+
+      att.stamina -= 5;
+      def.stamina += 5;
 
       def.dc = 1 + eng.getModifier(attacker.skill.versatility);
 
@@ -159,14 +166,23 @@ export const singleLeg = (action, attacker, defender) => {
       //not complete, attacker exposed, defender learns
       att.exposed += 10;
       def.learned += 5;
+
+      att.stamina -= 10;
+      def.stamina += 10;
       outcome.msg = `${attacker.nickname} fumbles a ${action.text} attempt on ${defender.nickname}`;
     } else if (eng.getDifference(finalAttack, finalDefend) >= 10) {
       //not complete, attacker learns
       att.learned += 5;
+
+      att.stamina -= 5;
+      def.stamina += 5;
       outcome.msg = `${attacker.nickname} fails to complete a ${action.text} on ${defender.nickname}`;
     } else {
       //not complete, defender exposed
       def.exposed += 5;
+
+      att.stamina -= 5;
+      def.stamina += 5;
       outcome.msg = `${attacker.nickname} almost gets the ${action.text} on ${defender.nickname}`;
     }
   }

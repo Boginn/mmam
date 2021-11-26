@@ -83,6 +83,8 @@ export const variousCombo = (action, attacker, defender) => {
   let physDC = eng.rollTwenty();
   let skillDC = eng.rollTwenty();
 
+  att.stamina = -10;
+
   // Physical checks
   let attackPhysMod = eng.normalActionPhysicalCheck(attacker);
   let defendPhysMod = eng.normalActionPhysicalCheck(defender);
@@ -126,6 +128,8 @@ export const variousCombo = (action, attacker, defender) => {
       att.learned += skillDC + 5;
       def.damage += eng.getAverage([physDC, skillDC]) + 5;
 
+      att.stamina += 5;
+
       outcome.significant = true;
       outcome.point = true;
       outcome.msg = `${attacker.nickname} lands a devistating ${action.text} on ${defender.nickname}`;
@@ -145,6 +149,8 @@ export const variousCombo = (action, attacker, defender) => {
       att.learned += 2;
       def.damage += 2;
 
+      def.stamina += 5;
+
       if (eng.getAverage([physDC, skillDC]) >= 10) {
         outcome.point = true;
       }
@@ -156,15 +162,24 @@ export const variousCombo = (action, attacker, defender) => {
       att.exposed += physDC + 5;
       def.learned += skillDC + 5;
 
+      att.stamina -= 5;
+      def.stamina += 10;
+
       outcome.msg = `${attacker.nickname} completely fumbles a ${action.text} attempt on ${defender.nickname}`;
     } else if (eng.getDifference(finalAttack, finalDefend) >= 10) {
       //not complete, attacker exposed
       att.exposed += physDC;
 
+      att.stamina -= 5;
+      def.stamina += 5;
+
       outcome.msg = `${attacker.nickname} fails to complete a ${action.text} on ${defender.nickname}`;
     } else {
       //not complete, attacker learns
       att.learned += skillDC;
+
+      att.stamina -= 5;
+      def.stamina += 5;
 
       outcome.msg = `${attacker.nickname} almost gets the ${action.text} on ${defender.nickname}`;
     }

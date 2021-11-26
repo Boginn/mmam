@@ -24,14 +24,13 @@
             </v-card>
           </v-col>
           <v-col>
-            <v-card class="commentary">
+            <v-card class="">
               <Control
                 :isFullTime="isFullTime"
                 :isDisabled="isDisabled"
                 :isPaused="isPaused"
                 :isFast="isFast"
                 :isBetweenRounds="isBetweenRounds"
-                :isCommentary="isCommentary"
                 @startRound="startRound()"
                 @getOn="getOn()"
                 @endMatch="endMatch()"
@@ -39,6 +38,7 @@
                 @setIntervalFast="setIntervalFast()"
                 @setIntervalSlow="setIntervalSlow()"
                 @setCommentary="setCommentary()"
+                @setRings="setRings()"
               />
             </v-card>
           </v-col>
@@ -68,6 +68,7 @@
               :homeTactic="homeTactic"
               :messages="messagesForRings"
               :colors="colors"
+              :isRings="isRings"
             />
             <Bench
               v-if="isTabBench"
@@ -255,6 +256,9 @@ export default {
 
     isCommentary() {
       return this.$store.getters.matchData.isCommentary;
+    },
+    isRings() {
+      return this.$store.getters.matchData.isRings;
     },
     isFullTime() {
       return this.$store.getters.matchData.isFullTime;
@@ -684,6 +688,9 @@ export default {
     setCommentary() {
       this.$store.dispatch('setIsCommentary');
     },
+    setRings() {
+      this.$store.dispatch('setIsRings');
+    },
     getClub(id) {
       return this.$store.getters.getClubById(id);
     },
@@ -1107,10 +1114,73 @@ export default {
       this.$store.dispatch('setIsDisabled', true);
       this.$store.dispatch('setIsPaused', true);
       // this.second = matchEngine.rollEvent(this.second, this.happenChance);
+
+      //stamina recovery
+      let staminaRecovered = this.second;
+
+      //roll seconds passing
       this.$store.dispatch(
         'setSecond',
         matchEngine.rollEvent(this.second, this.happenChance)
       );
+
+      //stamina recovery
+
+      if (!this.ringFinishedLeft) {
+        this.getFighter(
+          this.homeTactic.selection.left
+        ).match.stamina += Math.floor((this.second - staminaRecovered) / 10);
+        this.getFighter(
+          this.awayTactic.selection.left
+        ).match.stamina += Math.floor((this.second - staminaRecovered) / 10);
+        if (
+          this.getFighter(this.homeTactic.selection.left).match.stamina >= 100
+        ) {
+          this.getFighter(this.homeTactic.selection.left).match.stamina = 100;
+        }
+        if (
+          this.getFighter(this.awayTactic.selection.left).match.stamina >= 100
+        ) {
+          this.getFighter(this.awayTactic.selection.left).match.stamina = 100;
+        }
+      }
+      if (!this.ringFinishedCenter) {
+        this.getFighter(
+          this.homeTactic.selection.center
+        ).match.stamina += Math.floor((this.second - staminaRecovered) / 10);
+        this.getFighter(
+          this.awayTactic.selection.center
+        ).match.stamina += Math.floor((this.second - staminaRecovered) / 10);
+        if (
+          this.getFighter(this.homeTactic.selection.center).match.stamina >= 100
+        ) {
+          this.getFighter(this.homeTactic.selection.center).match.stamina = 100;
+        }
+        if (
+          this.getFighter(this.awayTactic.selection.center).match.stamina >= 100
+        ) {
+          this.getFighter(this.awayTactic.selection.center).match.stamina = 100;
+        }
+      }
+      if (!this.ringFinishedRight) {
+        this.getFighter(
+          this.homeTactic.selection.right
+        ).match.stamina += Math.floor((this.second - staminaRecovered) / 10);
+        this.getFighter(
+          this.awayTactic.selection.right
+        ).match.stamina += Math.floor((this.second - staminaRecovered) / 10);
+        if (
+          this.getFighter(this.homeTactic.selection.right).match.stamina >= 100
+        ) {
+          this.getFighter(this.homeTactic.selection.right).match.stamina = 100;
+        }
+        if (
+          this.getFighter(this.awayTactic.selection.right).match.stamina >= 100
+        ) {
+          this.getFighter(this.awayTactic.selection.right).match.stamina = 100;
+        }
+      }
+
       if (this.second >= 59) {
         // this.minute++;
         this.$store.dispatch('setMinute', this.minute + 1);
@@ -1136,7 +1206,7 @@ export default {
         // fighter variables
         let home, away, attacker, defender;
 
-        //pick ring
+        //assign fighters and pick ring
         ring = matchBrain.pickRing(
           this.ringFinishedLeft,
           this.ringFinishedRight
@@ -1199,6 +1269,34 @@ export default {
           ),
         };
 
+        //check for stamina
+        if (attacker.match.stamina < 25) {
+          if (attacker.tactic.instructions.risk == 1) {
+            let switchRoles = attacker;
+            attacker = defender;
+            defender = switchRoles;
+
+            attacker.match.stamina += 25;
+            // TODO
+            // gains more or less stamina back based on fitness/other
+          } else if (attacker.tactic.instructions.risk == 2) {
+            if (matchEngine.rollTwenty > 5) {
+              let switchRoles = attacker;
+              attacker = defender;
+              defender = switchRoles;
+
+              attacker.match.stamina += 25;
+              // TODO
+              // gains more or less stamina back based on fitness/other
+            }
+          }
+        }
+
+        //TODO
+        //if the fighter is below a certain threshold he is less likely to use his initative
+        //if the fighter does use it he is more likely to grapple/clinch/normal action
+        //in case he doesnt, he regains stamina and the initiative goes to the opponent unless the difference is large
+
         console.log(attacker);
         console.log(attacker.tactic.instructions);
         console.log(defender);
@@ -1242,7 +1340,6 @@ export default {
             isHomeAttack: this.isHomeAttack,
           };
         }
-        console.log('OUTCOME COLKORS' + outcome);
         //count activity
         // this.ringActivity = matchBrain.countActivity(
         //   ring,
@@ -1269,7 +1366,7 @@ export default {
         //updates momentum, condition, exposed and learned
         matchBrain.updateFighterMatchStats(attacker, defender, outcome);
 
-        // checks condition to see if there was a finish
+        //CheckForFINISH
         this.checkForFinish(
           defender,
           ring,
@@ -1288,21 +1385,8 @@ export default {
 
         this.$store.dispatch('setScore', this.score);
 
+        //POINTS
         if (outcome.point) {
-          console.log(this.ringTruePoints);
-          console.log(ring);
-          console.log(outcome);
-          console.log(this.isHomeAttack);
-          console.log(this.ringTruePoints);
-          console.log(this.round);
-
-          // this.ringTruePoints = matchBrain.tallyPoints(
-          //   ring,
-          //   outcome,
-          //   this.isHomeAttack,
-          //   this.ringTruePoints,
-          //   this.round
-          // );
           this.$store.dispatch(
             'setRingTruePoints',
             matchBrain.tallyPoints(
@@ -1313,23 +1397,11 @@ export default {
               this.round
             )
           );
-          console.log(this.ringTruePoints);
+          // console.log(this.ringTruePoints);
         }
 
         //SUBSTITUTION
-        if (
-          this.ringFinishedCenter &&
-          this.substitutionAvailable &&
-          !this.isFullTime
-        ) {
-          // this.$store.dispatch('setSubstitutionMade', true);
-
-          this.$store.dispatch('setPendingSub', true); //triggers makeSubstitution at the beginning of getOn()
-          this.$store.dispatch('setIsPaused', true);
-          this.$store.dispatch('setIsDisabled', false);
-          // this.$store.dispatch('setIsPaused', true);
-          // this.$store.dispatch('setIsDisabled', false);
-        }
+        this.checkForSubstitute();
 
         // enable button / loop
         this.$store.dispatch('setIsPaused', false);
@@ -1346,6 +1418,20 @@ export default {
     },
 
     //main loop helpers
+
+    checkForSubstitute() {
+      if (
+        this.ringFinishedCenter &&
+        this.substitutionAvailable &&
+        !this.isFullTime
+      ) {
+        // this.$store.dispatch('setSubstitutionMade', true);
+
+        this.$store.dispatch('setPendingSub', true); //triggers makeSubstitution at the beginning of getOn()
+        this.$store.dispatch('setIsPaused', true);
+        this.$store.dispatch('setIsDisabled', false);
+      }
+    },
     checkForFinish(
       fighter,
       ring,

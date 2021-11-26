@@ -45,12 +45,19 @@
           <span v-else>Continue</span></v-btn
         > -->
       <span class="text-center ml-5 title font-shadow " v-if="isDeveloper">
-        <span class="grey--text"> Date:</span> <b> {{ day }}</b
+        <span class="grey--text"> Day:</span> <b> {{ day }}</b
         ><span class="grey--text"> displayDate:</span>
-        <b>{{ displayDate }}</b>
+        <b style="cursor: pointer;" @click="$router.push('/fixtures')">{{
+          displayDate
+        }}</b>
       </span>
-      <span class="text-center ml-5 title font-shadow code" v-else>
-        <b class="code">{{ displayDate }}</b>
+      <span
+        @click="$router.push('/fixtures')"
+        style="cursor: pointer;"
+        class="text-center ml-5 title font-shadow code"
+        v-else
+      >
+        <b>{{ displayDate }}</b>
       </span>
     </v-col>
   </v-app-bar>

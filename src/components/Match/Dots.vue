@@ -1,6 +1,6 @@
 <template>
   <span>
-    <v-container v-if="!isFullTime">
+    <v-container v-if="!isFullTime && !isBetweenRounds && !isPaused">
       <HomeInitiativeDots :colors="colors" v-if="isHomeAttack" />
       <AwayInitiativeDots :colors="colors" v-else />
     </v-container>
@@ -25,18 +25,15 @@ export default {
 
   data: () => ({}),
 
-  watch: {
-    matchDataIsHomeAttack: function() {
-      console.log('WATCHING IS HOME ATTACK!!!!!!!!!!!!!!!!!!');
-    },
-  },
-
   computed: {
-    matchDataIsHomeAttack() {
-      return this.$store.getters.matchData.isHomeAttack;
+    isPaused() {
+      return this.$store.getters.matchData.isPaused;
     },
     isFullTime() {
       return this.$store.getters.matchData.isFullTime;
+    },
+    isBetweenRounds() {
+      return this.$store.getters.matchData.isBetweenRounds;
     },
   },
 

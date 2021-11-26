@@ -40,10 +40,7 @@
               <b class="font-shadow red--text">
                 {{ getFighter(fighter).match.exposed }}
               </b>
-              - c:
-              <b class="font-shadow amber--text">
-                {{ getFighter(fighter).match.condition }}
-              </b>
+
               - l:
               <b class="font-shadow green--text">
                 {{ getFighter(fighter).match.learned }}
@@ -65,65 +62,84 @@
                 color="green"
                 background-color="red"
               ></v-progress-linear>
+              <v-progress-linear
+                height="15"
+                v-model="getFighter(fighter).match.stamina"
+                :buffer-value="100"
+                color="cyan"
+                background-color="blue darken-4"
+              ></v-progress-linear>
             </div></div
         ></v-col>
       </v-row>
       <v-row align="center" class="ma-0 pt-0">
         <!--  -->
         <v-col align="center" class="ma-0 pt-0">
-          <v-card-text class="ma-0 pt-0" v-if="leftMsg">
-            <v-col
-              class="ring-message font-shadow"
-              v-if="!ringFinishedLeft && leftMsg.isHomeAttack"
-              :style="{
-                backgroundColor: leftMsg.primary,
-                color: leftMsg.secondary,
-              }"
-            >
-              {{ leftMsg.text }}</v-col
-            >
-          </v-card-text>
+          <v-col class="ma-1 pa-1">
+            <v-card-text class="ma-0 pt-0" v-if="leftMsg">
+              <v-col
+                class="ring-message font-shadow"
+                v-if="!ringFinishedLeft && leftMsg.isHomeAttack"
+                :style="{
+                  backgroundColor: leftMsg.primary,
+                  color: leftMsg.secondary,
+                }"
+              >
+                {{ leftMsg.text }}</v-col
+              >
+            </v-card-text>
+          </v-col>
+
           <div
-            class="positions-match d-flex align-center"
+            v-if="isRings"
+            class="positions-match"
             v-bind:class="{
               red: ringFinishedLeft,
               sixth: !ringFinishedLeft,
             }"
           >
             <Dots
-              v-if="leftMsg"
+              v-if="leftMsg && !ringFinishedLeft"
               :colors="colors"
               :isHomeAttack="leftMsg.isHomeAttack"
+              :isDisabled="isDisabled"
             />
           </div>
-          <v-card-text class="ma-0 pt-0" v-if="leftMsg">
-            <v-col
-              class=" ring-message font-shadow"
-              v-if="!ringFinishedLeft && !leftMsg.isHomeAttack"
-              :style="{
-                backgroundColor: leftMsg.primary,
-                color: leftMsg.secondary,
-              }"
-            >
-              {{ leftMsg.text }}</v-col
-            >
-          </v-card-text>
+
+          <v-col class="ma-1 pa-1">
+            <v-card-text class="ma-0 pt-0" v-if="leftMsg">
+              <v-col
+                class=" ring-message font-shadow"
+                v-if="!ringFinishedLeft && !leftMsg.isHomeAttack"
+                :style="{
+                  backgroundColor: leftMsg.primary,
+                  color: leftMsg.secondary,
+                }"
+              >
+                {{ leftMsg.text }}</v-col
+              >
+            </v-card-text>
+          </v-col>
         </v-col>
         <!--  -->
         <v-col align="center" class="ma-0 pt-0">
-          <v-card-text class="ma-0 pt-0" v-if="centerMsg">
-            <v-col
-              class=" ring-message font-shadow"
-              v-if="!ringFinishedCenter && centerMsg.isHomeAttack"
-              :style="{
-                backgroundColor: centerMsg.primary,
-                color: centerMsg.secondary,
-              }"
-            >
-              {{ centerMsg.text }}</v-col
-            >
-          </v-card-text>
+          <v-col class="ma-1 pa-1">
+            <v-card-text class="ma-0 pt-0" v-if="centerMsg">
+              <v-col
+                class=" ring-message font-shadow"
+                v-if="!ringFinishedCenter && centerMsg.isHomeAttack"
+                :style="{
+                  backgroundColor: centerMsg.primary,
+                  color: centerMsg.secondary,
+                }"
+              >
+                {{ centerMsg.text }}</v-col
+              >
+            </v-card-text>
+          </v-col>
+
           <div
+            v-if="isRings"
             class="positions-match "
             v-bind:class="{
               red: ringFinishedCenter,
@@ -131,39 +147,47 @@
             }"
           >
             <Dots
-              v-if="centerMsg"
+              v-if="centerMsg && !ringFinishedCenter"
               :colors="colors"
               :isHomeAttack="centerMsg.isHomeAttack"
+              :isDisabled="isDisabled"
             />
           </div>
-          <v-card-text class="ma-0 pt-0" v-if="centerMsg">
-            <v-col
-              class="ring-message font-shadow"
-              v-if="!ringFinishedCenter && !centerMsg.isHomeAttack"
-              :style="{
-                backgroundColor: centerMsg.primary,
-                color: centerMsg.secondary,
-              }"
-            >
-              {{ centerMsg.text }}</v-col
-            >
-          </v-card-text>
+
+          <v-col class="ma-1 pa-1">
+            <v-card-text class="ma-0 pt-0" v-if="centerMsg">
+              <v-col
+                class="ring-message font-shadow"
+                v-if="!ringFinishedCenter && !centerMsg.isHomeAttack"
+                :style="{
+                  backgroundColor: centerMsg.primary,
+                  color: centerMsg.secondary,
+                }"
+              >
+                {{ centerMsg.text }}</v-col
+              >
+            </v-card-text>
+          </v-col>
         </v-col>
 
         <v-col align="center" class="ma-0 pt-0">
-          <v-card-text class="ma-0 pt-0" v-if="rightMsg">
-            <v-col
-              class=" ring-message font-shadow"
-              v-if="!ringFinishedRight && rightMsg.isHomeAttack"
-              :style="{
-                backgroundColor: rightMsg.primary,
-                color: rightMsg.secondary,
-              }"
-            >
-              {{ rightMsg.text }}</v-col
-            >
-          </v-card-text>
+          <v-col class="ma-1 pa-1">
+            <v-card-text class="ma-0 pt-0" v-if="rightMsg">
+              <v-col
+                class=" ring-message font-shadow"
+                v-if="!ringFinishedRight && rightMsg.isHomeAttack"
+                :style="{
+                  backgroundColor: rightMsg.primary,
+                  color: rightMsg.secondary,
+                }"
+              >
+                {{ rightMsg.text }}</v-col
+              >
+            </v-card-text>
+          </v-col>
+
           <div
+            v-if="isRings"
             class="positions-match "
             v-bind:class="{
               red: ringFinishedRight,
@@ -171,25 +195,30 @@
             }"
           >
             <Dots
-              v-if="rightMsg"
+              v-if="rightMsg && !ringFinishedRight"
               :colors="colors"
               :isHomeAttack="rightMsg.isHomeAttack"
+              :isDisabled="isDisabled"
             />
           </div>
-          <v-card-text class="ma-0 pt-0" v-if="rightMsg">
-            <v-col
-              class=" ring-message font-shadow"
-              v-if="!ringFinishedRight && !rightMsg.isHomeAttack"
-              :style="{
-                backgroundColor: rightMsg.primary,
-                color: rightMsg.secondary,
-              }"
-            >
-              {{ rightMsg.text }}</v-col
-            >
-          </v-card-text>
+
+          <v-col class="ma-1 pa-1">
+            <v-card-text class="ma-0 pt-0" v-if="rightMsg">
+              <v-col
+                class=" ring-message font-shadow"
+                v-if="!ringFinishedRight && !rightMsg.isHomeAttack"
+                :style="{
+                  backgroundColor: rightMsg.primary,
+                  color: rightMsg.secondary,
+                }"
+              >
+                {{ rightMsg.text }}</v-col
+              >
+            </v-card-text>
+          </v-col>
         </v-col>
       </v-row>
+
       <v-row align="center" class="ma-0 pt-0">
         <v-col
           align="center"
@@ -213,6 +242,13 @@
                 color="green"
                 background-color="red"
               ></v-progress-linear>
+              <v-progress-linear
+                height="15"
+                v-model="getFighter(fighter).match.stamina"
+                :buffer-value="100"
+                color="cyan"
+                background-color="blue darken-4"
+              ></v-progress-linear>
             </div>
             <a @click="showUnitModal(fighter)" class="white--text">
               {{ firstName(getFighter(fighter)) }} '<b>{{
@@ -226,10 +262,7 @@
               <b class="font-shadow red--text">
                 {{ getFighter(fighter).match.exposed }}</b
               >
-              - c:
-              <b class="font-shadow amber--text">
-                {{ getFighter(fighter).match.condition }}</b
-              >
+
               - l:
               <b class="font-shadow green--text">
                 {{ getFighter(fighter).match.learned }}</b
@@ -266,6 +299,7 @@ export default {
     awayTactic: Object,
     messages: Array,
     colors: Object,
+    disabled: Boolean,
   },
 
   created() {
@@ -279,6 +313,12 @@ export default {
   computed: {
     isDeveloper() {
       return this.$store.getters.isDeveloper;
+    },
+    isDisabled() {
+      return this.$store.getters.matchData.isDisabled;
+    },
+    isRings() {
+      return this.$store.getters.matchData.isRings;
     },
     homeBanner() {
       return `linear-gradient(140deg,  ${this.colors.home.primary} 70%, ${this.colors.home.secondary}, ${this.colors.home.secondary})`;

@@ -25,6 +25,8 @@ export const standardDefend = (attacker, defender) => {
   const dc = defender.match.dc;
   console.log(dc + 'dc');
 
+  att.stamina = -10;
+
   // // can do a skill check here depending on type of position
   // // fluid and versa chosen because  grappling
   // let attackMod = Math.max(
@@ -110,8 +112,10 @@ export const standardDefend = (attacker, defender) => {
     if (eng.getDifference(attackMod, defendMod) >= 10) {
       att.exposed += 5;
       def.learned += 5;
+      att.stamina -= 7;
     }
 
+    att.stamina -= 4;
     outcome.msg = `${attacker.nickname} fails to escape`;
   }
 

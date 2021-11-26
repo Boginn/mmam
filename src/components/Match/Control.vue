@@ -60,16 +60,29 @@
           >-</v-btn
         >
         <v-spacer></v-spacer>
+        <span class="d-flex justify-center">
+          <v-btn
+            class="pa-5 ma-1 "
+            v-bind:class="{
+              'grey--text': !isRings,
+              fourth: isRings,
+            }"
+            small
+            @click="$emit('setRings')"
+            >rings</v-btn
+          >
 
-        <v-btn
-          class="seventh pa-5 ma-1 "
-          v-bind:class="{
-            'grey--text': !isCommentary,
-          }"
-          small
-          @click="$emit('setCommentary')"
-          >commentary</v-btn
-        >
+          <v-btn
+            class="pa-5 ma-1 "
+            v-bind:class="{
+              'grey--text ': !isCommentary,
+              indigo: isCommentary,
+            }"
+            small
+            @click="$emit('setCommentary')"
+            >comm</v-btn
+          >
+        </span>
       </v-col>
     </v-row>
   </v-col>
@@ -86,7 +99,15 @@ export default {
     isPaused: Boolean,
     isFast: Boolean,
     isBetweenRounds: Boolean,
-    isCommentary: Boolean,
+  },
+
+  computed: {
+    isCommentary() {
+      return this.$store.getters.matchData.isCommentary;
+    },
+    isRings() {
+      return this.$store.getters.matchData.isRings;
+    },
   },
 };
 </script>
